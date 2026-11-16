@@ -15,7 +15,7 @@ Resumen vivo de lo averiguado, acordado y pendiente en las conversaciones sobre 
 
 ## Pendiente
 
-- **Commit y push** de la retirada de Turnstile y los cambios de registro/recuperación de contraseña (árbol de trabajo sin confirmar el 2026-11-16, pruebas en verde: Laravel Auth+Console 143/143, Node 564/564, typecheck y lint sin errores). Hace falta una cuenta con escritura en `JacintoSygris/ai4sustainablityJacinto`.
+- **Push a `origin/main`** — los cambios están confirmados en local (`07861d4` retirada de Turnstile y registro/recuperación; `e44162f` páginas Blade igualadas con Next, iconos y consentimiento) pero el push falla: el remoto HTTPS no tiene credenciales guardadas y la clave SSH del equipo Linux (`JesusRio1991`) solo tiene lectura (`Permission denied`). Hace falta dar permiso de escritura a esa cuenta o empujar desde el Mac / con un token.
 - **Desplegar en producción** siguiendo la secuencia de «Camino a producción» y decidir `AUTH_PUBLIC_REGISTRATION_ENABLED` / `AUTH_PASSWORD_RESET_ENABLED` en el `.env` del backend.
 
 ## Registro de sesiones
