@@ -6,6 +6,9 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ config('app.name', 'IA4Sustainability') }}</title>
+        <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="32x32">
+        <link rel="icon" href="{{ asset('icon.svg') }}" type="image/svg+xml">
+        <link rel="apple-touch-icon" href="{{ asset('apple-icon.png') }}">
 
         <!-- Fonts -->
         <link rel="stylesheet" href="{{ asset('consent/consent.css') }}">
@@ -14,7 +17,6 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans text-gray-900 antialiased bg-slate-50">
-        <div id="airis-consent-root"></div>
         <div class="flex min-h-screen flex-col bg-slate-50 text-slate-950">
             <header class="sticky top-0 z-50 w-full border-b border-slate-200/80 bg-white/95 backdrop-blur">
                 <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -87,5 +89,8 @@
                 });
             });
         </script>
+        {{-- Consent UI goes last, like <CookieConsent /> in the Next layout: the persistent
+             "configure consent" controls render after the footer instead of above the header. --}}
+        <div id="airis-consent-root"></div>
     </body>
 </html>
