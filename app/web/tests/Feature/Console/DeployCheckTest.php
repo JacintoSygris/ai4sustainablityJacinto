@@ -16,11 +16,6 @@ beforeEach(function () {
         'app.cipher' => 'AES-256-CBC',
         'services.auth_hardening.public_registration_enabled' => true,
         'services.auth_hardening.require_email_verification' => true,
-        'services.auth_hardening.turnstile.site_key' => 'fixture-site-key',
-        'services.auth_hardening.turnstile.secret' => 'fixture-turnstile-secret',
-        'services.auth_hardening.turnstile.expected_hostname' => 'airis.sygris.com',
-        'services.auth_hardening.turnstile.expected_action' => 'register',
-        'services.auth_hardening.turnstile.verify_url' => 'https://challenges.cloudflare.com/turnstile/v0/siteverify',
         'mail.default' => 'smtp',
         'mail.mailers.smtp' => [
             'transport' => 'smtp', 'scheme' => 'smtp', 'require_tls' => true,
@@ -48,7 +43,7 @@ it('passes a complete deployment configuration without printing secret values', 
     foreach (['APP_URL', 'ENFORCE_TRUSTED_HOSTS', 'trusted_hosts', 'APP_KEY', 'DB_writable', 'migrations_current', 'registration', 'mailer_safe', 'smtp_configured', 'queue_durable'] as $check) {
         expect($output)->toContain('PASS '.$check);
     }
-    foreach ([config('app.key'), 'fixture-site-key', 'fixture-turnstile-secret', 'fixture-mail-user', 'fixture-mail-password'] as $secret) {
+    foreach ([config('app.key'), 'fixture-mail-user', 'fixture-mail-password'] as $secret) {
         expect($output)->not->toContain($secret);
     }
     expect(RegistrationGuard::registrationAvailable())->toBeTrue();
@@ -118,14 +113,6 @@ it('reports each registration prerequisite by name without failing a closed depl
 })->with([
     ['services.auth_hardening.public_registration_enabled', false, 'AUTH_PUBLIC_REGISTRATION_ENABLED'],
     ['services.auth_hardening.require_email_verification', false, 'AUTH_REQUIRE_EMAIL_VERIFICATION'],
-    ['services.auth_hardening.turnstile.site_key', '', 'TURNSTILE_SITE_KEY'],
-    ['services.auth_hardening.turnstile.site_key', '1x00000000000000000000AA', 'TURNSTILE_SITE_KEY'],
-    ['services.auth_hardening.turnstile.secret', '', 'TURNSTILE_SECRET'],
-    ['services.auth_hardening.turnstile.secret', '1x0000000000000000000000000000000AA', 'TURNSTILE_SECRET'],
-    ['services.auth_hardening.turnstile.expected_hostname', '', 'TURNSTILE_EXPECTED_HOSTNAME'],
-    ['services.auth_hardening.turnstile.expected_hostname', 'other.example.net', 'APP_URL_TURNSTILE_HOSTNAME'],
-    ['services.auth_hardening.turnstile.expected_action', 'other', 'TURNSTILE_EXPECTED_ACTION'],
-    ['services.auth_hardening.turnstile.verify_url', 'https://other.example.net', 'TURNSTILE_VERIFY_URL'],
     ['mail.default', 'log', 'MAIL_MAILER'],
     ['mail.mailers.smtp.require_tls', false, 'MAIL_MAILER'],
     ['queue.default', 'sync', 'QUEUE_CONNECTION'],

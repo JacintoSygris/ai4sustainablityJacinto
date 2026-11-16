@@ -7,13 +7,14 @@ import { useLocale } from "@/components/locale-provider"
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Eye, EyeOff } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { getLaravelRegisterConfig } from "@/lib/laravel-api"
 import { fetchLaravelCsrfToken, laravelAuthHeaders, laravelValidationMessage } from "@/lib/laravel-auth"
 
 export function LoginForm() {
@@ -26,6 +27,17 @@ export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useSystemMessage("")
   const [loading, setLoading] = useState(false)
+  const [resetEnabled, setResetEnabled] = useState(true)
+
+  useEffect(() => {
+    let mounted = true
+    getLaravelRegisterConfig().then(({ data }) => {
+      if (mounted) setResetEnabled(data.password_reset_enabled !== false)
+    }).catch(() => {})
+    return () => {
+      mounted = false
+    }
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -107,10 +119,12 @@ export function LoginForm() {
         {loading ? tr("Iniciando sesión...") : tr("Iniciar sesión")}
       </Button>
 
-      <div className="text-center">
-        <Link href="/forgot-password" className="text-sm text-primary hover:underline">
-          {" "}{tr("¿Has olvidado la contraseña?")}{" "}</Link>
-      </div>
+      {resetEnabled && (
+        <div className="text-center">
+          <Link href="/forgot-password" className="text-sm text-primary hover:underline">
+            {" "}{tr("¿Has olvidado la contraseña?")}{" "}</Link>
+        </div>
+      )}
 
       <div className="text-center text-sm text-muted-foreground">
         {" "}{tr("¿No tienes cuenta?")}{" "}

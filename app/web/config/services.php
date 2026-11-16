@@ -110,15 +110,6 @@ return [
         'public_registration_enabled' => (bool) env('AUTH_PUBLIC_REGISTRATION_ENABLED', false),
         'password_reset_enabled' => (bool) env('AUTH_PASSWORD_RESET_ENABLED', false),
         'require_email_verification' => (bool) env('AUTH_REQUIRE_EMAIL_VERIFICATION', false),
-        'turnstile' => [
-            // Cloudflare Turnstile. When site_key+secret are absent the guard is
-            // skipped (dev/local). Set both in production to enforce.
-            'site_key' => env('TURNSTILE_SITE_KEY'),
-            'secret' => env('TURNSTILE_SECRET'),
-            'verify_url' => env('TURNSTILE_VERIFY_URL', 'https://challenges.cloudflare.com/turnstile/v0/siteverify'),
-            'expected_hostname' => env('TURNSTILE_EXPECTED_HOSTNAME'),
-            'expected_action' => env('TURNSTILE_EXPECTED_ACTION', 'register'),
-        ],
         // Honeypot: a field bots fill and humans never see; must be empty.
         'honeypot_field' => env('AUTH_HONEYPOT_FIELD', 'company_website'),
     ],

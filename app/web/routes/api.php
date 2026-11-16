@@ -23,17 +23,14 @@ Route::middleware(['web'])->group(function () {
         ->middleware('throttle:30,1,locale')->name('api.locale.update');
 });
 
-// Public (no-auth) config for the pre-login register page: Turnstile site key
-// (public by design) + whether email verification is enforced. Lets the Next
-// register form render the widget only when configured.
+// Public (no-auth) config for the pre-login register page: guard state, whether
+// email verification is enforced and the antibot field name.
 Route::middleware(['web'])->get('auth/register-config', function () {
     return response()->json([
         'data' => [
             'registration_enabled' => RegistrationGuard::registrationAvailable(),
-            'turnstile_site_key' => RegistrationGuard::registrationAvailable()
-                ? config('services.auth_hardening.turnstile.site_key')
-                : null,
             'require_email_verification' => (bool) config('services.auth_hardening.require_email_verification'),
+            'password_reset_enabled' => \App\Support\PasswordResetGuard::available(),
             'honeypot_field' => (string) config('services.auth_hardening.honeypot_field'),
         ],
     ]);

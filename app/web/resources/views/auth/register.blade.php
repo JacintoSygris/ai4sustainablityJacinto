@@ -88,18 +88,6 @@
             </div>
         </div>
 
-        @if (\App\Support\RegistrationGuard::registrationAvailable() && \App\Support\RegistrationGuard::isTurnstileConfigured())
-            <div id="registration-security"></div>
-            <script type="module">
-                import { mountSecurityCheck } from '/consent/security.mjs';
-                mountSecurityCheck(document.getElementById('registration-security'), {
-                    enabled: true,
-                    siteKey: @json(config('services.auth_hardening.turnstile.site_key')),
-                    action: @json(config('services.auth_hardening.turnstile.expected_action')),
-                });
-            </script>
-        @endif
-
         <button
             type="submit"
             class="inline-flex h-9 w-full items-center justify-center gap-2 whitespace-nowrap rounded-md bg-purple-700 px-4 py-2 text-sm font-medium text-white shadow-sm outline-none transition hover:bg-purple-800 focus-visible:ring-2 focus-visible:ring-purple-700/40"

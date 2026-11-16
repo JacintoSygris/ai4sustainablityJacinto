@@ -684,7 +684,7 @@ test('auth system notices change language while entered name and passwords remai
 })
 
 test('forgot password, help and dashboard produce Spanish and English render trees', async () => {
-  const forgot = consumer('app/(auth)/forgot-password/page', 'default', [], harness())
+  const forgot = consumer('app/(auth)/forgot-password/page', 'default', [], harness(), { getLaravelRegisterConfig: async () => ({ data: { password_reset_enabled: true } }) })
   assert.match(renderToStaticMarkup(forgot.render()), /contraseña/i)
   forgot.setLocale('en'); assert.match(renderToStaticMarkup(forgot.render()), /password/i)
   assert.doesNotMatch(renderToStaticMarkup(forgot.render()), /contraseña/i); forgot.dispose()

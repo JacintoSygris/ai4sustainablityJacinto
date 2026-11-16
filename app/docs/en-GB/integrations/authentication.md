@@ -6,11 +6,11 @@ Authentication uses Laravel web sessions and CSRF protection. Protected routes r
 
 ## Public Configuration
 
-`GET /api/auth/register-config` reports the public Turnstile key if present, whether email verification is required and the antibot field name. This information contains no secrets.
+`GET /api/auth/register-config` reports whether registration is available, whether email verification is required and the antibot field name. This information contains no secrets.
 
 ## Registration And Login
 
-The client must send registration fields, CSRF and the empty antibot field. If Turnstile is configured, it must also send the widget token. Errors are handled as form validation.
+The client must send registration fields, CSRF and the empty antibot field. There is no third-party challenge: bot protection is the honeypot field plus a limit of five sign-ups per IP every ten minutes. Errors are handled as form validation.
 
 ## Verification
 

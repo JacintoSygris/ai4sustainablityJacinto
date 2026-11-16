@@ -6,11 +6,11 @@ La autenticación usa sesión web de Laravel y protección CSRF. Las rutas prote
 
 ## Configuración pública
 
-`GET /api/auth/register-config` informa de la clave pública de Turnstile si existe, de si se exige verificación de correo y del nombre del campo antibot. Esa información no contiene secretos.
+`GET /api/auth/register-config` informa de si el registro está disponible, de si se exige verificación de correo y del nombre del campo antibot. Esa información no contiene secretos.
 
 ## Registro e inicio de sesión
 
-El cliente debe enviar los campos de registro, CSRF y el campo antibot vacío. Si Turnstile está configurado, también debe enviar el token del widget. Los errores se tratan como validación de formulario.
+El cliente debe enviar los campos de registro, CSRF y el campo antibot vacío. No hay desafío de terceros: la protección antibots es el campo trampa y el límite de cinco altas por IP cada diez minutos. Los errores se tratan como validación de formulario.
 
 ## Verificación
 

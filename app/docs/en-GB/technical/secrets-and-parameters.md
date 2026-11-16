@@ -82,8 +82,6 @@ Check: review provider authentication logs and Laravel/FastAPI errors without ex
 | `MAIL_FROM_ADDRESS` | Laravel/SMTP | Yes for mail | `no-reply@app.example.org` | Authorised sender. |
 | `MAIL_FROM_NAME` | Laravel/SMTP | Yes for mail | `IA4Sustainability` | Visible name. |
 | `AUTH_REQUIRE_EMAIL_VERIFICATION` | Laravel | Recommended | `true` | Unverified users cannot use protected routes. |
-| `TURNSTILE_SITE_KEY` | Laravel/frontend | Optional | example public key | Register page shows widget if configured. |
-| `TURNSTILE_SECRET` | Laravel | Optional | managed secret | Anti-abuse verification. |
 | `SOCIAL_LOGIN_ENABLED` | Laravel | Optional | `false` | OAuth disabled by default. |
 | `GOOGLE_CLIENT_ID` | Laravel/Google | If Google | app id | Redirect starts. |
 | `GOOGLE_CLIENT_SECRET` | Laravel/Google | If Google | managed secret | Callback authenticates. |
@@ -133,7 +131,7 @@ SOCIAL_LOGIN_ENABLED=false
 LEARNING_DEPLOYED=false
 ```
 
-OAuth and Turnstile are enabled only when their providers are configured and verified. Document upload remains disabled until a service compatible with `POST /extract-document` exists.
+OAuth is enabled only when its providers are configured and verified; registration uses no third-party challenge (Turnstile was removed on 2026-11-13). Document upload remains disabled until a service compatible with `POST /extract-document` exists.
 
 With `APP_ENV=production`, optional learning is enabled by configuration unless `LEARNING_DEPLOYED=false`. Keep `LEARNING_DEPLOYED=false` in containers (they do not support learning) and on native installations until the provisioning checklist in the [activation runbook](../../learning-activation-runbook.md) (Spanish) is complete.
 

@@ -27,10 +27,6 @@ QUEUE_CONNECTION=database
 DB_QUEUE_RETRY_AFTER=360
 AUTH_PUBLIC_REGISTRATION_ENABLED=true
 AUTH_REQUIRE_EMAIL_VERIFICATION=true
-TURNSTILE_SITE_KEY=<clave real del sitio>
-TURNSTILE_SECRET=<secreto real de Turnstile>
-TURNSTILE_EXPECTED_HOSTNAME=airis.sygris.com
-TURNSTILE_EXPECTED_ACTION=register
 MAIL_MAILER=smtp
 MAIL_HOST=<servidor SMTP del proveedor>
 MAIL_PORT=587
@@ -42,7 +38,7 @@ MAIL_FROM_ADDRESS=<remitente autorizado por el proveedor>
 MAIL_FROM_NAME=IA4Sustainability
 ```
 
-Este bloque abre el registro únicamente si `RegistrationGuard` acepta todos sus requisitos. El widget de Cloudflare debe incluir `airis.sygris.com` entre sus hosts permitidos y utilizar claves reales, nunca las claves públicas de prueba. Para TLS implícito usar `MAIL_SCHEME=smtps` y el puerto del proveedor, normalmente `465`. La imagen no tiene un MTA local: no usar `sendmail`. Para un despliegue sin registro público, establecer `AUTH_PUBLIC_REGISTRATION_ENABLED=false` y crear las cuentas con el comando indicado abajo. `AUTH_REQUIRE_EMAIL_VERIFICATION` sigue activo; `AUTH_PASSWORD_RESET_ENABLED=true` es opcional y requiere la misma entrega segura de correo y cola.
+Este bloque abre el registro únicamente si `RegistrationGuard` acepta todos sus requisitos. Para TLS implícito usar `MAIL_SCHEME=smtps` y el puerto del proveedor, normalmente `465`. La imagen no tiene un MTA local: no usar `sendmail`. Para un despliegue sin registro público, establecer `AUTH_PUBLIC_REGISTRATION_ENABLED=false` y crear las cuentas con el comando indicado abajo. `AUTH_REQUIRE_EMAIL_VERIFICATION` sigue activo; `AUTH_PASSWORD_RESET_ENABLED=true` es opcional y requiere la misma entrega segura de correo y cola.
 
 En **frontend**, pasar estos valores como argumentos de construcción de `app/frontend/Dockerfile.public` y como variables del contenedor. Los valores `NEXT_PUBLIC_*` quedan incorporados al construir la imagen; cambiarlos solo en ejecución no basta.
 
@@ -71,7 +67,7 @@ php artisan i4s:user:create operator@example.net --name="Operador" --verified
 
 La contraseña se solicita de forma oculta y cumple las mismas reglas de contraseña que el registro. Se rechazan correos duplicados y se imprime el identificador creado. `--verified` marca la cuenta como verificada; sin esa opción queda pendiente y este comando no envía un correo. Para automatizar, añadir `--password-stdin` y proporcionar una sola línea por una tubería privada (con `docker compose exec -T web ...`); nunca poner la contraseña en argumentos, variables de la línea de comandos ni registros de Jenkins.
 
-`i4s:deploy:check` muestra `PASS`/`FAIL` por requisito, sin valores secretos: origen, protección de hosts activa (`ENFORCE_TRUSTED_HOSTS`) y hosts (incluidos el host de `APP_URL` y `web`), clave válida, base escribible, migraciones aplicadas, registro y nombres de sus requisitos fallidos, correo seguro, configuración SMTP y cola duradera. Devuelve código distinto de cero por fallos de origen/hosts, clave, base o migraciones. Registro, correo y cola se informan como fallos no bloqueantes, permitiendo instalaciones cerradas. El entrypoint ejecuta el diagnóstico después de migrar y sembrar, registra su resultado y continúa incluso si falla. Un `PASS` verifica configuración local, no acredita claves de Cloudflare, entrega de correo, ejecución del worker ni persistencia del volumen: el operador debe comprobarlos y verificar externamente inicio de sesión y registro tras desplegar.
+`i4s:deploy:check` muestra `PASS`/`FAIL` por requisito, sin valores secretos: origen, protección de hosts activa (`ENFORCE_TRUSTED_HOSTS`) y hosts (incluidos el host de `APP_URL` y `web`), clave válida, base escribible, migraciones aplicadas, registro y nombres de sus requisitos fallidos, correo seguro, configuración SMTP y cola duradera. Devuelve código distinto de cero por fallos de origen/hosts, clave, base o migraciones. Registro, correo y cola se informan como fallos no bloqueantes, permitiendo instalaciones cerradas. El entrypoint ejecuta el diagnóstico después de migrar y sembrar, registra su resultado y continúa incluso si falla. Un `PASS` verifica configuración local, no acredita entrega de correo, ejecución del worker ni persistencia del volumen: el operador debe comprobarlos y verificar externamente inicio de sesión y registro tras desplegar.
 
 ## Plantilla de Compose del operador
 

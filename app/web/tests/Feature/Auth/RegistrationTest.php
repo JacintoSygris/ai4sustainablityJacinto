@@ -90,7 +90,6 @@ test('new users can register using the laravel register alias', function () {
 
 test('the register-config endpoint is public and reports guard state', function () {
     config([
-        'services.auth_hardening.turnstile.site_key' => 'test-site-key',
         'services.auth_hardening.require_email_verification' => true,
         'services.auth_hardening.honeypot_field' => 'company_website',
     ]);
@@ -98,7 +97,7 @@ test('the register-config endpoint is public and reports guard state', function 
     $this->getJson('/api/auth/register-config')
         ->assertOk()
         ->assertJsonPath('data.registration_enabled', true)
-        ->assertJsonPath('data.turnstile_site_key', 'test-site-key')
+        ->assertJsonMissingPath('data.turnstile_site_key')
         ->assertJsonPath('data.require_email_verification', true)
         ->assertJsonPath('data.honeypot_field', 'company_website');
 });
@@ -116,47 +115,6 @@ test('a filled honeypot silently blocks registration', function () {
 
     $this->assertGuest();
     expect(\App\Models\User::where('email', 'bot@example.com')->exists())->toBeFalse();
-});
-
-test('a configured Turnstile blocks registration without a valid token', function () {
-    config([
-        'services.auth_hardening.turnstile.site_key' => 'sk',
-        'services.auth_hardening.turnstile.secret' => 'secret',
-    ]);
-    \Illuminate\Support\Facades\Http::fake([
-        '*siteverify*' => \Illuminate\Support\Facades\Http::response(['success' => false], 200),
-    ]);
-
-    $this->post('/register', [
-        'name' => 'Human?',
-        'email' => 'noturnstile@example.com',
-        'password' => 'password',
-        'password_confirmation' => 'password',
-        'cf-turnstile-response' => 'bad-token',
-    ])->assertSessionHasErrors('email');
-
-    $this->assertGuest();
-});
-
-test('a configured Turnstile allows registration with a valid token', function () {
-    config([
-        'services.auth_hardening.turnstile.site_key' => 'sk',
-        'services.auth_hardening.turnstile.secret' => 'secret',
-    ]);
-    \Illuminate\Support\Facades\Http::fake([
-        '*siteverify*' => \Illuminate\Support\Facades\Http::response(['success' => true], 200),
-    ]);
-
-    $this->post('/register', [
-        'name' => 'Real Human',
-        'email' => 'good@example.com',
-        'password' => 'password',
-        'password_confirmation' => 'password',
-        'cf-turnstile-response' => 'good-token',
-    ]);
-
-    $this->assertGuest();
-    $this->assertDatabaseHas('users', ['email' => 'good@example.com']);
 });
 
 test('registration is rate limited per ip', function () {
@@ -222,20 +180,23 @@ test('public registration fails closed when it is disabled', function () {
     $this->assertDatabaseMissing('users', ['email' => 'disabled@example.test']);
 });
 
-test('production registration rejects Cloudflare Turnstile test credentials', function () {
+test('production registration requires only verified delivery prerequisites', function () {
     $this->app['env'] = 'production';
     config([
-        'app.env' => 'production',
+        'app.url' => 'https://example.com',
+        'app.trusted_hosts' => ['example.com'],
         'services.auth_hardening.public_registration_enabled' => true,
         'services.auth_hardening.require_email_verification' => true,
-        'services.auth_hardening.turnstile.site_key' => '1x00000000000000000000AA',
-        'services.auth_hardening.turnstile.secret' => '1x0000000000000000000000000000000AA',
-        'services.auth_hardening.turnstile.expected_hostname' => 'example.com',
         'queue.default' => 'database',
         'mail.default' => 'smtp',
+        'mail.mailers.smtp.scheme' => 'smtps',
+        'mail.mailers.smtp.url' => null,
     ]);
 
-    $this->get('/register')->assertNotFound();
+    expect(RegistrationGuard::registrationUnavailableReasons())->toBe([]);
+
+    config(['mail.default' => 'log']);
+    expect(RegistrationGuard::registrationUnavailableReasons())->toBe(['MAIL_MAILER']);
 });
 
 test('production registration rejects unsafe nested delivery fallbacks', function () {
@@ -245,10 +206,6 @@ test('production registration rejects unsafe nested delivery fallbacks', functio
         'app.trusted_hosts' => ['example.com'],
         'services.auth_hardening.public_registration_enabled' => true,
         'services.auth_hardening.require_email_verification' => true,
-        'services.auth_hardening.turnstile.site_key' => 'live-site-key',
-        'services.auth_hardening.turnstile.secret' => 'live-secret-key',
-        'services.auth_hardening.turnstile.expected_hostname' => 'example.com',
-        'services.auth_hardening.turnstile.expected_action' => 'register',
         'queue.default' => 'failover',
         'queue.connections.failover' => [
             'driver' => 'failover',
@@ -271,10 +228,6 @@ test('production registration rejects an invalid canonical origin before accepti
         'app.trusted_hosts' => ['example.com'],
         'services.auth_hardening.public_registration_enabled' => true,
         'services.auth_hardening.require_email_verification' => true,
-        'services.auth_hardening.turnstile.site_key' => 'live-site-key',
-        'services.auth_hardening.turnstile.secret' => 'live-secret-key',
-        'services.auth_hardening.turnstile.expected_hostname' => 'example.com',
-        'services.auth_hardening.turnstile.expected_action' => 'register',
         'queue.default' => 'database',
         'mail.default' => 'smtp',
     ]);
@@ -293,10 +246,6 @@ test('the deployed Laravel registration form renders the configured abuse contro
         'services.auth_hardening.public_registration_enabled' => true,
         'services.auth_hardening.require_email_verification' => true,
         'services.auth_hardening.honeypot_field' => 'company_website',
-        'services.auth_hardening.turnstile.site_key' => 'live-site-key',
-        'services.auth_hardening.turnstile.secret' => 'live-secret-key',
-        'services.auth_hardening.turnstile.expected_hostname' => 'example.com',
-        'services.auth_hardening.turnstile.expected_action' => 'register',
         'queue.default' => 'database',
         'mail.default' => 'smtp',
     ]);
@@ -304,94 +253,25 @@ test('the deployed Laravel registration form renders the configured abuse contro
     $this->get('https://example.com/register')
         ->assertOk()
         ->assertSee('name="company_website"', false)
-        ->assertSee('id="registration-security"', false)
-        ->assertSee('mountSecurityCheck', false)
-        ->assertSee('siteKey: "live-site-key"', false)
-        ->assertSee('action: "register"', false)
-        ->assertDontSee('<script src="https://challenges.cloudflare.com', false);
+        ->assertDontSee('turnstile', false)
+        ->assertDontSee('challenges.cloudflare.com', false);
 });
 
-test('production Turnstile checks bind successful responses to hostname and action', function () {
-    $this->app['env'] = 'production';
-    config([
-        'app.env' => 'production',
-        'app.url' => 'https://example.com',
-        'app.trusted_hosts' => ['example.com'],
-        'app.enforce_trusted_hosts' => false,
-        'services.auth_hardening.public_registration_enabled' => true,
-        'services.auth_hardening.require_email_verification' => true,
-        'services.auth_hardening.turnstile.site_key' => 'live-site-key',
-        'services.auth_hardening.turnstile.secret' => 'live-secret-key',
-        'services.auth_hardening.turnstile.expected_hostname' => 'example.com',
-        'services.auth_hardening.turnstile.expected_action' => 'register',
-        'queue.default' => 'database',
-        'mail.default' => 'smtp',
-    ]);
-    \Illuminate\Support\Facades\Http::fake([
-        '*' => \Illuminate\Support\Facades\Http::response([
-            'success' => true,
-            'hostname' => 'attacker.example',
-            'action' => 'other-action',
-        ]),
-    ]);
-
-    $response = $this->withSession(['_token' => 'test-csrf-token'])
-        ->from('https://example.com/register')
-        ->post('https://example.com/register', [
-            '_token' => 'test-csrf-token',
-            'name' => 'Turnstile Bound',
-            'email' => 'turnstile-bound@example.test',
-            'password' => 'password',
-            'password_confirmation' => 'password',
-            'cf-turnstile-response' => 'token',
-        ]);
-
-    $response->assertRedirect('/register')->assertSessionHasErrors('email');
-    $this->assertDatabaseMissing('users', ['email' => 'turnstile-bound@example.test']);
-});
-
-test('registration does not disclose whether an email already has an account', function () {
+test('registration reports an email that already has an account', function () {
     \Illuminate\Support\Facades\Queue::fake();
     $existing = \App\Models\User::factory()->create(['email' => 'private@example.test']);
 
-    $existingResponse = $this->post('/register', [
+    $response = $this->from('/register')->post('/register', [
         'name' => 'Existing Person',
         'email' => $existing->email,
         'password' => 'password',
         'password_confirmation' => 'password',
     ]);
-    auth()->logout();
 
-    $newResponse = $this->post('/register', [
-        'name' => 'New Person',
-        'email' => 'new-private@example.test',
-        'password' => 'password',
-        'password_confirmation' => 'password',
-    ]);
-
-    $existingResponse->assertSessionHasNoErrors()->assertRedirect('/login');
-    $newResponse->assertSessionHasNoErrors()->assertRedirect('/login');
-    expect($existingResponse->getSession()->get('status'))->toBe($newResponse->getSession()->get('status'));
+    $response->assertRedirect('/register');
+    $response->assertSessionHasErrors('email');
+    expect(session('errors')->first('email'))->toContain('Ya existe una cuenta');
     $this->assertGuest();
-    \Illuminate\Support\Facades\Queue::assertPushed(\App\Jobs\SendRegistrationVerification::class, 2);
-});
-
-test('production registration rejects an untrusted Turnstile verification endpoint', function () {
-    $this->app['env'] = 'production';
-    config([
-        'app.url' => 'https://example.com',
-        'app.trusted_hosts' => ['example.com'],
-        'services.auth_hardening.public_registration_enabled' => true,
-        'services.auth_hardening.require_email_verification' => true,
-        'services.auth_hardening.turnstile.site_key' => 'live-site-key',
-        'services.auth_hardening.turnstile.secret' => 'live-secret-key',
-        'services.auth_hardening.turnstile.expected_hostname' => 'example.com',
-        'services.auth_hardening.turnstile.expected_action' => 'register',
-        'services.auth_hardening.turnstile.verify_url' => 'http://attacker.example/siteverify',
-        'queue.default' => 'database',
-        'mail.default' => 'smtp',
-        'mail.mailers.smtp.scheme' => 'smtps',
-    ]);
-
-    expect(RegistrationGuard::registrationAvailable())->toBeFalse();
+    expect(\App\Models\User::where('email', $existing->email)->count())->toBe(1);
+    \Illuminate\Support\Facades\Queue::assertNothingPushed();
 });

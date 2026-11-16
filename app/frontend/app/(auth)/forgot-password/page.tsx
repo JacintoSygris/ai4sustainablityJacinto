@@ -8,11 +8,14 @@ import { useLocale } from "@/components/locale-provider"
 import type React from "react"
 
 import Link from "next/link"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { getLaravelRegisterConfig } from "@/lib/laravel-api"
 import { fetchLaravelCsrfToken, laravelAuthHeaders, laravelValidationMessage } from "@/lib/laravel-auth"
+
+const RESET_UNAVAILABLE = "La recuperación de contraseña no está disponible en este momento. Contacta con el equipo responsable del despliegue."
 
 export default function ForgotPasswordPage() {
   const { locale } = useLocale()
@@ -22,11 +25,28 @@ export default function ForgotPasswordPage() {
   const [error, setError] = useSystemMessage("")
   const [status, setStatus] = useSystemMessage("")
   const [loading, setLoading] = useState(false)
+  const [resetEnabled, setResetEnabled] = useState(true)
+
+  useEffect(() => {
+    let mounted = true
+    getLaravelRegisterConfig().then(({ data }) => {
+      if (!mounted || data.password_reset_enabled !== false) return
+      setResetEnabled(false)
+      setError(systemCopy(RESET_UNAVAILABLE))
+    }).catch(() => {})
+    return () => {
+      mounted = false
+    }
+  }, [setError])
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
     setError("")
     setStatus("")
+    if (!resetEnabled) {
+      setError(systemCopy(RESET_UNAVAILABLE))
+      return
+    }
     setLoading(true)
 
     try {
@@ -42,8 +62,14 @@ export default function ForgotPasswordPage() {
         redirect: "manual",
       })
 
-      if (response.status === 419) {
-        setError(await laravelValidationMessage(response, tr("La sesión de seguridad ha caducado."), locale))
+      if (response.status === 404) {
+        setResetEnabled(false)
+        setError(systemCopy(RESET_UNAVAILABLE))
+        return
+      }
+
+      if (!(response.ok || response.type === "opaqueredirect" || (response.status >= 300 && response.status < 400))) {
+        setError(await laravelValidationMessage(response, tr("No se ha podido solicitar el enlace. Inténtalo de nuevo."), locale))
         return
       }
 
@@ -78,7 +104,7 @@ export default function ForgotPasswordPage() {
         />
       </div>
 
-      <Button type="submit" className="w-full" disabled={loading}>
+      <Button type="submit" className="w-full" disabled={loading || !resetEnabled}>
         {loading ? tr("Solicitando enlace...") : tr("Enviar enlace de recuperación")}
       </Button>
 

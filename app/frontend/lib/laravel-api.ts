@@ -46,8 +46,8 @@ export type LaravelFrontendSession = {
 
 export type LaravelRegisterConfig = {
   registration_enabled: boolean
-  turnstile_site_key: string | null
   require_email_verification: boolean
+  password_reset_enabled?: boolean
   honeypot_field: string
 }
 

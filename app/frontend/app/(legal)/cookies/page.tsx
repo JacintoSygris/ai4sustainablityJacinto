@@ -45,7 +45,6 @@ export default async function CookiesPage() {
       </section>
       <section className="space-y-3">
         <h2 className="text-xl font-semibold">{tr("Servicios que solicitas expresamente")}</h2>
-        <p>{tr("Si el alta está habilitada y configurada, «Iniciar comprobación de seguridad» carga Cloudflare Turnstile y transmite datos técnicos, incluida tu IP, para verificar el registro. Es independiente de las preferencias opcionales. No se carga por visitar las páginas de acceso o perfil ni con el registro deshabilitado. Su tecnología y conservación dependen del proveedor y configuración; no afirmamos que esté libre de cookies. Consulta la")}{" "}<a className="underline" href="https://www.cloudflare.com/privacypolicy/">{tr("privacidad de Cloudflare")}</a>.</p>
         <p>{tr("Google y Microsoft reciben la navegación cuando pulsas su enlace de acceso, sin SDK precargado. Sus páginas pueden usar sus propias tecnologías y plazos:")}{" "}<a className="underline" href="https://policies.google.com/privacy">Google</a> {" "}{tr("y")}{' '}
           <a className="underline" href="https://privacy.microsoft.com/privacystatement">Microsoft</a>.</p>
         <p>{tr("Esta versión no utiliza analítica ni publicidad. Las fuentes de Next se sirven localmente y las páginas de cuenta usan fuentes del sistema. Más información sobre tus datos y derechos en")}{" "}<a className="underline" href="/privacy">{tr("Privacidad")}</a>.</p>

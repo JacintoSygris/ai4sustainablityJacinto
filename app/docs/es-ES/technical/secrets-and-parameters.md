@@ -82,8 +82,6 @@ Comprobacion: revisar logs de autenticacion del proveedor y errores de Laravel/F
 | `MAIL_FROM_ADDRESS` | Laravel/SMTP | Si para correo | `no-reply@app.example.org` | Remitente permitido. |
 | `MAIL_FROM_NAME` | Laravel/SMTP | Si para correo | `IA4Sustainability` | Nombre visible. |
 | `AUTH_REQUIRE_EMAIL_VERIFICATION` | Laravel | Recomendado | `true` | Usuarios no verificados no pasan rutas protegidas. |
-| `TURNSTILE_SITE_KEY` | Laravel/frontend | Opcional | clave publica de ejemplo | Registro muestra widget si se configura. |
-| `TURNSTILE_SECRET` | Laravel | Opcional | secreto gestionado | Verificacion antiabuso. |
 | `SOCIAL_LOGIN_ENABLED` | Laravel | Opcional | `false` | OAuth desactivado por defecto. |
 | `GOOGLE_CLIENT_ID` | Laravel/Google | Si Google | id de app | Redirect se inicia. |
 | `GOOGLE_CLIENT_SECRET` | Laravel/Google | Si Google | secreto gestionado | Callback autentica. |
@@ -133,7 +131,7 @@ SOCIAL_LOGIN_ENABLED=false
 LEARNING_DEPLOYED=false
 ```
 
-OAuth y Turnstile se activan solo cuando sus proveedores estan configurados y verificados. La carga documental permanece desactivada hasta que exista un servicio compatible con `POST /extract-document`.
+OAuth se activa solo cuando sus proveedores estan configurados y verificados; el registro no usa desafios de terceros (Turnstile se retiro el 2026-11-13). La carga documental permanece desactivada hasta que exista un servicio compatible con `POST /extract-document`.
 
 Con `APP_ENV=production`, el aprendizaje opcional se activa por configuración salvo que `LEARNING_DEPLOYED=false`. Mantenga `LEARNING_DEPLOYED=false` en contenedores (no soportan el aprendizaje) y en instalaciones nativas hasta completar la lista de aprovisionamiento del [runbook de activación](../../learning-activation-runbook.md).
 

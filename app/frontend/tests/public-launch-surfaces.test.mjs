@@ -162,15 +162,14 @@ test("register form renders a hidden honeypot consumed from the register config"
   assert.doesNotMatch(source, /name=\{honeypotField\}[^>]*type="hidden"/)
 })
 
-test("register form delegates to the explicitly activated shared security control", () => {
+test("register form loads no third-party challenge script", () => {
   const source = read("components/auth/register-form.tsx")
+  const apiSource = read("lib/laravel-api.ts")
 
-  assert.match(source, /mountSecurityCheck/)
-  assert.match(source, /enabled: registrationEnabled/)
-  assert.match(source, /siteKey: turnstileSiteKey/)
-  assert.match(source, /cf-turnstile-response/)
-  // Widget and script are gated behind the presence of the key.
+  assert.doesNotMatch(source, /turnstile|cloudflare|mountSecurityCheck/i)
+  assert.doesNotMatch(apiSource, /turnstile/i)
   assert.doesNotMatch(source, /<Script/)
+  assert.equal(existsSync(join(process.cwd(), "public/consent/security.mjs")), false)
 })
 
 test("register form fails closed until the backend explicitly enables registration", () => {
@@ -182,7 +181,6 @@ test("register form fails closed until the backend explicitly enables registrati
   assert.match(source, /setRegistrationEnabled\(Boolean\(config\.registration_enabled\)\)/)
   assert.match(source, /\.catch\(\(\) => \{\s*setRegistrationEnabled\(false\)/s)
   assert.match(source, /if \(!registrationEnabled\) \{\s*setError\(/s)
-  assert.match(source, /action: "register"/)
   assert.match(source, /disabled=\{loading \|\| !registrationEnabled\}/)
   assert.match(source, /router\.push\("\/login\?registration=pending"\)/)
 })

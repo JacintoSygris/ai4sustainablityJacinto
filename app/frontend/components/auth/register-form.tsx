@@ -9,7 +9,6 @@ import type React from "react"
 
 import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
-import { mountSecurityCheck } from "@/public/consent/security.mjs"
 import { useRouter } from "next/navigation"
 import { Eye, EyeOff } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -26,7 +25,6 @@ export function RegisterForm() {
 
   const router = useRouter()
   const formRef = useRef<HTMLFormElement>(null)
-  const securityHost = useRef<HTMLDivElement>(null)
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -36,15 +34,6 @@ export function RegisterForm() {
   const [loading, setLoading] = useState(false)
   const [registrationEnabled, setRegistrationEnabled] = useState(false)
   const [honeypotField, setHoneypotField] = useState(DEFAULT_HONEYPOT_FIELD)
-  const [turnstileSiteKey, setTurnstileSiteKey] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (securityHost.current) return mountSecurityCheck(securityHost.current, {
-      enabled: registrationEnabled,
-      siteKey: turnstileSiteKey,
-      action: "register",
-    })
-  }, [registrationEnabled, turnstileSiteKey])
 
   useEffect(() => {
     let mounted = true
@@ -62,8 +51,6 @@ export function RegisterForm() {
         if (config.honeypot_field) {
           setHoneypotField(config.honeypot_field)
         }
-
-        setTurnstileSiteKey(config.turnstile_site_key ?? null)
       })
       .catch(() => {
         setRegistrationEnabled(false)
@@ -110,14 +97,6 @@ export function RegisterForm() {
       // for real users) so the server can reject automated sign-ups.
       const honeypotInput = formRef.current?.elements.namedItem(honeypotField) as HTMLInputElement | null
       params.set(honeypotField, honeypotInput?.value ?? "")
-
-      // Cloudflare injects this token field when the challenge widget renders.
-      const challengeInput = formRef.current?.querySelector<HTMLInputElement>(
-        'input[name="cf-turnstile-response"]',
-      )
-      if (challengeInput?.value) {
-        params.set("cf-turnstile-response", challengeInput.value)
-      }
 
       const response = await fetch("/laravel/register", {
         body: params,
@@ -223,8 +202,6 @@ export function RegisterForm() {
           defaultValue=""
         />
       </div>
-
-      <div ref={securityHost} />
 
       <Button type="submit" className="w-full" disabled={loading || !registrationEnabled}>
         {loading ? tr("Creando cuenta...") : tr("Crear cuenta")}

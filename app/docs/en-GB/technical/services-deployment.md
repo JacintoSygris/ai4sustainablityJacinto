@@ -27,10 +27,6 @@ QUEUE_CONNECTION=database
 DB_QUEUE_RETRY_AFTER=360
 AUTH_PUBLIC_REGISTRATION_ENABLED=true
 AUTH_REQUIRE_EMAIL_VERIFICATION=true
-TURNSTILE_SITE_KEY=<real site key>
-TURNSTILE_SECRET=<real Turnstile secret>
-TURNSTILE_EXPECTED_HOSTNAME=airis.sygris.com
-TURNSTILE_EXPECTED_ACTION=register
 MAIL_MAILER=smtp
 MAIL_HOST=<provider SMTP host>
 MAIL_PORT=587
@@ -42,7 +38,7 @@ MAIL_FROM_ADDRESS=<provider authorised sender>
 MAIL_FROM_NAME=IA4Sustainability
 ```
 
-This block opens registration only when `RegistrationGuard` accepts all prerequisites. The Cloudflare widget must list `airis.sygris.com` as an allowed host and use real keys, never the public test keys. For implicit TLS, use `MAIL_SCHEME=smtps` and the provider's port, usually `465`. The image has no local MTA: do not use `sendmail`. For a deployment without public registration, set `AUTH_PUBLIC_REGISTRATION_ENABLED=false` and bootstrap accounts with the command below. `AUTH_REQUIRE_EMAIL_VERIFICATION` remains enabled; `AUTH_PASSWORD_RESET_ENABLED=true` is optional and requires the same safe mail and queue delivery.
+This block opens registration only when `RegistrationGuard` accepts all prerequisites. For implicit TLS, use `MAIL_SCHEME=smtps` and the provider's port, usually `465`. The image has no local MTA: do not use `sendmail`. For a deployment without public registration, set `AUTH_PUBLIC_REGISTRATION_ENABLED=false` and bootstrap accounts with the command below. `AUTH_REQUIRE_EMAIL_VERIFICATION` remains enabled; `AUTH_PASSWORD_RESET_ENABLED=true` is optional and requires the same safe mail and queue delivery.
 
 For **frontend**, pass these values as build arguments to `app/frontend/Dockerfile.public` and as container environment variables. `NEXT_PUBLIC_*` values are embedded at build time; changing only the runtime environment is insufficient.
 
@@ -71,7 +67,7 @@ php artisan i4s:user:create operator@example.net --name="Operator" --verified
 
 The password is requested through a hidden prompt and follows the same password rules as registration. Duplicate emails are refused and the new user id is printed. `--verified` marks the account verified; without it verification remains pending and this command sends no email. For automation, add `--password-stdin` and supply one line over a private pipe (using `docker compose exec -T web ...`); never put passwords in arguments, command-line environment assignments or Jenkins logs.
 
-`i4s:deploy:check` prints `PASS`/`FAIL` for each requirement without secret values: origin, active host enforcement (`ENFORCE_TRUSTED_HOSTS`) and trusted hosts (including the `APP_URL` host and `web`), valid key, writable database, current migrations, registration with failing prerequisite names, safe mail, SMTP configuration and a durable queue. Origin/host, key, database or migration failures return a non-zero status. Registration, mail and queue failures are non-blocking diagnostics so closed deployments remain possible. The entrypoint runs the check after migrations and seeding, logs its result and continues even on failure. A `PASS` checks local configuration; it does not validate Cloudflare credentials, mail delivery, worker execution or the volume mount. The operator must verify those and externally check login and registration after deployment.
+`i4s:deploy:check` prints `PASS`/`FAIL` for each requirement without secret values: origin, active host enforcement (`ENFORCE_TRUSTED_HOSTS`) and trusted hosts (including the `APP_URL` host and `web`), valid key, writable database, current migrations, registration with failing prerequisite names, safe mail, SMTP configuration and a durable queue. Origin/host, key, database or migration failures return a non-zero status. Registration, mail and queue failures are non-blocking diagnostics so closed deployments remain possible. The entrypoint runs the check after migrations and seeding, logs its result and continues even on failure. A `PASS` checks local configuration; it does not validate mail delivery, worker execution or the volume mount. The operator must verify those and externally check login and registration after deployment.
 
 ## Operator Compose Template
 

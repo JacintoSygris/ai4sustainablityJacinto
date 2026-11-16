@@ -154,10 +154,9 @@ test('password reset links use the canonical application origin', function () {
         ->not->toContain('attacker.example');
 });
 
-test('reset bearer and anti abuse token are never flashed into the session on validation failure', function () {
+test('reset bearer is never flashed into the session on validation failure', function () {
     $response = $this->from('/reset-password')->post('/reset-password', [
         'token' => 'sensitive-reset-bearer',
-        'cf-turnstile-response' => 'sensitive-turnstile-bearer',
         'email' => 'person@example.test',
         'password' => 'short',
         'password_confirmation' => 'different',
@@ -165,8 +164,7 @@ test('reset bearer and anti abuse token are never flashed into the session on va
 
     $response->assertRedirect('/reset-password');
     $oldInput = $response->getSession()->getOldInput();
-    expect($oldInput)->not->toHaveKey('token')
-        ->and($oldInput)->not->toHaveKey('cf-turnstile-response');
+    expect($oldInput)->not->toHaveKey('token');
 });
 
 test('issued reset records bind the bearer to immutable account epoch and generation', function () {

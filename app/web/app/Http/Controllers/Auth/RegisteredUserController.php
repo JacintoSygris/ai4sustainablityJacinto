@@ -53,11 +53,13 @@ class RegisteredUserController extends Controller
 
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
+            // Owner decision (2026-11-16): a repeated email is reported as a
+            // visible validation error instead of a silent no-op.
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class.',email'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        // Honeypot + Turnstile. Production prerequisites are fail-closed.
+        // Honeypot. Production prerequisites are fail-closed.
         $guardErrors = RegistrationGuard::check($request);
         if ($guardErrors !== []) {
             throw ValidationException::withMessages($guardErrors);
@@ -73,7 +75,8 @@ class RegisteredUserController extends Controller
                     'password' => Hash::make($request->password),
                 ]);
             } catch (UniqueConstraintViolationException) {
-                // Intentionally indistinguishable from a newly created account.
+                // Race between validation and insert: the account already exists,
+                // so no verification email is sent (the job ignores userId 0).
             }
 
             $userId = 0;
