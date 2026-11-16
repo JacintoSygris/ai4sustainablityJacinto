@@ -54,6 +54,20 @@ class AppServiceProvider extends ServiceProvider
             : [];
         SymfonyRequest::setTrustedHosts($trustedHosts);
 
+        // Behind the Next proxy Laravel receives the backend's own host (e.g. an
+        // internal IP:port) and the frontend is not necessarily a trusted proxy,
+        // so every absolute URL it generates — the guest redirect to /login, the
+        // redirect after registering, asset() — must come from APP_URL instead.
+        // Invalid APP_URL values are already logged above; they do not abort.
+        if ($this->app->environment('production')) {
+            try {
+                URL::forceRootUrl(CanonicalPublicUrl::root());
+                URL::forceScheme('https');
+            } catch (\LogicException) {
+                // Keep request-based URLs until the operator fixes APP_URL.
+            }
+        }
+
         ResetPassword::createUrlUsing(static fn ($notifiable, string $token): string => CanonicalPublicUrl::to(
             '/reset-password',
             ['email' => $notifiable->getEmailForPasswordReset()],

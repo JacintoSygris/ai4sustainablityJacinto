@@ -115,4 +115,24 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Markdown Mail Settings
+    |--------------------------------------------------------------------------
+    |
+    | The "airis" theme is the stock Laravel theme with the brand colours of the
+    | Next app: the stock near-black button rendered as two different greys in
+    | mail clients with a dark mode (Gmail inverts the neutral background but
+    | not the borders), while a saturated colour is left alone.
+    |
+    */
+
+    'markdown' => [
+        'theme' => env('MAIL_MARKDOWN_THEME', 'airis'),
+
+        'paths' => [
+            resource_path('views/vendor/mail'),
+        ],
+    ],
+
 ];
