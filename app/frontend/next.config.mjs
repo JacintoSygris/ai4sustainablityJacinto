@@ -2,16 +2,19 @@ const laravelApiOrigin = (process.env.LARAVEL_API_ORIGIN?.trim() || process.env.
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Offline builds in restricted runners can use threads and the compiler API.
-  // Type checking remains enabled; ordinary release builds keep Next's defaults.
-  ...(process.env.I4S_BUILD_IN_PROCESS === "1" ? {
-    experimental: {
+  experimental: {
+    // Rewrites to Laravel wait for the response. Next's default (30 s) cut the XBRL
+    // generation, whose Arelle validation takes 25-60 s; the backend bounds it itself.
+    proxyTimeout: 300_000,
+    // Offline builds in restricted runners can use threads and the compiler API.
+    // Type checking remains enabled; ordinary release builds keep Next's defaults.
+    ...(process.env.I4S_BUILD_IN_PROCESS === "1" ? {
       useTypeScriptCli: false,
       workerThreads: true,
       webpackBuildWorker: false,
       cpus: 1,
-    },
-  } : {}),
+    } : {}),
+  },
   images: {
     unoptimized: true,
   },

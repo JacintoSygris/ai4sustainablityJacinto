@@ -178,3 +178,11 @@ Producción no tiene `.env` editable, así que todo lo que exigía el botón «G
   cuando falta Arelle.
 - Local: `.env` sin manifiesto/Arelle/caché explícitos y `ESRS_EXTERNAL_ROOT=/opt/i4s-external/auto` (montado desde
   `~/.config/i4s-local/external/auto`); el flujo completo funcionó por la API.
+
+## Tiempo del proxy de Next para el XBRL (2026-11-17)
+
+La prueba contra producción llegó al candidato XBRL y recibió «Internal Server Error» a los 30 s: es el
+`proxyTimeout` por defecto de los rewrites de Next, y la validación con Arelle tarda 25-60 s (la primera
+calienta la caché). `next.config.mjs` fija `experimental.proxyTimeout: 300000`. Verificado en local con la
+caché en frío: 54,5 s y HTTP 200. Si delante de Next hubiera otro proxy con su propio límite, habría que
+subirlo también.
