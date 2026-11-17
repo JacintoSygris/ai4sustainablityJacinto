@@ -328,6 +328,26 @@ export function ReportDraftPanel() {
     return blockers
   }
 
+  // Reason codes of the XBRL endpoint translated into what the person can do about them.
+  function xbrlFailureMessage(reason: string) {
+    switch (reason) {
+      case "xhtml_ixbrl_context_missing":
+        return systemCopy("No se ha podido generar el documento XBRL: faltan el LEI o las fechas de inicio y fin del periodo. Complétalos en el paso 1 («Editar la encuesta inicial»), guarda y vuelve a preparar y aprobar la versión factual.")
+      case "xhtml_ixbrl_arelle_busy":
+        return systemCopy("El validador está ocupado con otra validación. Espera un minuto y vuelve a intentarlo.")
+      case "xhtml_ixbrl_arelle_unavailable":
+        return systemCopy("No se ha podido generar el documento XBRL: el validador Arelle no está disponible en el servidor.")
+      case "xhtml_ixbrl_arelle_validation_failed":
+        return systemCopy("No se ha podido generar el documento XBRL: la validación técnica del documento ha fallado. Si es el primer intento tras instalar, espera un minuto a que termine la preparación del validador y repite.")
+      case "xhtml_ixbrl_no_taggable_claims":
+        return systemCopy("No se ha podido generar el documento XBRL: ningún dato factual revisado es numérico. Añade al menos un dato numérico (por ejemplo, número de empleados o ingresos) y apruébalo.")
+      case "":
+        return systemCopy("No se ha podido generar el documento XBRL.")
+      default:
+        return systemCopy("No se ha podido generar el documento XBRL. Motivo: {0}.", [reason])
+    }
+  }
+
   async function downloadXbrl() {
     try {
       setBusyAction("xbrl")
@@ -339,7 +359,7 @@ export function ReportDraftPanel() {
       if (!response.ok) {
         let reason = ""
         try { reason = String((await response.json())?.data?.reason_code ?? "") } catch {}
-        setOperationMessage(reason ? systemCopy("No se ha podido generar el documento XBRL. Motivo: {0}.", [reason]) : systemCopy("No se ha podido generar el documento XBRL."))
+        setOperationMessage(xbrlFailureMessage(reason))
         return
       }
       const blob = await response.blob()
