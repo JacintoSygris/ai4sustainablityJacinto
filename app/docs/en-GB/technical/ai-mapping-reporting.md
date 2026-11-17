@@ -4,35 +4,12 @@ Back to the [technical manual](index.md).
 
 ## Included FastAPI Service
 
-The included AI service starts with Uvicorn and exposes only:
-
-- `GET /healthz`;
-- `GET /model-profiles`;
-- `POST /predict`.
-
-It exposes `POST /extract-document` only when `I4S_DOCUMENT_EXTRACTION_ENABLED=true` (see [document-extraction.md](document-extraction.md)).
-
-Prerequisite: `ai-service` on the private network.
-
-```sh
-# Directory: /srv/ia4sustainability
-docker compose exec ai-service python -c "import urllib.request; print(urllib.request.urlopen('http://localhost:8001/healthz', timeout=5).read().decode())"
-docker compose exec ai-service python -c "import urllib.request; print(urllib.request.urlopen('http://localhost:8001/model-profiles', timeout=5).read().decode())"
-```
-
-Expected result: `status` is `ok` and the active profile is `new_format_732_v1_gpt41`.
-
-Check from Laravel: configure `CHARACTERIZATION_GATEWAY=api` and `CHARACTERIZATION_API_BASE_URL=http://ai-service:8001`; a submitted characterisation should produce a technical proposal or controlled error.
-
-## ESRS Mapping
-
-The matter to Disclosure Requirement mapping is enabled through an immutable path:
+The matter to Disclosure Requirement mapping uses the approved map shipped in the repository by default (`data/ar16_to_esrs_dr_mapping_esrs2023_v1.json`, `source.status=approved`). `ESRS_MATTER_DR_MAPPING_PATH` is only needed to replace it with another absolute path or, with the value `off`, to disable topical datapoints:
 
 ```dotenv
+# optional
 ESRS_MATTER_DR_MAPPING_PATH=/var/www/html/data/ar16_to_esrs_dr_mapping_esrs2023_v1.json
 ```
-
-Prerequisite: file present inside the Laravel container and with `source.status=approved`.
 
 ```sh
 # Directory: /srv/ia4sustainability

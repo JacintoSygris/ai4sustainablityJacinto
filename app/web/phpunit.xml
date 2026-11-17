@@ -22,6 +22,7 @@
     </source>
     <php>
         <ini name="memory_limit" value="1G"/>
+        <env name="ESRS_MATTER_DR_MAPPING_PATH" value="off"/>
         <env name="LEARNING_DEPLOYED" value="false"/>
         <env name="LEARNING_ENGINE_ENABLED" value="false"/>
         <env name="LEARNING_ENGINE_SERVING_ENABLED" value="false"/>

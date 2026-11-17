@@ -88,7 +88,7 @@ Comprobacion: revisar logs de autenticacion del proveedor y errores de Laravel/F
 | `CHARACTERIZATION_AI_MODEL_PROFILE` | Laravel/FastAPI | Si | `new_format_732_v1_gpt41` | `/model-profiles` lo lista. |
 | `CHARACTERIZATION_API_TOKEN` | Laravel/FastAPI | No usado por FastAPI incluido | vacio | No asumir autenticacion si el servicio no la implementa. |
 | `CHARACTERIZATION_PREDICTION_MAPPING_PATH` | Laravel | Opcional | vacio o ruta interna | Mapping de claves existe si se personaliza. |
-| `ESRS_MATTER_DR_MAPPING_PATH` | Laravel | Si para P9/P10 completo | `/var/www/html/data/ar16_to_esrs_dr_mapping_esrs2023_v1.json` | `esrs:validate-matter-dr-mapping`. |
+| `ESRS_MATTER_DR_MAPPING_PATH` | Laravel | No | vacio (usa `data/ar16_to_esrs_dr_mapping_esrs2023_v1.json` del repositorio) | Ruta absoluta para sustituir el mapa; `off` desactiva los datos tematicos. `esrs:validate-matter-dr-mapping`. |
 | `ESRS_EXTERNAL_TAXONOMY_MANIFEST_PATH` | Laravel | Solo candidato XHTML/iXBRL | ruta absoluta a manifiesto privado | El manifiesto verifica perfil, entrypoint, ZIP externo y SHA-256. |
 | `ESRS_ARELLE_COMMAND` | Laravel | Solo candidato XHTML/iXBRL | ruta absoluta a `arelleCmdLine` | Debe ser una ruta absoluta a un ejecutable, no un nombre resuelto por `PATH`: Arelle se ejecuta offline con un entorno mínimo (`PATH=/usr/local/bin:/usr/bin:/bin`). Una ruta relativa o ausente bloquea el candidato. |
 | `ESRS_ARELLE_CACHE_DIRECTORY` | Laravel | Opcional, candidato XHTML/iXBRL | ruta absoluta externa | Caché aprovisionada de dependencias públicas XBRL/W3C para validar sin red; ruta absoluta, fuera del repositorio. |

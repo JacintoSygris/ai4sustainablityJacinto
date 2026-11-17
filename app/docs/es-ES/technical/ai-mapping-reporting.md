@@ -26,13 +26,12 @@ Comprobacion desde Laravel: configurar `CHARACTERIZATION_GATEWAY=api` y `CHARACT
 
 ## Mapping ESRS
 
-El mapeo de asuntos a requisitos de divulgacion se activa con una ruta inmutable:
+El mapeo de asuntos a requisitos de divulgacion usa por defecto el mapa aprobado del repositorio (`data/ar16_to_esrs_dr_mapping_esrs2023_v1.json`, `source.status=approved`). `ESRS_MATTER_DR_MAPPING_PATH` solo hace falta para sustituirlo por otra ruta absoluta o, con el valor `off`, para desactivar los datos tematicos:
 
 ```dotenv
+# opcional
 ESRS_MATTER_DR_MAPPING_PATH=/var/www/html/data/ar16_to_esrs_dr_mapping_esrs2023_v1.json
 ```
-
-Precondicion: archivo presente dentro del contenedor Laravel y con `source.status=approved`.
 
 ```sh
 # Directorio: /srv/ia4sustainability

@@ -106,7 +106,16 @@ return [
     ],
 
     'esrs_datapoints' => [
-        'matter_dr_mapping_path' => env('ESRS_MATTER_DR_MAPPING_PATH'),
+        // Approved AR16 -> Disclosure Requirement map. Unset or empty falls back to the
+        // approved copy shipped in data/; set to "off" to disable topical datapoints.
+        'matter_dr_mapping_path' => (static function (): ?string {
+            $configured = trim((string) env('ESRS_MATTER_DR_MAPPING_PATH', ''));
+            if (in_array(strtolower($configured), ['off', 'none', 'disabled'], true)) {
+                return null;
+            }
+
+            return $configured !== '' ? $configured : base_path('data/ar16_to_esrs_dr_mapping_esrs2023_v1.json');
+        })(),
     ],
 
     'report' => [

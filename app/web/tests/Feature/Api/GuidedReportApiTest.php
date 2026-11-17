@@ -549,9 +549,11 @@ it('blocks publication when facts change while Arelle is validating the candidat
     app()->bind(\App\Services\Report\ArelleXhtmlIxbrlValidator::class, fn () => new class($fact->id) extends \App\Services\Report\ArelleXhtmlIxbrlValidator {
         public function __construct(private readonly int $factId) {}
 
-        public function validate(string $xhtml, \App\Services\Report\ReportingProfile $profile, array $internalManifest, bool $reportPackage = false): void
+        public function validate(string $xhtml, \App\Services\Report\ReportingProfile $profile, array $internalManifest, bool $reportPackage = false): array
         {
             ReportingFact::query()->whereKey($this->factId)->update(['value' => json_encode(['value' => '999.99'])]);
+
+            return ['assertion_errors' => 0, 'assertion_warnings' => 0];
         }
     });
 

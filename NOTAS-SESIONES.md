@@ -119,3 +119,21 @@ shadcn sin uso), `sector_columns.pkl`/`region_columns.pkl`, dependencias `mlflow
   78/78; `/login` y `/cookies` sin menciones a Google/Microsoft.
 - Sin tocar (pendiente de decisión): estudio de usabilidad, greentech, pila learning-case, `recommend()` legado,
   `.pkl` sin cargar y `mlflow`/`pandera` del servicio de IA.
+
+## Mapa AR16 → DR activado en local (2026-11-17, sin commit)
+
+El aviso del paso 5 «Falta el mapa aprobado AR16 a DR…» sale cuando `ESRS_MATTER_DR_MAPPING_PATH` está vacío.
+El fichero aprobado ya viene en el repo (`app/web/data/ar16_to_esrs_dr_mapping_esrs2023_v1.json`, 89 temas,
+83 requisitos, `php artisan esrs:validate-matter-dr-mapping` → VALID). En local se ha apuntado a
+`/app/data/...` (ruta dentro del contenedor). Efecto con el usuario de prueba: de 190 datos (solo NEIS 2) a 789
+(146 siempre exigibles, 599 temáticos, 44 de divulgación mínima). En producción hay que añadir la variable con la
+ruta absoluta del checkout del backend y limpiar la caché de configuración.
+
+## Mapa AR16 → DR activo por defecto (2026-11-17)
+
+Sin acceso al servidor de producción, el mapa se activa desde el código: `config/services.php` usa
+`data/ar16_to_esrs_dr_mapping_esrs2023_v1.json` cuando `ESRS_MATTER_DR_MAPPING_PATH` está vacía o no existe;
+`off` desactiva los datos temáticos y una ruta absoluta lo sustituye. `phpunit.xml` fija `off` para que la
+suite conserve el comportamiento histórico (los tests que necesitan el mapa lo configuran explícitamente).
+De paso, `GuidedReportApiTest` tenía un doble de `ArelleXhtmlIxbrlValidator::validate` con la firma antigua
+(`void`) y hacía fallar el fichero entero; devuelve ahora el array de aserciones.

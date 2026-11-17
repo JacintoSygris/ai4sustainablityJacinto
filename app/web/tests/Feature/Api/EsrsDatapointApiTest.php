@@ -701,6 +701,8 @@ it('downloads frontend ESRS datapoint responses with corpus context as csv', fun
 });
 
 it('fails closed without an approved AR16 matter to Disclosure Requirement map', function () {
+    // The shipped map is the default since 2026-11-17; simulate an installation that disabled it.
+    config(['services.esrs_datapoints.matter_dr_mapping_path' => null]);
     $characterization = Characterization::factory()->create([
         'user_id' => $this->user->id,
         'status' => Characterization::STATUS_COMPLETED,

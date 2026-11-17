@@ -419,6 +419,7 @@ it('reports auditable AR16 leaves separately from grouped material themes', func
 });
 
 it('distinguishes scoping-only report coverage mode', function () {
+    config(['services.esrs_datapoints.matter_dr_mapping_path' => null]);
     $characterization = reportReadyCharacterization($this->user, $this->e2Topic);
 
     $this->actingAs($this->user)
