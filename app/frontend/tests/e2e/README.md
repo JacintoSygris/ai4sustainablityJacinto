@@ -48,3 +48,14 @@ El informe HTML queda en `test-results/html`.
 Dura unos 3 minutos contra la pila local (Arelle valida cada documento en ~25 s). Las descargas se piden con `page.request`, que
 comparte las cookies de la sesión iniciada en el navegador.
 
+### Paso 5 con el mapa AR16 activo
+
+Con `ESRS_MATTER_DR_MAPPING_PATH` activo (por defecto desde el 2026-11-17) el inventario pasa de 190
+datos a varios cientos. La prueba rellena por la interfaz los datos de NEIS 2 y marca el inventario
+rápido de todos los estándares; los datos temáticos que queden pendientes se deciden en bloque por la
+API `PUT /api/esrs-datapoints/responses` con la sesión del navegador («No aplica» justificado), porque
+abrirlos uno a uno cuesta unos tres segundos por fila. La comprobación del paso 6 usa el tamaño del
+inventario, así que también cuenta lo decidido en ejecuciones anteriores del mismo usuario.
+
+No lances dos ejecuciones seguidas sin esperar: si se interrumpe una, su navegador sigue vaciando la
+cola de autoguardados unos minutos y la siguiente recibirá un conflicto de revisión en el paso 5.

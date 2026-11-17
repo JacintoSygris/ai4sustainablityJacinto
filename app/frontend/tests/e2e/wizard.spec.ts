@@ -215,6 +215,8 @@ test("el asistente se completa de principio a fin con datos de una PYME industri
   // Datos decididos en el paso 5, reutilizados en el paso 6 para crear sus datos factuales.
   const completedDatapoints = new Map<string, [string, string]>()
   let notApplicableCount = 0
+  // Tamaño del inventario tras el paso 5: el informe cuenta también lo decidido en ejecuciones anteriores.
+  let inventorySize = 0
 
   await test.step("paso 5: datos normativos NEIS", async () => {
     test.setTimeout(900_000)
@@ -226,8 +228,9 @@ test("el asistente se completa de principio a fin con datos de una PYME industri
     await page.getByRole("button", { name: "Todos", exact: true }).click()
 
     // Inventario rápido por estándar: lo de NEIS 2 (gobernanza y estrategia) ya se tiene;
-    // lo temático hay que buscarlo. El selector de cada estándar marca todo su grupo.
-    const standardSelects = page.getByRole("combobox", { name: /^Marcar todos los datos de (ESRS|NEIS) [A-Z0-9]+ \(/ })
+    // lo temático hay que buscarlo. El selector de cada estándar marca todo su grupo. Los
+    // estándares se llaman «NEIS 2 (190)» o «E1 (214)»; los requisitos llevan « · » y se excluyen.
+    const standardSelects = page.getByRole("combobox", { name: /^Marcar todos los datos de [^·]+ \(\d+\)/ })
     const standards = await standardSelects.count()
     expect(standards).toBeGreaterThan(0)
     for (let index = 0; index < standards; index += 1) {
@@ -237,7 +240,9 @@ test("el asistente se completa de principio a fin con datos de una PYME industri
     }
     test.info().annotations.push({ type: "estándares", description: String(standards) })
 
-    // Desplegar todos los estándares y pasar a modo «Responder».
+    // Desplegar NEIS 2 y pasar a modo «Responder». Los estándares temáticos (varios cientos de
+    // datos con el mapa AR16 activo) quedan plegados: se deciden en bloque por la API más abajo,
+    // porque abrirlos uno a uno tarda unos tres segundos por fila.
     const standardTriggers = page.getByRole("button", { name: /^(ESRS|NEIS) .*inventariados$/ })
     for (let index = 0; index < (await standardTriggers.count()); index += 1) {
       const trigger = standardTriggers.nth(index)
@@ -306,13 +311,46 @@ test("el asistente se completa de principio a fin con datos de una PYME industri
 
     await page.getByRole("button", { name: "Guardar respuestas" }).click()
     await expect(page.getByText(/Guardado automáticamente/)).toBeVisible({ timeout: 60_000 })
+
+    // Los datos temáticos pendientes se deciden en bloque por la API con la sesión del navegador,
+    // como haría una integración: «No aplica» justificado. La petición sustituye el conjunto
+    // completo, así que se reenvían también las respuestas ya guardadas.
+    const session = await page.request.get("/api/auth/session", { headers: { Accept: "application/json" } })
+    expect(session.ok()).toBeTruthy()
+    const headers = { Accept: "application/json", "X-CSRF-TOKEN": (await session.json()).data.csrf_token as string, "X-Requested-With": "XMLHttpRequest" }
+    const workspace = (await (await page.request.get("/api/esrs-datapoints", { headers })).json()) as { data: { blocks: Record<string, { datapoints?: Array<{ id: string }> }> }; response_state?: { revision?: number } }
+    const corpus = workspace.data
+    const corpusIds: string[] = Object.values(corpus.blocks as Record<string, { datapoints?: Array<{ id: string }> }>).flatMap((block) => (block.datapoints ?? []).map((datapoint) => datapoint.id))
+    inventorySize = corpusIds.length
+    const storedState = (await (await page.request.get("/api/esrs-datapoints/responses", { headers })).json()).data as { revision?: number; responses?: Record<string, { status: string; value?: string | null; evidence_reference?: string | null; note?: string | null; triage?: string | null }> } | null
+    const stored = storedState?.responses ?? {}
+    const topicalNote = "No aplica en el ejercicio 2025: dato temático sin hecho desencadenante en la empresa; se revisará cada ejercicio."
+    let bulkDecided = 0
+    const responses = corpusIds.map((datapointId) => {
+      const current = stored[datapointId]
+      if (current && current.status !== "draft") {
+        return { datapoint_id: datapointId, status: current.status, value: current.value ?? null, evidence_reference: current.evidence_reference ?? null, note: current.note ?? null, ...(current.triage ? { triage: current.triage } : {}) }
+      }
+      bulkDecided += 1
+      return { datapoint_id: datapointId, status: "not_applicable", value: null, evidence_reference: null, note: topicalNote, triage: "not_applicable_candidate" }
+    })
+    if (bulkDecided > 0) {
+      // La petición exige la revisión vigente, como hace el formulario, para detectar conflictos.
+      const bulk = await page.request.put("/api/esrs-datapoints/responses", { headers, data: { expected_revision: workspace.response_state?.revision ?? storedState?.revision ?? 0, responses } })
+      expect(bulk.ok(), await bulk.text()).toBeTruthy()
+      notApplicableCount += bulkDecided
+      test.info().annotations.push({ type: "datos temáticos por API", description: `${bulkDecided} no aplican` })
+      // Se recarga para que la pantalla parta del estado guardado y no reenvíe borradores antiguos.
+      await page.goto("/wizard/step-5")
+      await expect(page.getByText("Total", { exact: true })).toBeVisible({ timeout: 30_000 })
+    }
     await page.getByRole("button", { name: "Guardar y continuar" }).click()
     await expect(page).toHaveURL(/\/wizard\/step-6/, { timeout: 60_000 })
   })
 
   await test.step("paso 6: datos factuales revisados", async () => {
     await expect(page.getByRole("heading", { name: "Informe NEIS" })).toBeVisible({ timeout: 30_000 })
-    const decided = completedDatapoints.size + notApplicableCount
+    const decided = inventorySize || completedDatapoints.size + notApplicableCount
     await expect(page.getByText(`${decided} de ${decided} datos ya decididos`)).toBeVisible()
 
     // El primer dato factual se crea y se revisa desde la interfaz.

@@ -137,3 +137,17 @@ Sin acceso al servidor de producción, el mapa se activa desde el código: `conf
 suite conserve el comportamiento histórico (los tests que necesitan el mapa lo configuran explícitamente).
 De paso, `GuidedReportApiTest` tenía un doble de `ArelleXhtmlIxbrlValidator::validate` con la firma antigua
 (`void`) y hacía fallar el fichero entero; devuelve ahora el array de aserciones.
+
+## Prueba E2E adaptada al inventario completo (2026-11-17)
+
+- Los grupos temáticos del paso 5 se llaman «E1 (214)», «S1 (174)»… sin prefijo NEIS; la prueba ya
+  los reconoce (selectores `[^·]+`) y marca su inventario rápido.
+- Los datos temáticos pendientes se deciden en bloque por `PUT /api/esrs-datapoints/responses`
+  (exige `expected_revision`, tomado de `response_state.revision` del workspace, y sustituye el
+  conjunto completo, así que se reenvían las respuestas guardadas). Por la interfaz costaba ~3 s por
+  fila y superaba el tiempo límite.
+- La comprobación «N de N datos ya decididos» usa el tamaño del inventario.
+- Falsa alarma investigada: un 409 `datapoint_responses_conflict` al primer autoguardado venía del
+  navegador de una ejecución interrumpida que seguía vaciando su cola; no es un fallo del formulario.
+- Local, usuario de prueba con 789 datos: pasa en 2,5 min. En producción (669 datos en la cuenta del
+  usuario) basta con relanzar el mismo comando.
