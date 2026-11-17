@@ -31,7 +31,10 @@ def apply_learning(company, baseline):
             if resolved is not None:
                 manifest, model = resolved
                 served = baseline.model_copy(deep=True)
-                served.esrs = model.predict(company, baseline.esrs)
+                if hasattr(model, 'predict_detailed'):
+                    served.esrs, overlay = model.predict_detailed(company, baseline.esrs)
+                else:
+                    served.esrs, overlay = model.predict(company, baseline.esrs), None
                 served.model_profile = 'learning:' + active
                 # Base threshold/CRC counts describe the base, not the overlay.
                 served.mapping_metadata = {
@@ -45,6 +48,10 @@ def apply_learning(company, baseline):
                     # the composed output shown by Laravel, never shadow actions.
                     served.mapping_metadata['feedback_bandit'] = baseline.mapping_metadata['feedback_bandit']
                 served.mapping_metadata['learning_candidate'] = active
+                if overlay is not None:
+                    # Key names only: which keys the supervised overlay covers and which the
+                    # collaborative filter added; never subjects or neighbour identities.
+                    served.mapping_metadata['learning_overlay'] = overlay
                 served.mapping_metadata['learning_base_identity'] = identity
                 served.mapping_metadata['serving_identity'] = {
                     'profile': served.model_profile,

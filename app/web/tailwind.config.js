@@ -30,9 +30,22 @@ export default {
                     foreground: '#fcfcfc',
                 },
                 destructive: '#e7000b',
+                secondary: {
+                    DEFAULT: '#ecf3f8',
+                    foreground: '#2c2d38',
+                },
+                accent: {
+                    DEFAULT: '#00cca8',
+                    foreground: '#14151f',
+                },
+                popover: {
+                    DEFAULT: '#ffffff',
+                    foreground: '#14151f',
+                },
             },
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                // Same stack as --font-sans in app/frontend/app/globals.css.
+                sans: ['Geist', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
             },
         },
     },

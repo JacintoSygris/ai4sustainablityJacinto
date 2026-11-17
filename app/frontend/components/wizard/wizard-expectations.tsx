@@ -1,13 +1,11 @@
 "use client"
 
 import { useLocale } from "@/components/locale-provider"
-import { ui } from "@/lib/i18n/messages.mjs"
 import { useOptionalStorage } from "@/lib/consent-storage"
 
 import { useEffect, useState } from "react"
 import { X } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { WIZARD_STEPS } from "@/lib/wizard-steps"
 
 const storageKey = "wizard_expectations_dismissed"
 
@@ -16,14 +14,9 @@ const copy = {
     title: "Qué vas a hacer aquí",
     intro:
       "Este asistente te lleva por el proceso de materialidad del estándar europeo NEIS en 6 pasos. No necesitas conocimientos previos: cada paso explica lo que tienes que hacer.",
-    steps: [
-      "cuéntanos cómo es tu empresa (10-15 min)",
-      "revisa los temas que la inteligencia artificial propone para tu sector (15-30 min)",
-      "aprende a analizar cada tema con tu equipo, fuera de la aplicación (la guía es para llevárselo; el análisis puede llevar días)",
-      "confirma tu lista final de temas materiales (15-30 min)",
-      "repasa los datos concretos que tendrás que reunir (1-2 h la primera pasada)",
-      "revisa el estado de tu informe y descarga los resultados (10 min)",
-    ],
+    timeTitle: "Cuánto tiempo lleva",
+    time:
+      "Los pasos 1, 2 y 4 llevan entre 10 y 30 minutos cada uno. El paso 3 se hace con tu equipo fuera de la aplicación y puede llevar días. El paso 5 lleva 1-2 h la primera vez y el paso 6, unos 10 minutos.",
     needsTitle: "Qué necesitas",
     needs:
       "Conocer tu empresa (actividad, plantilla, facturación aproximada) y poder hablar con las personas que la conocen por dentro.",
@@ -36,14 +29,9 @@ const copy = {
     title: "What you will do here",
     intro:
       "This assistant takes you through the materiality process for the European ESRS standard in 6 steps. You do not need previous knowledge: each step explains what to do.",
-    steps: [
-      "tell us what your company is like (10-15 min)",
-      "review the topics artificial intelligence proposes for your sector (15-30 min)",
-      "learn how to analyze each topic with your team, outside the application (the guide is meant to take away; the analysis can take days)",
-      "confirm your final list of material topics (15-30 min)",
-      "review the specific data you will need to collect (1-2 h the first pass)",
-      "review your report status and download the results (10 min)",
-    ],
+    timeTitle: "How long it takes",
+    time:
+      "Steps 1, 2 and 4 take 10 to 30 minutes each. Step 3 happens with your team outside the application and can take days. Step 5 takes 1-2 h the first time and step 6 about 10 minutes.",
     needsTitle: "What you need",
     needs:
       "Know your company (activity, workforce, approximate revenue) and be able to speak with the people who know it from the inside.",
@@ -84,18 +72,12 @@ export function WizardExpectations() {
         </Button>
       </div>
 
-      <ol className="mt-4 space-y-2 text-sm text-muted-foreground">
-        {copy[locale].steps.map((description, index) => (
-          <li key={WIZARD_STEPS[index].id} className="flex gap-2">
-            <span className="font-medium text-foreground">{locale === "es" ? "Paso" : "Step"} {WIZARD_STEPS[index].id}:</span>
-            <span>
-              <span className="font-medium text-foreground">{ui(locale, WIZARD_STEPS[index].title)}</span> - {description}
-            </span>
-          </li>
-        ))}
-      </ol>
-
+      {/* The six steps themselves are already listed in the sidebar next to this panel. */}
       <div className="mt-4 grid gap-3 text-sm md:grid-cols-2">
+        <div className="rounded-lg bg-muted/50 p-3 md:col-span-2">
+          <h3 className="font-medium text-foreground">{copy[locale].timeTitle}</h3>
+          <p className="mt-1 text-muted-foreground">{copy[locale].time}</p>
+        </div>
         <div className="rounded-lg bg-muted/50 p-3">
           <h3 className="font-medium text-foreground">{copy[locale].needsTitle}</h3>
           <p className="mt-1 text-muted-foreground">{copy[locale].needs}</p>

@@ -17,9 +17,3 @@ export function useOptionalStorage(purpose: Purpose) {
     removeItem: (key: string): boolean => grant?.remove(key) ?? false,
   }
 }
-
-export function persistSidebar(open: boolean, maxAge: number) {
-  if (!getBrowserConsent()?.hasConsent("preferences")) return false
-  document.cookie = `sidebar_state=${open}; path=/; max-age=${maxAge}; SameSite=Lax`
-  return true
-}

@@ -119,6 +119,49 @@ it('blocks Arelle non-zero exit, explicit failure markers and error severities',
     'unanalyzable' => [0, ''],
 ]);
 
+it('reports taxonomy assertion messages without blocking and still blocks structural errors', function (array $log, int $exitCode, ?array $expected) {
+    $logJson = var_export(json_encode(['log' => $log], JSON_THROW_ON_ERROR), true);
+    $binary = arelleValidatorTempFile('arelle-log-fixture.php', <<<PHP
+<?php
+\$logIndex = array_search('--logFile', \$argv, true);
+if (is_int(\$logIndex)) file_put_contents(\$argv[\$logIndex + 1], {$logJson});
+exit({$exitCode});
+PHP);
+    chmod($binary, 0700);
+    config(['services.report.arelle_command' => [PHP_BINARY, '-n', $binary]]);
+    $validator = new ArelleXhtmlIxbrlValidator();
+
+    if ($expected === null) {
+        expect(fn () => $validator->validate('<html />', $this->profile, arelleValidatorManifestFixture()))
+            ->toThrow(XhtmlIxbrlCandidateException::class, 'xhtml_ixbrl_arelle_validation_failed');
+
+        return;
+    }
+
+    expect($validator->validate('<html />', $this->profile, arelleValidatorManifestFixture()))->toBe($expected);
+})->with([
+    'EFRAG completeness assertions at error and warning level, exit 3' => [[
+        ['code' => 'message:ea_eu_tags_99', 'level' => 'error', 'message' => ['text' => 'No tag found for X']],
+        ['code' => 'message:ea_eu_tags_outside_MA_1', 'level' => 'warning', 'message' => ['text' => 'No tag found for Y']],
+        ['code' => 'info', 'level' => 'info', 'message' => ['text' => 'validated in 2.10 secs - candidate.xhtml']],
+    ], 3, ['assertion_errors' => 1, 'assertion_warnings' => 1]],
+    'clean log, exit 0' => [[
+        ['code' => 'info', 'level' => 'info', 'message' => ['text' => 'validated in 0.50 secs - candidate.xhtml']],
+    ], 0, ['assertion_errors' => 0, 'assertion_warnings' => 0]],
+    'XHTML schema error blocks even with assertions' => [[
+        ['code' => 'lxml.SCHEMAV_ELEMENT_CONTENT', 'level' => 'error', 'message' => ['text' => "Element 'section': This element is not expected."]],
+        ['code' => 'message:ea_eu_tags_99', 'level' => 'error', 'message' => ['text' => 'No tag found for X']],
+        ['code' => 'info', 'level' => 'info', 'message' => ['text' => 'validated in 2.10 secs - candidate.xhtml']],
+    ], 3, null],
+    'non-zero exit without any assertion error blocks' => [[
+        ['code' => 'info', 'level' => 'info', 'message' => ['text' => 'validated in 2.10 secs - candidate.xhtml']],
+    ], 3, null],
+    'unsatisfied formula processing blocks' => [[
+        ['code' => 'formula:assertionUnsatisfied', 'level' => 'warning', 'message' => ['text' => 'Assertion unsatisfied']],
+        ['code' => 'info', 'level' => 'info', 'message' => ['text' => 'validated in 2.10 secs - candidate.xhtml']],
+    ], 0, null],
+]);
+
 // Characterization of the existing fail-closed admission guard, not a new RED behavior.
 it('characterizes rejected Arelle commands without launching the fixture', function (string $case) {
     $capturePath = arelleValidatorTempFile('capture.json', 'not-started');

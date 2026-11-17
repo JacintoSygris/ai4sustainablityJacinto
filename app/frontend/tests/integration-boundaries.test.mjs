@@ -742,13 +742,8 @@ test("imported Better Auth Turso Drizzle helpers and scripts are superseded outs
     assert.equal(existsSync(join(root, file)), false, `${file} must not remain active`)
   }
 
-  const archivedFiles = listFiles("archive/2026-06-06-imported-next-backend", () => true, { excludeArchive: false })
-
-  assert.equal(archivedFiles.length, 19, "retired backend source must be preserved as archived files")
-
-  for (const file of archivedFiles) {
-    assert.doesNotMatch(file, /\.(ts|tsx)$/)
-  }
+  // The archived copies of that backend were deleted on 2026-11-17; git history keeps them.
+  assert.equal(existsSync(join(root, "archive")), false, "retired backend archive must not remain in the tree")
 })
 
 test("active frontend source no longer imports retired backend packages or helpers", () => {

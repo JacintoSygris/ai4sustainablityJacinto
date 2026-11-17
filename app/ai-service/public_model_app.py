@@ -25,6 +25,7 @@ from services.datatypes import SectorComparisonRequest, SectorComparisonResponse
 from services.datatypes import CompanyData, Prediction, XbrlConceptResponse
 from services.xbrl_runtime_endpoint import concept_candidates
 from services.dma_processing_endpoint import dma_process
+from services.document_extraction_endpoint import extract_document
 from services.dma_processing_schema import DmaProcessingResponse
 from services.service_predict import (
     model_serving_identity,
@@ -63,6 +64,10 @@ app.add_api_route("/xbrl/concept-candidates", concept_candidates, methods=["POST
 # Independent default-off, authenticated text analysis; no model I/O at startup.
 app.add_api_route("/dma/process", dma_process, methods=["POST"],
                   response_model=DmaProcessingResponse)
+
+# Document information extraction for the characterization step (P6): default
+# off, authenticated, path allowlist ESRS_UPLOAD_EXTRACT_BASE, no model I/O at startup.
+app.add_api_route("/extract-document", extract_document, methods=["POST"])
 
 def learning_flags() -> dict:
     """Read-only learning configuration of THIS process; no paths or identifiers."""

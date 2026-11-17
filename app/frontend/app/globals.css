@@ -76,7 +76,8 @@
 }
 
 @theme inline {
-  --font-sans: "Geist", "Geist Fallback";
+  /* Geist is not bundled; fall back to the system sans stack (shared with the Blade pages). */
+  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: "Geist Mono", "Geist Mono Fallback";
   --color-background: var(--background);
   --color-foreground: var(--foreground);

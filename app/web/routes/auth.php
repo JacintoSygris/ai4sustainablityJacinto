@@ -8,15 +8,10 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\Auth\SocialLoginController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
-    Route::get('auth/{provider}/redirect', [SocialLoginController::class, 'redirect'])
-        ->whereIn('provider', ['google', 'microsoft'])
-        ->name('social.redirect');
-
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
 
@@ -49,17 +44,7 @@ Route::middleware('guest')->group(function () {
         ->name('password.store');
 });
 
-Route::get('auth/{provider}/callback', [SocialLoginController::class, 'callback'])
-    ->middleware('throttle:20,1')
-    ->whereIn('provider', ['google', 'microsoft'])
-    ->name('social.callback');
-
 Route::middleware('auth')->group(function () {
-    Route::get('profile/oauth-identities/{provider}/redirect', [SocialLoginController::class, 'link'])
-        ->middleware(['verified', 'password.confirm', 'throttle:10,1'])
-        ->whereIn('provider', ['google', 'microsoft'])
-        ->name('social.link');
-
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');
 

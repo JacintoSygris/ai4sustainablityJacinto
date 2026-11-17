@@ -155,7 +155,7 @@ export function EsrsDatapointsForm() {
     setViewMode("respond"); setObligationFilter("all")
     setExpandedStandards(current => ({ ...current, [target.standard]: true }))
     setExpandedRequirements(current => ({ ...current, [target.dr]: true }))
-    setExpandedDatapoints(current => ({ ...current, [target.id]: true }))
+    setExpandedDatapoints(() => ({ [target.id]: true }))
     setTimeout(() => document.getElementById(target.editorId)?.focus(), 0)
   }
 
@@ -632,7 +632,7 @@ export function EsrsDatapointsForm() {
             <button type="button" className="underline" onClick={() => {
               setExpandedStandards(current => ({ ...current, [link.esrs]: true }))
               setExpandedRequirements(current => ({ ...current, [link.dr]: true }))
-              setObligationFilter("all"); setExpandedDatapoints(current => ({ ...current, [link.datapoint_id]: true }))
+              setObligationFilter("all"); setExpandedDatapoints({ [link.datapoint_id]: true })
               setTimeout(() => document.getElementById(`${link.datapoint_id}-status`)?.focus(), 0)
             }}>{link.datapoint_id} · {link.dr}</button>
             <ul>{link.questions.map(question => <li key={question.id}>{question.text}</li>)}</ul>
@@ -852,105 +852,141 @@ export function EsrsDatapointsForm() {
                                   const applicability = datapointApplicabilitySummary(datapoint, locale)
                                   const badge = obligationBadge(datapoint, locale)
                                   const phaseLabel = phaseInBadgeLabel(datapoint, lessThan750, locale)
-                                  const expanded = expandedDatapoints[datapoint.id] ?? viewMode === "respond"
+                                  // Acordeón: solo un dato abierto a la vez, para que el formulario se lea de uno en uno.
+                                  const expanded = expandedDatapoints[datapoint.id] === true
+                                  const statusTone = draft.status === "completed"
+                                    ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+                                    : draft.status === "not_applicable"
+                                      ? "border-amber-200 bg-amber-50 text-amber-800"
+                                      : "border-border bg-muted text-muted-foreground"
+                                  const showsDisplay = datapoint.display?.locale === locale
+                                  const hasContext = Boolean((showsDisplay && (datapoint.display?.qualification || datapoint.display?.data_type)) || applicability.reason || applicability.mappingBasisLabel || applicability.phaseInLessThan750 || applicability.phaseInAllUndertakings || phaseLabel || applicability.limitations.length > 0 || (datapoint.related_datapoints?.length ?? 0) > 0)
+                                  const fieldClass = "h-9 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                                   return (
-                                    <Collapsible key={datapoint.id} open={expanded} onOpenChange={(open) => setExpandedDatapoints((current) => ({ ...current, [datapoint.id]: open }))} className="border-b border-border last:border-b-0">
+                                    <Collapsible key={datapoint.id} open={expanded} onOpenChange={(open) => setExpandedDatapoints(open ? { [datapoint.id]: true } : {})} className="border-b border-border last:border-b-0 data-[state=open]:bg-primary/5">
                                       <div className="grid grid-cols-[minmax(16rem,1fr)_19rem]">
-                                        <CollapsibleTrigger className="group flex min-w-0 items-start gap-2 p-3 text-left hover:bg-accent/30">
-                                          <ChevronDown className="mt-1 h-4 w-4 shrink-0 transition-transform group-data-[state=open]:rotate-180" />
-                                          <div className="min-w-0 space-y-1">
-                                            <p className="text-xs text-muted-foreground">{datapoint.id} · {datapointSubtitle(datapoint, locale)}</p>
+                                        <CollapsibleTrigger className="group flex min-w-0 items-start gap-3 px-4 py-3 text-left hover:bg-accent/30">
+                                          <ChevronDown className="mt-1 h-4 w-4 shrink-0 text-muted-foreground transition-transform group-data-[state=open]:rotate-180 group-data-[state=open]:text-primary" />
+                                          <div className="min-w-0 space-y-1.5">
+                                            <p className="font-mono text-[11px] text-muted-foreground">{datapoint.id} · {datapointSubtitle(datapoint, locale)}</p>
                                             {corpus.iro_context_v1?.by_datapoint[datapoint.id]?.map(link => <p key={link.iro_id} className="text-xs">{`IRO ${link.iro_id}`}</p>)}
-                                            <h3 className="text-sm font-medium text-foreground [overflow-wrap:anywhere]">{datapointDisplayName(datapoint, locale)}</h3>
-                                            <p className="text-xs text-muted-foreground">{badge.label} · {responseLabel(draft.status, locale)}</p>
+                                            <h3 className="text-sm font-medium text-foreground [overflow-wrap:anywhere] group-data-[state=open]:text-primary">{datapointDisplayName(datapoint, locale)}</h3>
+                                            <div className="flex flex-wrap items-center gap-1.5 text-xs">
+                                              <span className="rounded-md border border-border bg-background px-2 py-0.5 text-muted-foreground">{badge.label}</span>
+                                              <span className={`rounded-md border px-2 py-0.5 ${statusTone}`}>{responseLabel(draft.status, locale)}</span>
+                                            </div>
                                           </div>
                                           <span className="sr-only">{expanded ? tr("Colapsar") : tr("Expandir")}{" "}{tr("respuesta")}</span>
                                         </CollapsibleTrigger>
                                         <TriageResponseControl locale={locale} datapointId={datapoint.id} value={draft.triage} onChange={(triage) => updateDraft(datapoint.id, { triage })} />
                                       </div>
-                                      <CollapsibleContent className="space-y-3 border-t border-border bg-muted/10 p-3">
-                                        {datapoint.display?.locale === locale && datapoint.display.qualification ? <p className="text-xs text-amber-800">{datapoint.display.qualification}</p> : null}
-                                        {datapoint.display?.locale === locale ? <p className="text-xs text-muted-foreground">{datapoint.display.data_type}{datapoint.display.conditional_or_alternative ? ` · ${datapoint.display.conditional_or_alternative}` : ""}</p> : null}
-                                        {applicability.reason ? <p className="text-sm text-muted-foreground">{applicability.reason}</p> : null}
-                                        <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
-                                          {applicability.mappingBasisLabel ? <span className="rounded-md border border-border px-2 py-1">{tr("Base:")} {applicability.mappingBasisLabel}</span> : null}
-                                          {applicability.phaseInLessThan750 || applicability.phaseInAllUndertakings ? <span className="rounded-md border border-border px-2 py-1">{tr("Aplicación gradual")}</span> : null}
-                                        </div>
-                                        {phaseLabel ? <p className="text-xs text-amber-800">{phaseLabel}</p> : null}
-                                        {applicability.limitations.length > 0 ? <p className="text-xs text-amber-800">{applicability.limitations.join(" ")}</p> : null}
-                                        <ConceptRelations items={datapoint.related_datapoints} kind="datapoints" locale={locale} />
-                                        <fieldset className="space-y-2">
-                                          <legend className="text-sm font-medium">{reviewEnglish ? "Review this disclosure" : "Revisión del dato"}</legend>
+                                      <CollapsibleContent className="space-y-4 border-t border-border bg-background px-4 py-4 sm:px-5">
+                                        {hasContext ? (
+                                          <section className="rounded-lg border border-border bg-muted/30 p-4">
+                                            <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{tr("Contexto del dato")}</h4>
+                                            <div className="mt-2 space-y-2 text-sm">
+                                              {showsDisplay && datapoint.display?.qualification ? <p className="text-amber-800">{datapoint.display.qualification}</p> : null}
+                                              {showsDisplay ? <p className="text-xs text-muted-foreground">{datapoint.display?.data_type}{datapoint.display?.conditional_or_alternative ? ` · ${datapoint.display.conditional_or_alternative}` : ""}</p> : null}
+                                              {applicability.reason ? <p className="text-muted-foreground">{applicability.reason}</p> : null}
+                                              {applicability.mappingBasisLabel || applicability.phaseInLessThan750 || applicability.phaseInAllUndertakings ? (
+                                                <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+                                                  {applicability.mappingBasisLabel ? <span className="rounded-md border border-border bg-background px-2 py-1">{tr("Base:")} {applicability.mappingBasisLabel}</span> : null}
+                                                  {applicability.phaseInLessThan750 || applicability.phaseInAllUndertakings ? <span className="rounded-md border border-border bg-background px-2 py-1">{tr("Aplicación gradual")}</span> : null}
+                                                </div>
+                                              ) : null}
+                                              {phaseLabel ? <p className="text-xs text-amber-800">{phaseLabel}</p> : null}
+                                              {applicability.limitations.length > 0 ? <p className="text-xs text-amber-800">{applicability.limitations.join(" ")}</p> : null}
+                                              <ConceptRelations items={datapoint.related_datapoints} kind="datapoints" locale={locale} />
+                                            </div>
+                                          </section>
+                                        ) : null}
+
+                                        <fieldset className="rounded-lg border border-border bg-background p-4">
+                                          <legend className="px-1 text-sm font-semibold text-foreground">{reviewEnglish ? "Review this disclosure" : "Revisión del dato"}</legend>
                                           <p className="text-xs text-muted-foreground">{reviewEnglish ? "This review does not remove reporting obligations. Answer both questions to record a decision; an unanswered question leaves it unreviewed." : "Esta revisión no elimina las obligaciones del informe. Contesta ambas preguntas para registrar una decisión; si falta una, queda sin revisar."}</p>
-                                          {([['relevant', reviewEnglish ? 'Is this relevant to your company?' : '¿Es relevante para tu empresa?'], ['selected_to_answer', reviewEnglish ? 'Do you want to answer this disclosure?' : '¿Quieres contestar este dato?']] as const).map(([field, label]) => (
-                                            <div key={field}>
-                                              <Label htmlFor={`${datapoint.id}-review-${field}`}>{label}</Label>
-                                              <select id={`${datapoint.id}-review-${field}`} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                                                value={draft.learning_review?.[field] === undefined ? '' : String(draft.learning_review[field])}
-                                                onChange={(event) => updateDraft(datapoint.id, { learning_review: { ...draft.learning_review, [field]: event.target.value === '' ? undefined : event.target.value === 'true' } })}>
-                                                <option value="">{reviewEnglish ? "Unanswered" : "Sin responder"}</option><option value="true">{reviewEnglish ? "Yes" : "Sí"}</option><option value="false">{tr("No")}</option>
+                                          <div className="mt-3 grid gap-4 md:grid-cols-2">
+                                            {([['relevant', reviewEnglish ? 'Is this relevant to your company?' : '¿Es relevante para tu empresa?'], ['selected_to_answer', reviewEnglish ? 'Do you want to answer this disclosure?' : '¿Quieres contestar este dato?']] as const).map(([field, label]) => (
+                                              <div key={field} className="space-y-1.5">
+                                                <Label htmlFor={`${datapoint.id}-review-${field}`}>{label}</Label>
+                                                <select id={`${datapoint.id}-review-${field}`} className={fieldClass}
+                                                  value={draft.learning_review?.[field] === undefined ? '' : String(draft.learning_review[field])}
+                                                  onChange={(event) => updateDraft(datapoint.id, { learning_review: { ...draft.learning_review, [field]: event.target.value === '' ? undefined : event.target.value === 'true' } })}>
+                                                  <option value="">{reviewEnglish ? "Unanswered" : "Sin responder"}</option><option value="true">{reviewEnglish ? "Yes" : "Sí"}</option><option value="false">{tr("No")}</option>
+                                                </select>
+                                              </div>
+                                            ))}
+                                          </div>
+                                          <div className="mt-4 grid gap-4 md:grid-cols-[minmax(12rem,1fr)_2fr]">
+                                            <div className="space-y-1.5">
+                                              <Label htmlFor={`${datapoint.id}-review-reason`}>{reviewEnglish ? "Review reason (optional)" : "Motivo de la revisión (opcional)"}</Label>
+                                              <select id={`${datapoint.id}-review-reason`} className={fieldClass}
+                                                value={draft.learning_review?.reason_codes?.[0] ?? ''}
+                                                onChange={(event) => updateDraft(datapoint.id, { learning_review: { ...draft.learning_review, reason_codes: event.target.value ? [event.target.value] : [] } })}>
+                                                <option value="">{reviewEnglish ? "No reason" : "Sin motivo"}</option><option value="scope">{reviewEnglish ? "Company scope" : "Alcance de la empresa"}</option><option value="external_assessment">{reviewEnglish ? "External assessment" : "Análisis externo"}</option><option value="other">{reviewEnglish ? "Other" : "Otro"}</option>
                                               </select>
                                             </div>
-                                          ))}
-                                          <Label htmlFor={`${datapoint.id}-review-reason`}>{reviewEnglish ? "Review reason (optional)" : "Motivo de la revisión (opcional)"}</Label>
-                                          <select id={`${datapoint.id}-review-reason`} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                                            value={draft.learning_review?.reason_codes?.[0] ?? ''}
-                                            onChange={(event) => updateDraft(datapoint.id, { learning_review: { ...draft.learning_review, reason_codes: event.target.value ? [event.target.value] : [] } })}>
-                                            <option value="">{reviewEnglish ? "No reason" : "Sin motivo"}</option><option value="scope">{reviewEnglish ? "Company scope" : "Alcance de la empresa"}</option><option value="external_assessment">{reviewEnglish ? "External assessment" : "Análisis externo"}</option><option value="other">{reviewEnglish ? "Other" : "Otro"}</option>
-                                          </select>
-                                          <Label htmlFor={`${datapoint.id}-review-note`}>{reviewEnglish ? "Review note (optional)" : "Nota de la revisión (opcional)"}</Label>
-                                          <Textarea id={`${datapoint.id}-review-note`} value={draft.learning_review?.note ?? ''} maxLength={2000}
-                                            onChange={(event) => updateDraft(datapoint.id, { learning_review: { ...draft.learning_review, note: event.target.value } })} />
+                                            <div className="space-y-1.5">
+                                              <Label htmlFor={`${datapoint.id}-review-note`}>{reviewEnglish ? "Review note (optional)" : "Nota de la revisión (opcional)"}</Label>
+                                              <Textarea id={`${datapoint.id}-review-note`} className="min-h-9" value={draft.learning_review?.note ?? ''} maxLength={2000}
+                                                onChange={(event) => updateDraft(datapoint.id, { learning_review: { ...draft.learning_review, note: event.target.value } })} />
+                                            </div>
+                                          </div>
                                         </fieldset>
-                                        <div className="grid gap-4 lg:grid-cols-[180px_1fr_1fr]">
-                                          <div className="space-y-2">
-                                            <Label htmlFor={`${datapoint.id}-status`}>{tr("Estado")}</Label>
-                                            <div className="text-[10px] text-muted-foreground mb-1">{tr("Marca 'No aplica' cuando el dato no existe en tu actividad (por ejemplo, emisiones de proceso si solo tienes oficina). Si dudas, usa 'Tengo que buscarlo'.")}</div>
-                                            <select
-                                              id={`${datapoint.id}-status`}
-                                              className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground"
-                                              value={draft.status}
-                                              onChange={(event) => {
-                                                const nextStatus = event.target.value as LaravelEsrsDatapointResponseStatus
-                                                updateDraft(datapoint.id, { status: nextStatus })
-                                              }}
-                                            >
-                                              {statusOptions.map((option) => (
-                                                <option key={option.value} value={option.value}>
-                                                  {option.label}
-                                                </option>
-                                              ))}
-                                            </select>
-                                            {draft.status === "not_applicable" && !draft.note ? (
-                                              <p className="text-xs text-amber-700">{tr("Opcional: ¿por qué no aplica? Una frase ayuda a tu auditor.")}</p>
-                                            ) : null}
-                                          </div>
-                                          <div className="space-y-2">
-                                            <Label htmlFor={`${datapoint.id}-value`}>{tr("Valor / respuesta")}</Label>
-                                            <Input
-                                              id={`${datapoint.id}-value`}
-                                              value={draft.value}
-                                              onInput={(event) => updateDraft(datapoint.id, { value: event.currentTarget.value })}
-                                            />
-                                          </div>
-                                          <div className="space-y-2">
-                                            <Label htmlFor={`${datapoint.id}-evidence`}>{tr("Evidencia")}</Label>
-                                            <Input
-                                              id={`${datapoint.id}-evidence`}
-                                              value={draft.evidence_reference}
-                                              onInput={(event) => updateDraft(datapoint.id, { evidence_reference: event.currentTarget.value })}
-                                            />
-                                          </div>
-                                          <div className="space-y-2 lg:col-span-3">
-                                            <Label htmlFor={`${datapoint.id}-note`}>{tr("Nota")}</Label>
-                                            <Textarea
-                                              id={`${datapoint.id}-note`}
-                                              value={draft.note}
-                                              onInput={(event) => updateDraft(datapoint.id, { note: event.currentTarget.value })}
-                                            />
-                                          </div>
-                                        </div>
 
+                                        <section className="rounded-lg border border-primary/30 bg-primary/5 p-4">
+                                          <h4 className="text-sm font-semibold text-foreground">{tr("Respuesta")}</h4>
+                                          <p className="mt-1 text-xs text-muted-foreground">{tr("Marca 'No aplica' cuando el dato no existe en tu actividad (por ejemplo, emisiones de proceso si solo tienes oficina). Si dudas, usa 'Tengo que buscarlo'.")}</p>
+                                          <div className="mt-3 grid gap-4 lg:grid-cols-[200px_1fr_1fr]">
+                                            <div className="space-y-1.5">
+                                              <Label htmlFor={`${datapoint.id}-status`}>{tr("Estado")}</Label>
+                                              <select
+                                                id={`${datapoint.id}-status`}
+                                                className={fieldClass}
+                                                value={draft.status}
+                                                onChange={(event) => {
+                                                  const nextStatus = event.target.value as LaravelEsrsDatapointResponseStatus
+                                                  updateDraft(datapoint.id, { status: nextStatus })
+                                                }}
+                                              >
+                                                {statusOptions.map((option) => (
+                                                  <option key={option.value} value={option.value}>
+                                                    {option.label}
+                                                  </option>
+                                                ))}
+                                              </select>
+                                              {draft.status === "not_applicable" && !draft.note ? (
+                                                <p className="text-xs text-amber-700">{tr("Opcional: ¿por qué no aplica? Una frase ayuda a tu auditor.")}</p>
+                                              ) : null}
+                                            </div>
+                                            <div className="space-y-1.5">
+                                              <Label htmlFor={`${datapoint.id}-value`}>{tr("Valor / respuesta")}</Label>
+                                              <Input
+                                                id={`${datapoint.id}-value`}
+                                                className="bg-background"
+                                                value={draft.value}
+                                                onInput={(event) => updateDraft(datapoint.id, { value: event.currentTarget.value })}
+                                              />
+                                            </div>
+                                            <div className="space-y-1.5">
+                                              <Label htmlFor={`${datapoint.id}-evidence`}>{tr("Evidencia")}</Label>
+                                              <Input
+                                                id={`${datapoint.id}-evidence`}
+                                                className="bg-background"
+                                                value={draft.evidence_reference}
+                                                onInput={(event) => updateDraft(datapoint.id, { evidence_reference: event.currentTarget.value })}
+                                              />
+                                            </div>
+                                            <div className="space-y-1.5 lg:col-span-3">
+                                              <Label htmlFor={`${datapoint.id}-note`}>{tr("Nota")}</Label>
+                                              <Textarea
+                                                id={`${datapoint.id}-note`}
+                                                className="bg-background"
+                                                value={draft.note}
+                                                onInput={(event) => updateDraft(datapoint.id, { note: event.currentTarget.value })}
+                                              />
+                                            </div>
+                                          </div>
+                                        </section>
                                       </CollapsibleContent>
                                     </Collapsible>
                                   )

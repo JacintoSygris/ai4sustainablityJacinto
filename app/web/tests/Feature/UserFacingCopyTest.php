@@ -32,10 +32,6 @@ test('active backend user-facing copy does not expose backend framework names in
                 continue;
             }
 
-            if (str_contains($line, "class_exists('Laravel\\\\Socialite")) {
-                continue;
-            }
-
             $offenders[] = "{$relative}:".($index + 1).': '.trim($line);
         }
     }

@@ -8,28 +8,12 @@ test('registration screen can be rendered', function () {
     $response->assertStatus(200);
 });
 
-test('registration screen keeps product copy without social account creation options', function () {
+test('registration screen keeps product copy', function () {
     $response = $this->get('/register');
 
     $response->assertStatus(200);
     $response->assertSee('Te damos la bienvenida a Airis');
-    $response->assertDontSee('Regístrate con Google');
-    $response->assertDontSee('Regístrate con Microsoft');
     $response->assertDontSee('Laravel');
-});
-
-test('configured social login options are still not offered as registration', function () {
-    config([
-        'services.social_login.enabled' => true,
-        'services.google.client_id' => 'client',
-        'services.google.client_secret' => 'secret',
-        'services.google.redirect' => 'https://example.com/auth/google/callback',
-    ]);
-    $response = $this->get('/register');
-
-    $response->assertStatus(200);
-    $response->assertDontSee('Regístrate con Google');
-    $response->assertDontSee('href="'.route('social.redirect', ['provider' => 'google'], false).'"', false);
 });
 
 test('laravel register alias renders csrf form without replacing canonical route name', function () {

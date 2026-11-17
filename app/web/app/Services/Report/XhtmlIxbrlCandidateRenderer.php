@@ -152,6 +152,16 @@ class XhtmlIxbrlCandidateRenderer
         return ['taxonomy' => $taxonomy, 'claims' => $entries, 'facts' => array_values($facts)];
     }
 
+    /** Claim paragraphs carry `class="fact <claim_id>"` (see ReportPresentationDocument). */
+    private static function claimIdFromClass(string $class): string
+    {
+        foreach (preg_split('/\s+/', trim($class)) ?: [] as $token) {
+            if (str_starts_with($token, 'claim_')) return $token;
+        }
+
+        return '';
+    }
+
     private function exclusionReason(array $claim, XbrlConceptMap $mapping): ?string
     {
         if (($claim['nil'] ?? false) === true) return 'nil_unsupported';
@@ -222,7 +232,7 @@ class XhtmlIxbrlCandidateRenderer
         }
         $used = [];
         foreach ($doc->getElementsByTagNameNS(self::XHTML_NS, 'p') as $p) {
-            $id = $p->getAttribute('data-claim-id');
+            $id = self::claimIdFromClass($p->getAttribute('class'));
             $entry = $plan['claims'][$id] ?? null;
             if (! ($entry['eligible'] ?? false) || isset($used[$id])) continue;
             $span = $p->getElementsByTagNameNS(self::XHTML_NS, 'span')->item(0);

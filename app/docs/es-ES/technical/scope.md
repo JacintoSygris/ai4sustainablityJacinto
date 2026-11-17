@@ -6,7 +6,7 @@ Volver al [manual tecnico](index.md).
 
 El repositorio permite construir una instalacion propia basada en Next.js, Laravel y FastAPI, siempre que el operador aporte la infraestructura de produccion: proxy TLS, base PostgreSQL persistente, Redis, worker Laravel, gestion de secretos, correo, copias de seguridad, observabilidad y procedimientos de operacion.
 
-La instalacion de produccion documentada aqui no usa `app/compose.public.yml` como artefacto final. Ese Compose sirve para evaluacion local: publica `web`, `frontend` y `ai-service`; configura SQLite en una ruta temporal; usa cache, sesion y cola no persistentes; desactiva OAuth y documentos; y ejecuta `migrate:fresh` en cada arranque de Laravel.
+La instalacion de produccion documentada aqui no usa `app/compose.public.yml` como artefacto final. Ese Compose sirve para evaluacion local: publica `web`, `frontend` y `ai-service`; configura SQLite en una ruta temporal; usa cache, sesion y cola no persistentes; desactiva documentos; y ejecuta `migrate:fresh` en cada arranque de Laravel.
 
 ## Precondiciones
 
@@ -16,7 +16,6 @@ La instalacion de produccion documentada aqui no usa `app/compose.public.yml` co
 - Imagen o runtime de Laravel adaptado para PostgreSQL: el Dockerfile publico incluido instala `pdo_sqlite`, pero no `pdo_pgsql`.
 - PostgreSQL y Redis en red privada, no publicados en Internet.
 - SMTP real si se activan verificacion de correo y restablecimiento de contrasena.
-- Aplicaciones OAuth externas solo si se desea login social. OAuth no es obligatorio.
 - Politica de backup y recuperacion aprobada antes de cargar datos reales.
 
 ## Matriz de estado
@@ -34,7 +33,6 @@ La instalacion de produccion documentada aqui no usa `app/compose.public.yml` co
 | Redis persistente | Se configura al instalar | Laravel soporta Redis para cache, sesion y cola | Configurar persistencia y contrasena/ACL segun plataforma. |
 | Caddy/TLS | Se configura al instalar | No hay Caddyfile incluido | Exponer solo Caddy y frontend. |
 | Correo SMTP | Se configura al instalar | `config/mail.php` | Credenciales externas, remitente y entregabilidad. |
-| OAuth Google/Microsoft | Se configura al instalar | rutas Socialite | Apps externas, redirect exacto y secretos. |
 | S3/MinIO documental | Requiere desarrollo antes de activar | `CharacterizationDocument::STORAGE_DISK = 'local'` | No funciona automaticamente para documentos. |
 | Extraccion documental | Requiere desarrollo antes de activar | Laravel llama `POST /extract-document`; FastAPI no lo ofrece | Mantener `P6_DOCUMENT_UPLOAD_ENABLED=false`. |
 

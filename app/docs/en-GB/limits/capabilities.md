@@ -17,7 +17,7 @@ Back to the [documentation index](../index.md).
 - The topical information list depends on configured and valid mappings.
 - The XHTML/iXBRL candidate requires sufficient structured data, runtime technical validation and human approval for any later use.
 - Document functions are disabled in the included public profile and the compatible extraction service is not supplied.
-- Mail, OAuth, queues, persistent storage and external controls depend on the operator.
+- Mail, queues, persistent storage and external controls depend on the operator.
 
 ## Not Provided
 

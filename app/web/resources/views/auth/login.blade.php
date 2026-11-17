@@ -14,8 +14,6 @@
             </div>
         @endif
 
-        @include('auth.partials.social-auth-options', ['mode' => 'login'])
-
         <div class="space-y-4">
             <div class="space-y-2">
                 <label for="email" class="block text-sm font-medium text-slate-800">{{ __('Email') }}</label>

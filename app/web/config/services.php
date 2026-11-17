@@ -35,25 +35,6 @@ return [
         ],
     ],
 
-    'social_login' => [
-        'enabled' => env('SOCIAL_LOGIN_ENABLED', false),
-    ],
-
-    'google' => [
-        'client_id' => env('GOOGLE_CLIENT_ID'),
-        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
-        'redirect' => env('GOOGLE_REDIRECT_URI'),
-    ],
-
-    'microsoft' => [
-        'client_id' => env('MICROSOFT_CLIENT_ID'),
-        'client_secret' => env('MICROSOFT_CLIENT_SECRET'),
-        'redirect' => env('MICROSOFT_REDIRECT_URI'),
-        'tenant' => env('MICROSOFT_TENANT_ID', 'common'),
-        'include_tenant_info' => true,
-        'include_avatar' => true,
-    ],
-
     'characterization' => [
         'driver' => env('CHARACTERIZATION_GATEWAY', 'mock'),
         'mock_outcome' => env('CHARACTERIZATION_MOCK_OUTCOME', 'success'),
@@ -133,6 +114,7 @@ return [
         'external_taxonomy_manifest_path' => env('ESRS_EXTERNAL_TAXONOMY_MANIFEST_PATH'),
         'arelle_command' => env('ESRS_ARELLE_COMMAND'),
         'arelle_cache_directory' => env('ESRS_ARELLE_CACHE_DIRECTORY'),
+        'arelle_max_output_bytes' => env('ESRS_ARELLE_MAX_OUTPUT_BYTES'),
     ],
 
 ];

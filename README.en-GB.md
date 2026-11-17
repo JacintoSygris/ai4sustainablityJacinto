@@ -35,6 +35,7 @@ The installation guide is in [app/docs/en-GB/technical/installation-local.md](ap
 
 - [Optional learning engine](app/docs/en-GB/learning-engine.md): off locally and in the included composition; on by configuration in deployed environments (`APP_ENV=production|staging` or `LEARNING_DEPLOYED=true`); consent only; manual promotion and rollback in `/admin/learning`; missing prerequisites block it visibly.
 - [Learning gate metrics](app/docs/learning-engine-production.md#métricas-del-control-de-promocion): precision, recall, F1 and company-level intervals in the panel; predeclared improvement and positive preservation; `LEARNING_GATE_METRICS_ENABLED=false` by default (Spanish guide).
+- [Document extraction](app/docs/en-GB/technical/document-extraction.md): ESRS topic evidence from PDF/DOCX uploaded in step 1; `P6_DOCUMENT_UPLOAD_ENABLED` in Laravel and `I4S_DOCUMENT_EXTRACTION_ENABLED` in Python, both off by default.
 - [DMA import](app/docs/dma-import.md) (Spanish): `DMA_IMPORT_ENABLED`, off by default.
 - [Local IRO text analysis](app/docs/dma-import.md#análisis-local-de-textos-iro) (Spanish): reviewed topic and indicator suggestions; `DMA_NLP_ENABLED=false` in Laravel and `I4S_DMA_NLP_ENABLED=false` in Python; requires reviewed IRO traceability.
 - [IRO context in reports](app/docs/dma-import.md#contexto-iro-en-la-presentación-del-informe) (Spanish): HTML, DOCX and XHTML presentation when included in the approved snapshot; requires an integration that supplies the context.

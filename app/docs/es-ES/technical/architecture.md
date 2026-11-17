@@ -65,7 +65,7 @@ Comprobacion: desde el host publico, el firewall solo debe admitir entrada a `80
 
 Los documentos, si se activan en el futuro, se guardan en disco local persistente porque el modelo `CharacterizationDocument` fuerza el disco `local`. El controlador acepta PDF/DOCX hasta 50 MB, valida extension y magic bytes, y debe conservar validaciones de seguridad de archivos verificadas y controles de seguridad de carga.
 
-La extraccion no esta disponible con el codigo incluido: el job llama `POST /extract-document`, pero el FastAPI publico solo expone `/healthz`, `/model-profiles` y `/predict`. Mantener `P6_DOCUMENT_UPLOAD_ENABLED=false`.
+Extraccion: el job llama `POST /extract-document`, servido por el servicio de IA con `I4S_DOCUMENT_EXTRACTION_ENABLED=true` (recuperacion TF-IDF de evidencia de temas NEIS a partir del texto PDF/DOCX; ver [document-extraction.md](document-extraction.md)). Mantener `P6_DOCUMENT_UPLOAD_ENABLED=false` hasta aprovisionar ese servicio y el analisis ClamAV.
 
 ## Compose publico
 

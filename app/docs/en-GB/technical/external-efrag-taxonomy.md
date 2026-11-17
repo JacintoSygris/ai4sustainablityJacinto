@@ -67,7 +67,7 @@ Arelle runs without network access using `--internetConnectivity=offline` and `-
 
 P10 shows authenticated users the taxonomy name, version, profile and availability state. It does not show the local path, manifest contents or full SHA-256.
 
-A `validated_candidate` result means only that the configured technical checks passed. It does not demonstrate that a report is complete, correct, assured, filed or accepted by an authority.
+A `validated_candidate` result means only that the configured technical checks passed: structural errors (XHTML 1.1 schema, XBRL 2.1, Inline XBRL, unsatisfied formula processing) block the candidate, while the taxonomy's own assertion messages (`message:*` codes, such as EFRAG's "always disclose" completeness checks) do not block and are returned in the `X-Taxonomy-Assertions` header (`errors=N; warnings=M`). It does not demonstrate that a report is complete, correct, assured, filed or accepted by an authority.
 
 ## Arelle cache and iXBRL candidate package
 

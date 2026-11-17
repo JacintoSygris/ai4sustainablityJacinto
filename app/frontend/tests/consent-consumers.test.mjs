@@ -158,15 +158,11 @@ test('actual P9 edits and server save work with recovery OFF and queued updater 
   c.dispose()
 })
 
-test('actual expectations and sidebar preserve in-memory operation without optional storage', async () => {
+test('actual expectations preserve in-memory operation without optional storage', async () => {
   const h = harness()
   const c = consumer('components/wizard/wizard-expectations.tsx', 'WizardExpectations', ['dismiss'], h)
   c.render(); c.handlers.dismiss(); await c.settle(); assert.equal(h.data.has('wizard_expectations_dismissed'), false)
   c.dispose()
-  const sidebar = consumer('components/ui/sidebar.tsx', 'SidebarProvider', ['setOpen'], h)
-  sidebar.render(); sidebar.handlers.setOpen(false); assert.equal(sidebar.document.cookie, '')
-  h.api.setChoice(all, 'accept'); sidebar.handlers.setOpen(true); assert.match(sidebar.document.cookie, /sidebar_state=true/)
-  sidebar.dispose()
 })
 
 
@@ -639,7 +635,7 @@ test('expectations and topic assistant render both languages and retain notes an
   const c = consumer('components/wizard/wizard-expectations', 'WizardExpectations', [], harness())
   assert.match(renderToStaticMarkup(c.render()), /Qué vas a hacer aquí/)
   c.setLocale('en'); const html = renderToStaticMarkup(c.render())
-  assert.match(html, /What you will do here/); assert.match(html, /Step 1/); assert.doesNotMatch(html, /Qué necesitas|Paso 1/); c.dispose()
+  assert.match(html, /What you will do here/); assert.match(html, /How long it takes/); assert.doesNotMatch(html, /Qué necesitas|Cuánto tiempo lleva/); c.dispose()
   const results = []
   const props = { topic: { id: 1, esrs_code: 'E1', theme: { es: 'Cambio climático', en: 'Climate change' } }, exposicionDefault: 'fuerte', initialAnswer: { note: 'Texto libre unchanged' }, onResult: v => results.push(v) }
   const assistant = consumer('components/wizard/topic-signal-assistant', 'TopicSignalAssistant', ['setUserNote', 'setSig', 'note'], harness())

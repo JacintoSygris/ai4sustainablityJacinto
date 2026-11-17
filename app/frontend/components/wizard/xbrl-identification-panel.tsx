@@ -71,20 +71,20 @@ export function XbrlIdentificationPanel({ enabled, csrfToken, subjects = [] }: {
     <p className="text-sm">{tr("No cambia la doble importancia relativa ni etiqueta automáticamente el informe.")}</p>
     <p className="text-sm text-muted-foreground">{tr("Las puntuaciones ordenan candidatos; no son probabilidades de acierto. Revisa el concepto y sus limitaciones antes de aceptar.")}</p>
     <label className="block text-sm">{tr("Indicador")}
-      <select className="block w-full rounded border p-2" value={subject?.key ?? ""} onChange={event => selectSubject(event.target.value)}>
+      <select className="mt-1 h-9 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50" value={subject?.key ?? ""} onChange={event => selectSubject(event.target.value)}>
         <option value="">{tr("Descripción libre sin vincular a un punto de datos")}</option>
         {subjects.map(item => <option key={item.key} value={item.key}>{item.datapoint_id ?? item.key} · {item.label}</option>)}
       </select>
     </label>
     <label className="block text-sm">{tr("Nombre del indicador")}<Input value={indicator.label} maxLength={300} onChange={e => update({ label: e.target.value })} /></label>
     <label className="block text-sm">{tr("Descripción del indicador")}<Textarea value={indicator.description} maxLength={4000} onChange={e => update({ description: e.target.value })} /></label>
-    <div className="flex flex-wrap gap-3">
-      <label className="text-sm">{tr("Idioma del texto")}<select className="block rounded border p-2" value={indicator.language} onChange={e => update({ language: e.target.value })}><option value="es">{tr("Español")}</option><option value="en">{tr("Inglés")}</option></select></label>
-      <label className="text-sm">{tr("Tipo de valor")}<select className="block rounded border p-2" value={indicator.value_type ?? ""} onChange={e => update({ value_type: e.target.value || null })}>
+    <div className="grid gap-3 sm:grid-cols-2">
+      <label className="block text-sm">{tr("Idioma del texto")}<select className="mt-1 h-9 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50" value={indicator.language} onChange={e => update({ language: e.target.value })}><option value="es">{tr("Español")}</option><option value="en">{tr("Inglés")}</option></select></label>
+      <label className="block text-sm">{tr("Tipo de valor")}<select className="mt-1 h-9 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50" value={indicator.value_type ?? ""} onChange={e => update({ value_type: e.target.value || null })}>
         <option value="">{tr("Sin especificar")}</option>{[["text", "Texto"], ["number", "Número"], ["integer", "Entero"], ["monetary", "Monetario"], ["boolean", "Booleano"], ["date", "Fecha"]].map(([value, label]) => <option key={value} value={value}>{tr(label)}</option>)}
       </select></label>
-      <label className="text-sm">{tr("Tipo de periodo")}<select className="block rounded border p-2" value={indicator.period_type ?? ""} onChange={e => update({ period_type: e.target.value || null })}><option value="">{tr("Sin especificar")}</option><option value="duration">{tr("Duración")}</option><option value="instant">{tr("Instante")}</option></select></label>
-      <label className="text-sm">{tr("Unidad (ISO 4217 o pure)")}<Input value={indicator.unit ?? ""} maxLength={64} onChange={e => update({ unit: e.target.value || null })} /></label>
+      <label className="block text-sm">{tr("Tipo de periodo")}<select className="mt-1 h-9 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50" value={indicator.period_type ?? ""} onChange={e => update({ period_type: e.target.value || null })}><option value="">{tr("Sin especificar")}</option><option value="duration">{tr("Duración")}</option><option value="instant">{tr("Instante")}</option></select></label>
+      <label className="block text-sm">{tr("Unidad (ISO 4217 o pure)")}<Input value={indicator.unit ?? ""} maxLength={64} onChange={e => update({ unit: e.target.value || null })} /></label>
     </div>
     <Button type="button" disabled={state.busy || changing || !(indicator.label.trim() || indicator.description.trim())} onClick={identify}>{tr("Identificar concepto XBRL de las NEIS")}</Button>
     <div aria-live="polite">

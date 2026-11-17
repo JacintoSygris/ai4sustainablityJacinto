@@ -24,7 +24,6 @@ test("privacy page exists with production legal identity, GDPR rights and local 
   assert.match(source, /mailto:dpo@cbiconsulting\.es/)
   assert.match(source, /sygris\.com\/legal\/aviso-legal\//)
   assert.match(source, /sygris\.com\/legal\/politica-privacidad\//)
-  assert.match(source, /Google.*Microsoft|Microsoft.*Google/s)
   assert.match(source, /https:\/\/www\.aepd\.es\//)
   // Data categories collected.
   assert.match(source, /Datos de tu cuenta/)
@@ -123,7 +122,6 @@ test("cookie consent mounts the shared UI after hydration and links to its inven
   assert.match(ui, /cookies necesarias/)
   assert.match(ui, /no utilizamos analítica ni publicidad/)
   const inventory = read("app/(legal)/cookies/page.tsx")
-  assert.match(inventory, /Google.*Microsoft|Microsoft.*Google/s)
   assert.match(inventory, /Cerrar sesión/)
   assert.match(inventory, /datos del sitio desde\s+la configuración del navegador/)
   const privacy = read("app/(legal)/privacy/page.tsx")
@@ -209,15 +207,12 @@ test("session-based verification gate and 409 handling are wired", () => {
   assert.match(api, /\/verify-email/)
 })
 
-test("P10 report surface shows a prominent scope disclaimer", () => {
+test("P10 report surface offers XBRL generation without download disclaimers", () => {
   const source = read("components/wizard/report-draft-panel.tsx")
 
-  assert.match(source, /Alcance y límites de estas salidas/)
-  assert.match(source, /No es una presentación oficial/)
-  assert.match(source, /No es un servicio de aseguramiento/)
-  assert.match(source, /Taxonomía de la UE/)
-  assert.match(source, /candidato XHTML\/iXBRL no se ofrece como descarga/)
+  assert.match(source, /Generar XBRL/)
+  assert.match(source, /\/report\/ixbrl-package/)
+  assert.doesNotMatch(source, /Alcance y límites de estas salidas|no se ofrece como descarga|no es una presentación ESEF\/ESAP oficial/)
   assert.match(source, /ixbrl_package_enabled === true && readiness.workflow_complete && readiness.report_content_ready/)
-  assert.match(source, /readiness\.report_content_ready && taxonomyStatus\?\.availability\.state === "verified" \?/, "the iXBRL candidate is offered only while the external taxonomy is verified")
-  assert.match(source, /Candidato iXBRL provisional \(no es una presentación ESEF\/ESAP oficial\)/)
+  assert.match(source, /readiness\.report_content_ready && taxonomyStatus\?\.availability\.state === "verified" \?/, "the iXBRL download link is offered only while the external taxonomy is verified")
 })

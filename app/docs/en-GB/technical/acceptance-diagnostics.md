@@ -13,12 +13,11 @@ Back to the [technical manual](index.md).
 7. Private health: Laravel `/healthz`, FastAPI `/healthz` and `/model-profiles` respond.
 8. Registration and session: a test account can register, log in and log out.
 9. Password reset: SMTP delivers a link with `https://app.example.org`.
-10. Optional OAuth: Google/Microsoft work only if `SOCIAL_LOGIN_ENABLED=true`.
 11. Prediction: a test characterisation obtains a technical proposal from FastAPI.
 12. ESRS information and technical candidate: with sufficient data, expected downloads appear; Arelle technically validates the candidate if applicable.
 13. Backup: PostgreSQL and document volume backups are generated.
 14. Restore: restoration tested in an isolated environment.
-15. Documents: `P6_DOCUMENT_UPLOAD_ENABLED=false` confirmed until `/extract-document` exists.
+15. Documents: `P6_DOCUMENT_UPLOAD_ENABLED=false` unless the AI service runs with `I4S_DOCUMENT_EXTRACTION_ENABLED=true` and ClamAV is configured.
 
 ## Acceptance Commands
 
@@ -47,11 +46,10 @@ Expected result: every command completes successfully. The XHTML/iXBRL candidate
 | Login does not persist | Cookies and Redis | Review `SESSION_DRIVER=redis`, `SESSION_SECURE_COOKIE=true`, domain and TLS. |
 | Jobs do not progress | Worker and Redis status | Restart worker after reading logs; do not switch to `sync` in production. |
 | Mail does not arrive | SMTP provider and `MAIL_*` | Correct credentials/sender; do not log passwords. |
-| OAuth returns redirect error | Registered URI | Match callback and `APP_URL` exactly. |
 | `/predict` fails | FastAPI `/healthz` and `/model-profiles` | Review profile, artefacts and resources. |
 | ESRS information outputs do not download | Journey state and assets | Complete data, validate mapping/assets/taxonomy. |
 | Candidate iXBRL fails | Arelle and taxonomies | Run validators; treat as technical failure, do not force a valid download. |
-| Document remains `failed` | `P6_DOCUMENT_UPLOAD_ENABLED` | Keep disabled; `/extract-document` is missing. |
+| Document remains `failed` | `P6_DOCUMENT_UPLOAD_ENABLED` | Check `I4S_DOCUMENT_EXTRACTION_ENABLED`, the token and `ESRS_UPLOAD_EXTRACT_BASE` in the AI service. |
 | Backup does not restore | Isolated test | Fix procedure before loading real data. |
 | Redis loses sessions | Redis persistence | Enable and verify AOF/RDB according to policy. |
 | Internal ports appear public | `ss` and firewall rules | Close ports and remove `ports` from private services. |

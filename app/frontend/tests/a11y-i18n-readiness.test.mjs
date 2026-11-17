@@ -21,10 +21,6 @@ test("Spanish application shell declares locale and localized metadata", () => {
 test("active UI primitives do not leak English accessibility copy", () => {
   const files = [
     "components/dashboard/progress-card.tsx",
-    "components/ui/command.tsx",
-    "components/ui/pagination.tsx",
-    "components/ui/sidebar.tsx",
-    "components/ui/spinner.tsx",
   ]
 
   const englishUiPatterns = [

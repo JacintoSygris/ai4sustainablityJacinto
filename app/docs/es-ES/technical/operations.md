@@ -27,7 +27,7 @@ La tabla de fallos debe consultarse sin error. Si hay jobs fallidos, revisar cau
 
 ## Registros
 
-Enviar logs de Caddy, frontend, Laravel, worker, FastAPI, PostgreSQL y Redis a la plataforma de observabilidad del operador. Los logs no deben incluir documentos, tokens, contrasenas ni respuestas completas de proveedores OAuth.
+Enviar logs de Caddy, frontend, Laravel, worker, FastAPI, PostgreSQL y Redis a la plataforma de observabilidad del operador. Los logs no deben incluir documentos, tokens, contrasenas ni respuestas completas de proveedores externos.
 
 Precondicion: servicios en ejecucion.
 
@@ -47,7 +47,7 @@ Alertar al menos por:
 - Laravel `/healthz` degradado en red privada;
 - FastAPI `/healthz` falla;
 - worker detenido o cola acumulada;
-- errores SMTP/OAuth repetidos;
+- errores SMTP repetidos;
 - almacenamiento de PostgreSQL, Redis o volumen documental por encima del umbral del operador;
 - expiracion o fallo de renovacion TLS.
 
@@ -71,7 +71,7 @@ Comprobacion: ejecutar checklist de [aceptacion y diagnostico](acceptance-diagno
 
 ## Rotacion de secretos
 
-Rotar `APP_KEY` solo con un procedimiento especifico de Laravel y ventana de mantenimiento, porque afecta datos cifrados y sesiones. Rotar contrasenas de PostgreSQL, Redis, SMTP y OAuth de forma individual, verificando cada dependencia antes de revocar la anterior.
+Rotar `APP_KEY` solo con un procedimiento especifico de Laravel y ventana de mantenimiento, porque afecta datos cifrados y sesiones. Rotar contrasenas de PostgreSQL, Redis y SMTP de forma individual, verificando cada dependencia antes de revocar la anterior.
 
 ## Acciones ante error
 

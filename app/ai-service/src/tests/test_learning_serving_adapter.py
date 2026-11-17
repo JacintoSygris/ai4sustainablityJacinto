@@ -50,7 +50,8 @@ class AdapterTests(unittest.TestCase):
                          'learning_production_cli.py', 'learning_production_runtime.py',
                          'wp13_feedback_bridge.py', 'wp13_feedback_training.py',
                          'learning_gate_metrics.py', 'learning_activation.py',
-                         'feedback_bandit.py', 'feedback_bandit_registry.py', 'esrs_standard.py', 'train/masked_multilabel.py'):
+                         'feedback_bandit.py', 'feedback_bandit_registry.py', 'esrs_standard.py', 'collaborative_filtering.py',
+                         'train/masked_multilabel.py'):
                 dest = target/name
                 dest.parent.mkdir(parents=True,exist_ok=True)
                 shutil.copyfile(source/name,dest)

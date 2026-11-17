@@ -197,7 +197,7 @@ it('keeps every mixed-content value visible while tagging eligible numbers in th
     expect($result['xhtml'])->toContain('Narrativa sintética', 'custom: Untranslated', '99 EUR', 'Dato no disponible', 'Omisión sintética');
     expect($result['tagging']['tagged_claim_ids'])->toBe(['claim_synthetic_number'])
         ->and(array_column($result['tagging']['untagged_claims'], 'reason'))->toBe(['non_numeric', 'dimensions_unsupported', 'duplicate_machine_fact']);
-    expect($xp->query('//*[local-name()="p" and @data-claim-id="claim_synthetic_number"]')->length)->toBe(2);
+    expect($xp->query('//*[local-name()="p" and contains(concat(" ", normalize-space(@class), " "), " claim_synthetic_number ")]')->length)->toBe(2);
 });
 
 it('rejects conflicts between eligible machine facts while keeping dimensional zero-tag reports renderable', function () {
@@ -227,7 +227,7 @@ it('keeps mapping-required-context and unmapped claims visible with stable exclu
     $xp->registerNamespace('ix', 'http://www.xbrl.org/2013/inlineXBRL');
     $xp->registerNamespace('xbrli', 'http://www.xbrl.org/2003/instance');
     foreach (['claim_synthetic_number', 'claim_unmapped'] as $id) {
-        $paragraphs = $xp->query('//*[local-name()="p" and @data-claim-id="'.$id.'"]');
+        $paragraphs = $xp->query('//*[local-name()="p" and contains(concat(" ", normalize-space(@class), " "), " '.$id.' ")]');
         expect($paragraphs->length)->toBe(1)->and($paragraphs->item(0)->textContent)->toBe('-1.234,567 EUR');
     }
     expect($xp->query('//ix:nonFraction | //xbrli:context')->length)->toBe(0);

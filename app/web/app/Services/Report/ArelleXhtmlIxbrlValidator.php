@@ -8,19 +8,35 @@ class ArelleXhtmlIxbrlValidator
 {
     private const TIMEOUT_SECONDS = 120;
 
-    private const MAX_OUTPUT_BYTES = 1048576;
+    // The EFRAG taxonomy emits one assertion message per untagged "always disclose" element (several
+    // hundred, ~1.5 MB of JSON log for a small report), so the budget must hold the whole log.
+    private const MAX_OUTPUT_BYTES = 8388608;
 
     private const LOCK_NAME = 'i4s:report:arelle-validation';
 
+    private readonly int $maxOutputBytes;
+
     public function __construct(
         private readonly int $timeoutSeconds = self::TIMEOUT_SECONDS,
-        private readonly int $maxOutputBytes = self::MAX_OUTPUT_BYTES,
-    ) {}
+        ?int $maxOutputBytes = null,
+    ) {
+        $configured = config('services.report.arelle_max_output_bytes');
+        $this->maxOutputBytes = $maxOutputBytes
+            ?? (is_numeric($configured) && (int) $configured > 0 ? (int) $configured : self::MAX_OUTPUT_BYTES);
+    }
 
     /**
      * @param array<string, mixed> $internalManifest
      */
-    public function validate(string $xhtml, ReportingProfile $profile, array $internalManifest, bool $reportPackage = false): void
+    /**
+     * Validates the candidate with Arelle. Structural problems (XHTML schema, XBRL 2.1, Inline XBRL,
+     * formula processing) block the candidate. The taxonomy's own assertion messages (`message:*`
+     * codes, e.g. EFRAG's "always disclose" completeness checks) do not block: they describe what
+     * the report still lacks and are returned so callers can surface them.
+     *
+     * @return array{assertion_errors: int, assertion_warnings: int}
+     */
+    public function validate(string $xhtml, ReportingProfile $profile, array $internalManifest, bool $reportPackage = false): array
     {
         $command = config('services.report.arelle_command');
         $prefix = is_string($command) ? [$command] : $command;
@@ -78,9 +94,14 @@ class ArelleXhtmlIxbrlValidator
                     $args = [...$args, '--cacheDirectory', $cache];
                 }
                 $result = $this->run($args, $tmpDir);
-                if ($result['exit_code'] !== 0 || ! $this->logIsCleanAndAnalyzable($logPath)) {
+                $summary = $this->analyzeLog($logPath);
+                // `--validationExitCode` also returns non-zero for assertion messages alone; a non-zero
+                // exit without any recorded assertion error is an unexplained failure.
+                if ($summary === null || ($result['exit_code'] !== 0 && $summary['assertion_errors'] === 0)) {
                     throw new XhtmlIxbrlCandidateException('xhtml_ixbrl_arelle_validation_failed');
                 }
+
+                return $summary;
             } finally {
                 if (is_file($logPath)) @unlink($logPath);
                 if (is_file($xhtmlPath)) {
@@ -260,24 +281,41 @@ class ArelleXhtmlIxbrlValidator
         }
     }
 
-    private function logIsCleanAndAnalyzable(string $path): bool
+    /**
+     * Null when the log is missing, unanalyzable, lacks the "validated" line or records a
+     * structural error; otherwise the counts of taxonomy assertion messages by severity.
+     *
+     * @return array{assertion_errors: int, assertion_warnings: int}|null
+     */
+    private function analyzeLog(string $path): ?array
     {
-        if (! is_file($path) || filesize($path) > $this->maxOutputBytes) return false;
+        if (! is_file($path) || filesize($path) > $this->maxOutputBytes) return null;
         try {
             $log = json_decode(file_get_contents($path), true, flags: JSON_THROW_ON_ERROR)['log'] ?? null;
         } catch (\JsonException) {
-            return false;
+            return null;
         }
-        if (! is_array($log) || $log === []) return false;
+        if (! is_array($log) || $log === []) return null;
         $validated = false;
+        $assertionErrors = 0;
+        $assertionWarnings = 0;
         foreach ($log as $entry) {
-            if (! is_array($entry) || ! is_string($entry['level'] ?? null)) return false;
-            if (! in_array(strtolower($entry['level']), ['info', 'warning', 'debug'], true)) return false;
+            if (! is_array($entry) || ! is_string($entry['level'] ?? null)) return null;
+            $level = strtolower($entry['level']);
+            $code = (string) ($entry['code'] ?? '');
             $message = $entry['message']['text'] ?? '';
-            if (! is_string($message)) return false;
-            if (($entry['code'] ?? '') === 'info' && preg_match('/\bvalidated in \d+(?:[.,]\d+)? secs?\b/', $message)) $validated = true;
-            if (str_starts_with((string) ($entry['code'] ?? ''), 'formula:') && str_contains(strtolower($message), 'unsatisfied')) return false;
+            if (! is_string($message)) return null;
+            $isAssertion = str_starts_with($code, 'message:');
+            if ($isAssertion) {
+                if ($level === 'error') $assertionErrors++;
+                if ($level === 'warning') $assertionWarnings++;
+                continue;
+            }
+            if (! in_array($level, ['info', 'warning', 'debug'], true)) return null;
+            if ($code === 'info' && preg_match('/\bvalidated in \d+(?:[.,]\d+)? secs?\b/', $message)) $validated = true;
+            if (str_starts_with($code, 'formula:') && str_contains(strtolower($message), 'unsatisfied')) return null;
         }
-        return $validated;
+
+        return $validated ? ['assertion_errors' => $assertionErrors, 'assertion_warnings' => $assertionWarnings] : null;
     }
 }

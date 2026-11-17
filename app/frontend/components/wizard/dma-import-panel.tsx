@@ -144,7 +144,7 @@ function IroReviewEditor({ row, importId, review, candidates, disabled, onChange
     locations: [], groups: [], reason: '', focus_datapoint_ids: [], ...current }
   const change = (patch: Partial<LaravelIroReview>) => onChange({ ...base, ...patch }, false)
   const select = (key: 'decision' | 'type' | 'dimension', title: string, options: [string, string][]) => <label className="block">
-    {tr(title)}<select className="block border p-2" value={base[key] ?? ''} onChange={event => change({ [key]: event.target.value, ...(key === 'decision' ? { focus_datapoint_ids: [] } : {}) })}>
+    {tr(title)}<select className="mt-1 h-9 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50" value={base[key] ?? ''} onChange={event => change({ [key]: event.target.value, ...(key === 'decision' ? { focus_datapoint_ids: [] } : {}) })}>
       <option value="">{tr("Selecciona una opción")}</option>{options.map(([value, label]) => <option key={value} value={value}>{tr(label)}</option>)}
     </select></label>
   const checks = (key: 'locations' | 'groups' | 'focus_datapoint_ids', title: string, options: [string, string][]) => <fieldset className="space-y-1"><legend>{tr(title)}</legend>

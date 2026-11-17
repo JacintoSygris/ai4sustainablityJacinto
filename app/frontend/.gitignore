@@ -19,3 +19,6 @@ pnpm-debug.log*
 /out/
 /coverage/
 tsconfig.tsbuildinfo
+
+# Playwright
+/test-results/

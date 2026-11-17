@@ -353,7 +353,7 @@ class GuidedReportController extends Controller
             $bundle['candidate_validation'] = ['scope' => 'xbrl_2_1_inline_xbrl_report_package', 'publication_state' => 'validated_candidate', 'filing_ready' => false];
             $bundle['taxonomy_package_checksum'] = $manifest['taxonomy_package_checksum'];
             $bytes = $package ? $this->reportPackage->render($xhtml, $bundle) : $xhtml;
-            $this->arelle->validate($bytes, $profile, $manifest, $package);
+            $assertions = $this->arelle->validate($bytes, $profile, $manifest, $package);
         } catch (DomainException) {
             return $this->blocked('approved_snapshot_invalid', 'xhtml_ixbrl_candidate_blocked');
         } catch (XhtmlIxbrlCandidateException $e) {
@@ -364,14 +364,18 @@ class GuidedReportController extends Controller
             return $block;
         }
 
+        // Taxonomy assertion messages (EFRAG completeness checks) never block; the counts travel in headers.
+        $assertionSummary = 'errors='.$assertions['assertion_errors'].'; warnings='.$assertions['assertion_warnings'];
         if ($package) {
             return response($bytes, 200)
                 ->header('Content-Type', 'application/zip')
                 ->header('Content-Disposition', 'attachment; filename="candidato-ixbrl-provisional.zip"')
                 ->header('X-Report-Publication-State', 'validated_candidate')
+                ->header('X-Taxonomy-Assertions', $assertionSummary)
                 ->header('X-Taxonomy-Profile', $taxonomyId);
         }
         return response($xhtml, 200)
+            ->header('X-Taxonomy-Assertions', $assertionSummary)
             ->header('Content-Type', 'application/xhtml+xml; charset=UTF-8')
             ->header('Content-Disposition', 'attachment; filename="'.(app()->getLocale() === 'en' ? 'esrs-candidate-report.xhtml' : 'informe-neis-candidato.xhtml').'"')
             ->header('X-Report-Publication-State', 'validated_candidate');

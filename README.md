@@ -36,6 +36,7 @@ La guía de instalación está en [app/docs/es-ES/technical/installation-local.m
 
 - [Motor de aprendizaje opcional](app/docs/es-ES/learning-engine.md): apagado en local y en la composición incluida; activo por configuración en entornos desplegados (`APP_ENV=production|staging` o `LEARNING_DEPLOYED=true`); solo con consentimiento; promoción y reversión manuales en `/admin/learning`; los requisitos ausentes lo bloquean de forma visible.
 - [Métricas del control de aprendizaje](app/docs/learning-engine-production.md#métricas-del-control-de-promocion): precisión, sensibilidad, F1 e intervalos por empresa en el panel; mejora predeclarada y conservación de positivos; `LEARNING_GATE_METRICS_ENABLED=false` por defecto.
+- [Extracción documental](app/docs/es-ES/technical/document-extraction.md): evidencia de temas NEIS a partir de PDF/DOCX subidos en el paso 1; `P6_DOCUMENT_UPLOAD_ENABLED` en Laravel e `I4S_DOCUMENT_EXTRACTION_ENABLED` en Python, apagados por defecto.
 - [Importación del ADM](app/docs/dma-import.md): `DMA_IMPORT_ENABLED`, apagado por defecto.
 - [Análisis local de textos IRO](app/docs/dma-import.md#análisis-local-de-textos-iro): propuestas revisadas de temas e indicadores; `DMA_NLP_ENABLED=false` en Laravel e `I4S_DMA_NLP_ENABLED=false` en Python; requiere trazabilidad IRO revisada.
 - [Contexto IRO en informes](app/docs/dma-import.md#contexto-iro-en-la-presentación-del-informe): presentación en HTML, DOCX y XHTML si consta en la instantánea aprobada; requiere una integración que aporte ese contexto.

@@ -31,11 +31,11 @@ export default async function CookiesPage() {
         <h2 className="text-xl font-semibold">{tr("Inventario de esta versión")}</h2>
         <dl className="space-y-4 break-words">
           <div><dt className="font-semibold">{tr("Necesarias · sesión y protección de solicitudes · propias, Sygris")}</dt>
-            <dd>{tr("Cookie de sesión con nombre configurable (por defecto el nombre de aplicación normalizado seguido de «-session») y")}{" "}<code>XSRF-TOKEN</code>{tr(". Mantienen el acceso y protegen formularios/API. El código establece por defecto 120 minutos de vida de sesión y no exige caducidad al cerrar el navegador; el servidor puede configurar otros valores. No se borran por rechazar opcionales. La autenticación normal y social no activa «recordarme»; se retira la cookie heredada")}{" "}<code>remember_web_…</code> {" "}{tr("en las solicitudes web sin eliminar la sesión corriente.")}</dd></div>
+            <dd>{tr("Cookie de sesión con nombre configurable (por defecto el nombre de aplicación normalizado seguido de «-session») y")}{" "}<code>XSRF-TOKEN</code>{tr(". Mantienen el acceso y protegen formularios/API. El código establece por defecto 120 minutos de vida de sesión y no exige caducidad al cerrar el navegador; el servidor puede configurar otros valores. No se borran por rechazar opcionales. La autenticación no activa «recordarme»; se retira la cookie heredada")}{" "}<code>remember_web_…</code> {" "}{tr("en las solicitudes web sin eliminar la sesión corriente.")}</dd></div>
           <div><dt className="font-semibold">{tr("Necesaria · elección del navegador · propia, Sygris")}</dt>
             <dd><code>airis-consent-v1</code> {" "}{tr("en localStorage: versión, finalidades, fecha, vencimiento, acción y una revisión aleatoria nueva por elección guardada para distinguir cambios entre pestañas. Válida 180 días desde tu acción, sin identificador publicitario ni historial centralizado de identidad. El antiguo")}{" "}<code>airis-cookie-consent</code> {" "}{tr("solo era un acuse y no autoriza ninguna finalidad.")}</dd></div>
           <div><dt className="font-semibold">{tr("Opcional · preferencias · propias, Sygris")}</dt>
-            <dd><code>wizard_expectations_dismissed</code> {" "}{tr("y")}{" "}<code>p9_intro_dismissed</code> {" "}{tr("en localStorage recuerdan avisos ocultados. La cookie")}{" "}<code>sidebar_state</code>{tr(", cuando se usa la barra lateral, dura hasta 7 días. Las preferencias se eliminan al retirar, rechazar o caducar la autorización (como máximo 180 días, con limpieza al volver a abrir la aplicación). Sin permiso, puedes ocultar avisos y cambiar la barra en memoria, pero no se recuerdan entre visitas.")}</dd></div>
+            <dd><code>wizard_expectations_dismissed</code> {" "}{tr("y")}{" "}<code>p9_intro_dismissed</code> {" "}{tr("en localStorage recuerdan avisos ocultados. Las preferencias se eliminan al retirar, rechazar o caducar la autorización (como máximo 180 días, con limpieza al volver a abrir la aplicación). Sin permiso, puedes ocultar avisos en memoria, pero no se recuerdan entre visitas.")}</dd></div>
           <div><dt className="font-semibold">{tr("Opcional · recuperación local · propia, Sygris")}</dt>
             <dd><code>p8_guided_draft_&lt;id&gt;</code>, <code>p8_guided_draft_&lt;id&gt;_conflict</code> {" "}{tr("y")}{" "}<code>p9_drafts_&lt;id&gt;</code>
               {" "}{tr("conservan copias de decisiones y respuestas no guardadas o en conflicto de los pasos 4 y 5. Se limpian al guardar correctamente o descartar según el flujo, y al retirar/rechazar/caducar el permiso. No tienen duración autónoma de cookie: están limitadas por la autorización de 180 días y la limpieza al abrir la aplicación. El guardado en servidor sigue funcionando sin estas copias; cerrar o recargar puede perder ediciones aún no guardadas.")}</dd></div>
@@ -44,9 +44,7 @@ export default async function CookiesPage() {
         </dl>
       </section>
       <section className="space-y-3">
-        <h2 className="text-xl font-semibold">{tr("Servicios que solicitas expresamente")}</h2>
-        <p>{tr("Google y Microsoft reciben la navegación cuando pulsas su enlace de acceso, sin SDK precargado. Sus páginas pueden usar sus propias tecnologías y plazos:")}{" "}<a className="underline" href="https://policies.google.com/privacy">Google</a> {" "}{tr("y")}{' '}
-          <a className="underline" href="https://privacy.microsoft.com/privacystatement">Microsoft</a>.</p>
+        <h2 className="text-xl font-semibold">{tr("Servicios externos")}</h2>
         <p>{tr("Esta versión no utiliza analítica ni publicidad. Las fuentes de Next se sirven localmente y las páginas de cuenta usan fuentes del sistema. Más información sobre tus datos y derechos en")}{" "}<a className="underline" href="/privacy">{tr("Privacidad")}</a>.</p>
       </section>
     </article>

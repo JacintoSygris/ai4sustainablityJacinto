@@ -25,5 +25,6 @@
 !src/feedback_bandit_registry.py
 !src/wp13_feedback_bridge.py
 !src/wp13_feedback_training.py
+!src/collaborative_filtering.py
 !src/train/__init__.py
 !src/train/masked_multilabel.py

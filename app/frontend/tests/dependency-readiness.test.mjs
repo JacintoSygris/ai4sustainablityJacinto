@@ -1,5 +1,5 @@
 import assert from "node:assert/strict"
-import { readFileSync } from "node:fs"
+import { existsSync, readFileSync } from "node:fs"
 import { join } from "node:path"
 import test from "node:test"
 
@@ -9,8 +9,8 @@ const workspaceConfig = readFileSync("pnpm-workspace.yaml", "utf8")
 test("frontend dependencies do not retain the unused Recharts/Lodash chart stack", () => {
   assert.equal(packageJson.dependencies?.recharts, undefined)
 
-  const chartSource = readFileSync(join("components", "ui", "chart.tsx"), "utf8")
-  assert.doesNotMatch(chartSource, /from ['"]recharts['"]/)
+  // The unused shadcn chart primitive was removed on 2026-11-17 together with its stack.
+  assert.equal(existsSync(join("components", "ui", "chart.tsx")), false)
 })
 
 test("frontend workspace pins PostCSS above the audited vulnerable Next transitive version", () => {

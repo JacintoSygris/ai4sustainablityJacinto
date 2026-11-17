@@ -13,12 +13,11 @@ Volver al [manual tecnico](index.md).
 7. Health privado: Laravel `/healthz`, FastAPI `/healthz` y `/model-profiles` responden.
 8. Registro y sesion: una cuenta de prueba puede registrarse, iniciar sesion y cerrar sesion.
 9. Reset de contrasena: correo SMTP entrega enlace con `https://app.example.org`.
-10. OAuth opcional: Google/Microsoft funcionan solo si `SOCIAL_LOGIN_ENABLED=true`.
 11. Prediccion: una caracterizacion de prueba obtiene propuesta tecnica de FastAPI.
 12. Informacion ESRS y candidato tecnico: con datos suficientes, descargas esperadas aparecen; Arelle valida tecnicamente el candidato si procede.
 13. Backup: se genera backup de PostgreSQL y volumen documental.
 14. Restore: restauracion probada en entorno aislado.
-15. Documentos: `P6_DOCUMENT_UPLOAD_ENABLED=false` confirmado hasta que exista `/extract-document`.
+15. Documentos: `P6_DOCUMENT_UPLOAD_ENABLED=false` salvo que el servicio de IA tenga `I4S_DOCUMENT_EXTRACTION_ENABLED=true` y ClamAV configurado.
 
 ## Comandos de aceptacion
 
@@ -47,11 +46,10 @@ Resultado esperado: todos los comandos terminan correctamente. El candidato XHTM
 | Login no persiste | Cookies y Redis | Revisar `SESSION_DRIVER=redis`, `SESSION_SECURE_COOKIE=true`, dominio y TLS. |
 | Jobs no avanzan | Estado del worker y Redis | Reiniciar worker tras revisar logs; no cambiar a `sync` en produccion. |
 | Correo no llega | Proveedor SMTP y `MAIL_*` | Corregir credenciales/remitente; no registrar contrasenas. |
-| OAuth devuelve error de redirect | URI registrada | Hacer coincidir exactamente callback y `APP_URL`. |
 | `/predict` falla | `/healthz` y `/model-profiles` de FastAPI | Revisar perfil, artefactos y recursos. |
 | Salidas de informacion ESRS no descargan | Estado del recorrido y assets | Completar datos, validar mapping/assets/taxonomia. |
 | iXBRL candidato falla | Arelle y taxonomias | Ejecutar validadores; tratar como fallo tecnico, no forzar descarga valida. |
-| Documento queda `failed` | `P6_DOCUMENT_UPLOAD_ENABLED` | Mantener desactivado; falta `/extract-document`. |
+| Documento queda `failed` | `P6_DOCUMENT_UPLOAD_ENABLED` | Revisar `I4S_DOCUMENT_EXTRACTION_ENABLED`, el token y `ESRS_UPLOAD_EXTRACT_BASE` en el servicio de IA. |
 | Backup no restaura | Prueba aislada | Corregir procedimiento antes de cargar datos reales. |
 | Redis pierde sesiones | Persistencia Redis | Activar y verificar AOF/RDB segun politica. |
 | Aparecen puertos internos publicos | `ss` y reglas firewall | Cerrar puertos y quitar `ports` de servicios privados. |

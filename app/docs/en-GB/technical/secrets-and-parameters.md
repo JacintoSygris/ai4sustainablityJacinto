@@ -23,7 +23,7 @@ Expected result: a `base64:...` key is printed.
 
 Check: copy it only into the environment secret `APP_KEY`; do not write it in Markdown or in a versioned Compose file.
 
-For database, Redis, SMTP and OAuth passwords, generate values with the corporate secret manager or a secure local generator. Do not reuse values across services.
+For database, Redis and SMTP passwords, generate values with the corporate secret manager or a secure local generator. Do not reuse values across services.
 
 ## Storage And Rotation
 
@@ -47,7 +47,7 @@ Check: review provider authentication logs and Laravel/FastAPI errors without ex
 | `APP_ENV` | Laravel | Yes | `production` | `php artisan about` inside `web`. |
 | `APP_KEY` | Laravel | Yes | `base64:EXAMPLE_NOT_A_SECRET=` | Encrypted sessions do not fail. |
 | `APP_DEBUG` | Laravel | Yes | `false` | Errors do not show traces to users. |
-| `APP_URL` | Laravel | Yes | `https://app.example.org` | Mail links and OAuth use the correct domain. |
+| `APP_URL` | Laravel | Yes | `https://app.example.org` | Mail links use the correct domain. |
 | `APP_LOCALE` | Laravel | Recommended | `es` | Expected localised messages. |
 | `LOG_CHANNEL` | Laravel | Yes | `stderr` or `stack` | Logs visible in platform. |
 | `LOG_LEVEL` | Laravel | Yes | `info` | No debug-sensitive data. |
@@ -82,14 +82,6 @@ Check: review provider authentication logs and Laravel/FastAPI errors without ex
 | `MAIL_FROM_ADDRESS` | Laravel/SMTP | Yes for mail | `no-reply@app.example.org` | Authorised sender. |
 | `MAIL_FROM_NAME` | Laravel/SMTP | Yes for mail | `IA4Sustainability` | Visible name. |
 | `AUTH_REQUIRE_EMAIL_VERIFICATION` | Laravel | Recommended | `true` | Unverified users cannot use protected routes. |
-| `SOCIAL_LOGIN_ENABLED` | Laravel | Optional | `false` | OAuth disabled by default. |
-| `GOOGLE_CLIENT_ID` | Laravel/Google | If Google | app id | Redirect starts. |
-| `GOOGLE_CLIENT_SECRET` | Laravel/Google | If Google | managed secret | Callback authenticates. |
-| `GOOGLE_REDIRECT_URI` | Laravel/Google | If Google | `https://app.example.org/auth/google/callback` | Exact match in Google Cloud. |
-| `MICROSOFT_CLIENT_ID` | Laravel/Entra | If Microsoft | app id | Redirect starts. |
-| `MICROSOFT_CLIENT_SECRET` | Laravel/Entra | If Microsoft | managed secret | Callback authenticates. |
-| `MICROSOFT_REDIRECT_URI` | Laravel/Entra | If Microsoft | `https://app.example.org/auth/microsoft/callback` | Exact match in Entra. |
-| `MICROSOFT_TENANT_ID` | Laravel/Entra | If Microsoft | `common` | Adjust if operator restricts tenants. |
 | `CHARACTERIZATION_GATEWAY` | Laravel | Yes | `api` | Do not use `mock` for real operation. |
 | `CHARACTERIZATION_API_BASE_URL` | Laravel/FastAPI | Yes | `http://ai-service:8001` (containers) or `http://127.0.0.1:8001` (native installation) | `/healthz` responds privately. |
 | `CHARACTERIZATION_API_TIMEOUT` | Laravel | Yes | `60` | Sufficient prediction timeout. |
@@ -102,7 +94,7 @@ Check: review provider authentication logs and Laravel/FastAPI errors without ex
 | `ESRS_ARELLE_CACHE_DIRECTORY` | Laravel | Optional, XHTML/iXBRL candidate | absolute external path | Provisioned cache of public XBRL/W3C dependencies for offline validation; absolute path, outside the repository. |
 | `FILESYSTEM_DISK` | Laravel | Yes | `local` | Documents are forced to local disk by model. |
 | `AWS_ACCESS_KEY_ID` and related | Laravel | Only other integrations | non-secret example | Do not enable P6 documents automatically. |
-| `P6_DOCUMENT_UPLOAD_ENABLED` | Laravel | Yes | `false` | Must remain `false` until `/extract-document` exists. |
+| `P6_DOCUMENT_UPLOAD_ENABLED` | Laravel | Yes | `false` | Needs the AI service with `I4S_DOCUMENT_EXTRACTION_ENABLED=true` and `ESRS_UPLOAD_EXTRACT_BASE`. |
 | `P6_DOCUMENT_EXTRACT_TIMEOUT` | Laravel | Future | `240` | Does not fix missing endpoint. |
 | `P6_DOCUMENT_EXTRACT_JOB_TIMEOUT` | Laravel | Future | `300` | Does not fix missing endpoint. |
 | `LARAVEL_INTERNAL_API_ORIGIN` | Next.js | Yes | `http://web:8000` | Private Laravel origin for SSR and rewrites; not exposed to browsers. |
@@ -127,11 +119,10 @@ QUEUE_CONNECTION=redis
 CHARACTERIZATION_GATEWAY=api
 CHARACTERIZATION_API_BASE_URL=http://ai-service:8001
 P6_DOCUMENT_UPLOAD_ENABLED=false
-SOCIAL_LOGIN_ENABLED=false
 LEARNING_DEPLOYED=false
 ```
 
-OAuth is enabled only when its providers are configured and verified; registration uses no third-party challenge (Turnstile was removed on 2026-11-13). Document upload remains disabled until a service compatible with `POST /extract-document` exists.
+Registration uses no third-party challenge (Turnstile was removed on 2026-11-13). Document upload stays disabled until the AI service is started with `I4S_DOCUMENT_EXTRACTION_ENABLED=true` (see document-extraction.md).
 
 With `APP_ENV=production`, optional learning is enabled by configuration unless `LEARNING_DEPLOYED=false`. Keep `LEARNING_DEPLOYED=false` in containers (they do not support learning) and on native installations until the provisioning checklist in the [activation runbook](../../learning-activation-runbook.md) (Spanish) is complete.
 

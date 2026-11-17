@@ -62,7 +62,8 @@ def code_hashes():
     names = ['learning_production_registry.py', 'learning_production_runtime.py', 'learning_production_cli.py',
              'wp13_feedback_training.py', 'wp13_feedback_bridge.py', 'train/masked_multilabel.py',
              'learning_gate_metrics.py', 'learning_serving_adapter.py', 'learning_activation.py',
-             'feedback_bandit.py', 'feedback_bandit_registry.py', 'esrs_standard.py']
+             'feedback_bandit.py', 'feedback_bandit_registry.py', 'esrs_standard.py',
+             'collaborative_filtering.py']
     from learning_serving_adapter import sources
     paths = {n: root / n for n in names} | sources()
     paths['contracts/learning-gate-metrics-v1.schema.json'] = root.parents[1] / 'contracts/api/learning-gate-metrics-v1.schema.json'

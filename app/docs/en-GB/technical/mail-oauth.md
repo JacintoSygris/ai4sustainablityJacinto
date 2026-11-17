@@ -1,4 +1,4 @@
-# Mail And OAuth
+# Mail
 
 Back to the [technical manual](index.md).
 
@@ -39,68 +39,3 @@ Common errors:
 | Email does not arrive | Laravel logs and SMTP provider | Correct host, port, user or authorised sender. |
 | Link uses wrong domain | `APP_URL` | Set `https://app.example.org` and clear cache. |
 | TLS fails | Provider port/encryption | Use provider-documented mode; do not disable security globally. |
-
-## Google OAuth
-
-OAuth is optional. If enabled, set `SOCIAL_LOGIN_ENABLED=true` and source credentials from a web application created by the operator in Google Cloud.
-
-Example redirect URI:
-
-```text
-https://app.example.org/auth/google/callback
-```
-
-Variables:
-
-```dotenv
-SOCIAL_LOGIN_ENABLED=true
-GOOGLE_CLIENT_ID=example-google-client-id
-GOOGLE_CLIENT_SECRET=managed-secret
-GOOGLE_REDIRECT_URI=https://app.example.org/auth/google/callback
-```
-
-Prerequisite: the URI above is registered exactly in Google Cloud.
-
-```sh
-# Directory: /srv/ia4sustainability
-docker compose exec web php artisan route:list --path=auth/google
-```
-
-Expected result: redirect and callback routes appear.
-
-Check: open `https://app.example.org/auth/google/redirect`, complete login with an authorised test account and confirm return to the application.
-
-## Microsoft Entra OAuth
-
-Create an application in Microsoft Entra ID with web platform and exact redirect:
-
-```text
-https://app.example.org/auth/microsoft/callback
-```
-
-Variables:
-
-```dotenv
-SOCIAL_LOGIN_ENABLED=true
-MICROSOFT_CLIENT_ID=example-microsoft-client-id
-MICROSOFT_CLIENT_SECRET=managed-secret
-MICROSOFT_REDIRECT_URI=https://app.example.org/auth/microsoft/callback
-MICROSOFT_TENANT_ID=common
-```
-
-`MICROSOFT_TENANT_ID=common` allows broad behaviour. The operator may restrict it to its tenant if the identity policy requires that.
-
-Prerequisite: Entra application created and secret valid.
-
-```sh
-# Directory: /srv/ia4sustainability
-docker compose exec web php artisan route:list --path=auth/microsoft
-```
-
-Expected result: redirect and callback routes appear.
-
-Check: open `https://app.example.org/auth/microsoft/redirect` with a test account and verify return.
-
-## OAuth Secret Storage
-
-Store client secrets in the secret manager or a protected host file. Do not version secrets in `web.env`, Compose, Markdown or images. Rotate before expiry and verify both providers after each rotation.

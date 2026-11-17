@@ -23,32 +23,6 @@ test('login screen keeps the Airis visual shell while using Laravel csrf', funct
     $response->assertDontSee('Laravel');
 });
 
-test('login screen restores Figma social login options', function () {
-    $response = $this->get('/login');
-
-    $response->assertStatus(200);
-    $response->assertSee('Iniciar sesión con Google');
-    $response->assertSee('Iniciar sesión con Microsoft');
-    $response->assertSee('>O<', false);
-});
-
-test('unconfigured social login options are not clickable links', function () {
-    $response = $this->get('/login');
-
-    $response->assertStatus(200);
-    $response->assertSee('disabled', false);
-    $response->assertDontSee('href="'.route('social.redirect', ['provider' => 'google'], false).'"', false);
-    $response->assertDontSee('href="'.route('social.redirect', ['provider' => 'microsoft'], false).'"', false);
-});
-
-test('social login fails closed when provider is not configured', function () {
-    $response = $this->from('/login')->get('/auth/google/redirect');
-
-    $this->assertGuest();
-    $response->assertRedirect('/login');
-    $response->assertSessionHas('status', 'El inicio de sesión con Google no está configurado en esta demo.');
-});
-
 test('login validation errors are Spanish and product neutral', function () {
     config(['app.locale' => 'es']);
 
@@ -85,41 +59,6 @@ test('invalid login error is Spanish and product neutral', function () {
 
     expect($message)->toBe('Estas credenciales no coinciden con nuestros registros.');
     expect($message)->not->toContain('Laravel');
-});
-
-test('configured google social login redirects to google oauth', function () {
-    config([
-        'services.social_login.enabled' => true,
-        'services.google.client_id' => 'google-client-id',
-        'services.google.client_secret' => 'google-client-secret',
-        'services.google.redirect' => 'https://reports.example.test/auth/google/callback',
-    ]);
-
-    $response = $this->get('/auth/google/redirect');
-
-    $response->assertRedirect();
-    $location = $response->headers->get('Location');
-    expect($location)->not->toBe(url('/login'));
-    expect($location)->toContain('accounts.google.com');
-    expect($location)->toContain('google-client-id');
-});
-
-test('configured microsoft social login redirects to microsoft oauth', function () {
-    config([
-        'services.social_login.enabled' => true,
-        'services.microsoft.client_id' => 'microsoft-client-id',
-        'services.microsoft.client_secret' => 'microsoft-client-secret',
-        'services.microsoft.redirect' => 'https://reports.example.test/auth/microsoft/callback',
-        'services.microsoft.tenant' => 'common',
-    ]);
-
-    $response = $this->get('/auth/microsoft/redirect');
-
-    $response->assertRedirect();
-    $location = $response->headers->get('Location');
-    expect($location)->not->toBe(url('/login'));
-    expect($location)->toContain('microsoft');
-    expect($location)->toContain('microsoft-client-id');
 });
 
 test('laravel login alias renders csrf form without replacing canonical route name', function () {

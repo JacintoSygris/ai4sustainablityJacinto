@@ -54,7 +54,7 @@ test('every authored translation call in active pages and components has reviewe
 })
 
 test('active JSX cannot silently reintroduce uncatalogued literal copy or human attributes', () => {
-  const identifiers = new Set(['Airis', 'Airis Academy', '©Sygris', 'Cookies', 'ESRS', 'Google', 'Microsoft', 'Español', 'English', 'Juan Hernández', '••••••••••••••', 'dpo@sygris.com', 'dpo@cbiconsulting.es', 'www.aepd.es', 'XSRF-TOKEN', 'remember_web_…', 'airis-consent-v1', 'airis-cookie-consent', 'wizard_expectations_dismissed', 'p9_intro_dismissed', 'sidebar_state', 'p8_guided_draft_&lt;id&gt;', 'p8_guided_draft_&lt;id&gt;_conflict', 'p9_drafts_&lt;id&gt;', 'pusherTransportTLS', 'pusherTransportNonTLS'])
+  const identifiers = new Set(['Airis', 'Airis Academy', '©Sygris', 'Cookies', 'ESRS', 'Español', 'English', 'Juan Hernández', '••••••••••••••', 'dpo@sygris.com', 'dpo@cbiconsulting.es', 'www.aepd.es', 'XSRF-TOKEN', 'remember_web_…', 'airis-consent-v1', 'airis-cookie-consent', 'wizard_expectations_dismissed', 'p9_intro_dismissed', 'p8_guided_draft_&lt;id&gt;', 'p8_guided_draft_&lt;id&gt;_conflict', 'p9_drafts_&lt;id&gt;', 'pusherTransportTLS', 'pusherTransportNonTLS'])
   const offenders = []
   for (const file of productionTsx) {
     const source = ts.createSourceFile(file.pathname, readFileSync(file, 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)

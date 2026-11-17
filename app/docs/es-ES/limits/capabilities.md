@@ -17,7 +17,7 @@ Volver al [índice de documentación](../index.md).
 - La lista temática de información depende de correspondencias configuradas y válidas.
 - El candidato XHTML/iXBRL exige datos estructurados suficientes, validación técnica en ejecución y aprobación humana para cualquier uso posterior.
 - Las funciones documentales están desactivadas en el perfil público incluido y no se suministra el servicio de extracción compatible.
-- El correo, OAuth, colas, almacenamiento persistente y controles externos dependen del operador.
+- El correo, colas, almacenamiento persistente y controles externos dependen del operador.
 
 ## No ofrecido
 

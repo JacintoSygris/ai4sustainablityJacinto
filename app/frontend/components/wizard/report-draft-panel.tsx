@@ -61,9 +61,7 @@ import {
   downloadLabel,
   endpointHref,
   formatPercent,
-  isScopingOnly,
   latestReportSnapshot,
-  limitationMessage,
   materialThemeGroups,
   reportDownloadRows,
   sectionLabel,
@@ -74,7 +72,6 @@ import {
   xhtmlPresentationAvailable,
   statusLabel,
   statusTone,
-  uniqueLimitations,
   visibleNextActions,
 } from "@/lib/report-draft-state.mjs"
 
@@ -143,6 +140,8 @@ export function ReportDraftPanel() {
   const [approvalError, setApprovalError] = useSystemMessage(null)
   useStudyError(6, approvalError)
   const [busyAction, setBusyAction] = useState<string | null>(null)
+  // «Generar XBRL»: prepara la versión factual si hace falta, pide la aprobación y descarga el paquete.
+  const [xbrlPending, setXbrlPending] = useState(false)
   const confirmedMaterialThemes = useMemo(
     () => materialThemeGroups(draft?.materiality.confirmed_topics ?? [], locale),
     [draft?.materiality.confirmed_topics, locale],
@@ -242,9 +241,7 @@ export function ReportDraftPanel() {
     () => reportDownloadRows(readiness, draft) as Array<[string, LaravelReportDownload]>,
     [draft, readiness],
   )
-  const limitationRows = useMemo(() => uniqueLimitations(readiness, draft), [draft, readiness])
   const nextActionRows = useMemo(() => visibleNextActions(readiness) as string[], [readiness])
-  const scopingOnly = useMemo(() => isScopingOnly(readiness, draft), [draft, readiness])
   const reportOnlyNextAction = allSectionsReady(readiness)
   const latestSnapshot = latestReportSnapshot(snapshots) as LaravelReportSnapshot | null
   const snapshotBlockers = snapshotDownloadBlockers(latestSnapshot).map(tr)
@@ -318,6 +315,85 @@ export function ReportDraftPanel() {
     }
   }
 
+  const xbrlReady = readiness?.workflow_complete === true && readiness?.report_content_ready === true
+    && readiness?.ixbrl_package_enabled === true && taxonomyStatus?.availability.state === "verified"
+
+  function xbrlBlockers(): string[] {
+    const blockers: string[] = []
+    if (readiness?.workflow_complete !== true) blockers.push(tr("Completa los pasos anteriores: todos los datos normativos del paso 5 deben estar decididos."))
+    if (readiness?.report_content_ready !== true) blockers.push(tr("Guarda y revisa un dato factual por cada dato completado (más abajo, «Datos factuales y revisión»)."))
+    if (readiness?.ixbrl_package_enabled !== true) blockers.push(tr("El paquete XBRL no está activado en esta instalación (IXBRL_PACKAGE_UI_ENABLED)."))
+    if (taxonomyStatus && taxonomyStatus.availability.state !== "verified") blockers.push(tr("La taxonomía externa no está aprovisionada en el servidor (manifiesto, paquete EFRAG y Arelle)."))
+    return blockers
+  }
+
+  async function downloadXbrl() {
+    try {
+      setBusyAction("xbrl")
+      setOperationMessage(systemCopy("Generando el documento XBRL y validándolo con Arelle. Puede tardar un minuto."))
+      const response = await fetch(laravelApiUrl("/report/ixbrl-package"), {
+        credentials: "include",
+        headers: { Accept: "application/zip, application/json" },
+      })
+      if (!response.ok) {
+        let reason = ""
+        try { reason = String((await response.json())?.data?.reason_code ?? "") } catch {}
+        setOperationMessage(reason ? systemCopy("No se ha podido generar el documento XBRL. Motivo: {0}.", [reason]) : systemCopy("No se ha podido generar el documento XBRL."))
+        return
+      }
+      const blob = await response.blob()
+      const url = URL.createObjectURL(blob)
+      const anchor = document.createElement("a")
+      anchor.href = url
+      anchor.download = "informe-neis-ixbrl.zip"
+      document.body.appendChild(anchor)
+      anchor.click()
+      anchor.remove()
+      setTimeout(() => URL.revokeObjectURL(url), 60_000)
+      const assertions = response.headers.get("X-Taxonomy-Assertions")
+      const counts = /^errors=(\d+); warnings=(\d+)$/.exec(assertions ?? "")
+      setOperationMessage(counts
+        ? systemCopy("Documento XBRL generado y validado. La taxonomía señala {0} datos esperados sin informar y {1} advertencias; no impiden la descarga.", [counts[1], counts[2]])
+        : systemCopy("Documento XBRL generado y validado."))
+    } catch {
+      setOperationMessage(systemCopy("No se ha podido generar el documento XBRL."))
+    } finally {
+      setBusyAction(null)
+    }
+  }
+
+  async function handleGenerateXbrl() {
+    if (busyAction) return
+    const blockers = xbrlBlockers()
+    if (blockers.length > 0) {
+      setOperationMessage(`${tr("Para generar el XBRL:")} ${blockers.join(" ")}`)
+      return
+    }
+    if (approvedFreshSnapshot) {
+      await downloadXbrl()
+      return
+    }
+    setXbrlPending(true)
+    if (!snapshotApprovalAllowed(latestSnapshot)) {
+      await handleCreateSnapshot()
+      return
+    }
+    setApproveDialogOpen(true)
+  }
+
+  useEffect(() => {
+    if (!xbrlPending || busyAction) return
+    if (approvedFreshSnapshot) {
+      setXbrlPending(false)
+      void downloadXbrl()
+      return
+    }
+    if (snapshotApprovalAllowed(latestSnapshot) && latestSnapshot && !latestSnapshot.is_approved && !approveDialogOpen) {
+      setApproveDialogOpen(true)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [xbrlPending, busyAction, approvedFreshSnapshot, latestSnapshot, approveDialogOpen])
+
   async function handleApproveSnapshot() {
     const declaration = approvalDeclaration.trim()
 
@@ -353,6 +429,9 @@ export function ReportDraftPanel() {
             {" "}{tr("Esto muestra qué asuntos materiales, datos normativos y evidencias están registrados, qué falta y qué descargas pueden generarse.")}{" "}</p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <Button type="button" onClick={handleGenerateXbrl} disabled={busyAction !== null || !presentationReady}>
+            <Download className="h-4 w-4" />
+            {" "}{busyAction === "xbrl" ? tr("Generando XBRL...") : tr("Generar XBRL")}{" "}</Button>
           <Button type="button" variant="outline" onClick={refreshReport}>
             <RefreshCw className="h-4 w-4" />
             {" "}{tr("Recargar")}{" "}</Button>
@@ -364,23 +443,6 @@ export function ReportDraftPanel() {
           <LocalizedDownload disabled={!presentationReady} type="button" variant="outline" href={laravelApiUrl("/report/draft")} target="_blank" rel="noreferrer">
               <FileText className="h-4 w-4" />
               {" "}{tr("Borrador JSON")}{" "}</LocalizedDownload>
-        </div>
-      </div>
-
-      <div className="rounded-lg border-2 border-amber-400 bg-amber-50 p-4">
-        <div className="flex items-start gap-3">
-          <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-amber-700" aria-hidden="true" />
-          <div className="space-y-2">
-            <p className="text-sm font-semibold text-amber-900">{tr("Alcance y límites de estas salidas")}</p>
-            <p className="text-sm text-amber-900">
-              {" "}{tr("Este paquete organiza el estado de preparación ASG/NEIS. Ten en cuenta sus límites:")}{" "}</p>
-            <ul className="list-disc space-y-1 pl-5 text-sm text-amber-900">
-              <li>{tr("No es una presentación oficial de tu informe ante ningún organismo.")}</li>
-              <li>{tr("No es un servicio de aseguramiento ni de verificación independiente.")}</li>
-              <li>{tr("No equivale a la atestación de la Taxonomía de la UE.")}</li>
-              <li>{tr("El candidato XHTML/iXBRL no se ofrece como descarga salvo que la validación técnica externa esté disponible y superada.")}</li>
-            </ul>
-          </div>
         </div>
       </div>
 
@@ -464,10 +526,6 @@ export function ReportDraftPanel() {
             </CardContent>
           </Card>
 
-          <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-            {tr(limitationMessage({ key: "report_package_scope" }))}
-          </div>
-
           {taxonomyStatus ? (
             <Card>
               <CardContent className="space-y-2 pt-6 text-sm">
@@ -486,15 +544,6 @@ export function ReportDraftPanel() {
             </Card>
           ) : null}
 
-          {scopingOnly ? (
-            <Card className="border-amber-200 bg-amber-50">
-              <CardContent className="space-y-2 pt-6 text-sm text-amber-950">
-                <h2 className="text-lg font-semibold">{tr("Modo alcance")}</h2>
-                <p>{tr(limitationMessage({ key: "exact_ar16_matter_to_dr_mapping_pending" }))}</p>
-                <p>{tr("Tus decisiones de materialidad siguen guardadas y se aplicarán cuando la cobertura completa esté activa.")}</p>
-              </CardContent>
-            </Card>
-          ) : null}
 
           {nextActionRows.length > 0 && !reportOnlyNextAction ? (
             <Card>
@@ -784,7 +833,7 @@ export function ReportDraftPanel() {
                         {readiness?.ixbrl_package_enabled === true && readiness.workflow_complete && readiness.report_content_ready && taxonomyStatus?.availability.state === "verified" ? (
                           <LocalizedDownload disabled={!presentationReady} type="button" variant="outline" className="w-full justify-start whitespace-normal text-left h-auto" href={laravelApiUrl("/report/ixbrl-package")}>
                             <Download className="h-4 w-4 shrink-0" />
-                            {tr("Candidato iXBRL provisional (no es una presentación ESEF/ESAP oficial)")}
+                            {tr("Descargar XBRL (paquete iXBRL)")}
                           </LocalizedDownload>
                         ) : null}
                         <LocalizedDownload disabled={!presentationReady} type="button" variant="outline" className="w-full justify-start" href={laravelApiUrl("/guided-report/evidence-bundle")}>
@@ -835,23 +884,6 @@ export function ReportDraftPanel() {
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardContent className="space-y-3 pt-6">
-                  <h2 className="text-lg font-semibold text-foreground">{tr("Limitaciones")}</h2>
-                  {limitationRows.map((limitation) => (
-                    <div key={limitation.key} className="rounded-md border border-border px-3 py-2 text-sm">
-                      <p className="font-medium text-foreground">
-                        {limitation.key === "exact_ar16_matter_to_dr_mapping_pending"
-                          ? tr("Cobertura de datos normativos")
-                          : limitation.key === "report_package_scope"
-                            ? tr("Alcance del paquete")
-                            : tr("Limitación de esta versión")}
-                      </p>
-                      <p className="mt-1 text-muted-foreground">{tr(limitationMessage(limitation))}</p>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
             </div>
           </div>
         </>

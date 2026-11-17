@@ -84,6 +84,14 @@ servicio de aprendizaje desactivado y `false` si el proceso no puede abrir el
 registro, también antes del primer candidato. Ninguno de los dos expone rutas ni
 identificadores de candidatos o de personas.
 
+`POST /extract-document` (desactivado por defecto, `I4S_DOCUMENT_EXTRACTION_ENABLED`)
+extrae texto de un PDF o DOCX subido en el paso 1 y devuelve evidencia de temas
+NEIS por página (TF-IDF frente al catálogo, frases negadas como evidencia
+negativa). Exige el token `I4S_AI_API_TOKEN`, una ruta bajo
+`ESRS_UPLOAD_EXTRACT_BASE` y, fuera de un checkout, el catálogo en
+`I4S_DOCUMENT_EXTRACTION_CATALOGUE_DIR`. Contrato y límites en
+[`../docs/es-ES/technical/document-extraction.md`](../docs/es-ES/technical/document-extraction.md).
+
 ## Codificación de entrada `p5-gpt41-encoding-v1`
 
 Los sectores se codifican como letras de sección CNAE/NACE Rev.2.1 (las
@@ -154,6 +162,18 @@ de parche de Python invalida los candidatos supervisados promovidos hasta que se
 reentrenen. Una promoción de la política de retroalimentación cambia la
 identidad de servicio y tiene el mismo efecto. El procedimiento completo está en
 [`../docs/learning-activation-runbook.md`](../docs/learning-activation-runbook.md).
+
+El entrenamiento supervisado (`wp13_feedback_training.py`) ajusta un estimador
+enmascarado por clave: bosque aleatorio por defecto o una red neuronal
+multicapa (`LEARNING_ENGINE_ESTIMATOR=rf|mlp|auto`; con `auto` se elige por
+validación cruzada enmascarada). Sobre las mismas filas se ajusta un filtrado
+colaborativo basado en ítems (`collaborative_filtering.py`: similitud coseno
+entre claves según las decisiones confirmadas de las empresas) que añade
+candidatos co-confirmados para las claves que la superposición supervisada no
+cubre; nunca retira claves y exige un soporte mínimo de empresas. El recibo de
+entrenamiento registra `estimator_family`, `estimator_selection` y
+`collaborative_filtering`; la respuesta servida añade `mapping_metadata.learning_overlay`
+con los nombres de clave afectados, sin identificadores.
 
 El control opcional `LEARNING_GATE_METRICS_ENABLED=false` añade métricas e intervalos por empresa y exige una mejora predeclarada para promover. `learning_serving_adapter.py` conserva el alias público `services`; `LEARNING_SERVING_RUNTIME` solo admite `public`. El contrato `../contracts/api/learning-gate-metrics-v1.schema.json` forma parte de los hashes. Su copia `learning-gate-metrics-v1.schema.json` se mantiene byte a byte para el contexto de Docker y se verifica en las pruebas del runtime. Consulte [la configuración y los límites](../docs/learning-engine-production.md#métricas-del-control-de-promoción).
 

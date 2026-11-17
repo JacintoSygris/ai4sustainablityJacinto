@@ -10,7 +10,7 @@ The included AI service starts with Uvicorn and exposes only:
 - `GET /model-profiles`;
 - `POST /predict`.
 
-It does not expose `POST /extract-document`.
+It exposes `POST /extract-document` only when `I4S_DOCUMENT_EXTRACTION_ENABLED=true` (see [document-extraction.md](document-extraction.md)).
 
 Prerequisite: `ai-service` on the private network.
 

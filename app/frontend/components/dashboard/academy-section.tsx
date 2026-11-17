@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
+// Sygris articles backing each card; the English edition is used when it exists.
 const articles = [
   {
     id: 1,
@@ -17,6 +18,10 @@ const articles = [
       "Aprende sobre el concepto de doble importancia relativa y cómo evaluar los impactos ambientales y financieros de tu empresa según NEIS.",
     image: "/forest-trees-canopy-sustainability.jpg",
     isExternal: true,
+    href: {
+      es: "https://sygris.com/2024/07/30/que-es-doble-materialidad/",
+      en: "https://sygris.com/en/resources/articles/what-is-double-materiality/",
+    },
   },
   {
     id: 2,
@@ -25,6 +30,10 @@ const articles = [
       "Descubre cómo identificar y consultar a los grupos de interés clave para tu análisis de materialidad.",
     image: "/esg-business-meeting.jpg",
     isExternal: true,
+    href: {
+      es: "https://sygris.com/2021/11/16/que-es-un-analisis-de-materialidad",
+      en: "https://sygris.com/2021/11/16/que-es-un-analisis-de-materialidad",
+    },
   },
   {
     id: 3,
@@ -33,6 +42,10 @@ const articles = [
       "Pistas para revisar información relacionada con energías renovables antes de incorporarla a una salida de trabajo.",
     image: "/wind-turbines-renewable-energy.jpg",
     isExternal: true,
+    href: {
+      es: "https://sygris.com/recursos/noticias/grenergy-confia-en-sygris-para-reportar-su-informacion-no-financiera/",
+      en: "https://sygris.com/recursos/noticias/grenergy-confia-en-sygris-para-reportar-su-informacion-no-financiera/",
+    },
   },
 ]
 
@@ -63,7 +76,14 @@ export function AcademySection() {
 
       <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {filteredArticles.map((article) => (
-          <Card key={article.id} className="overflow-hidden transition-shadow hover:shadow-lg">
+          <a
+            key={article.id}
+            href={article.href[locale === "en" ? "en" : "es"]}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block rounded-xl focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+          >
+          <Card className="h-full overflow-hidden transition-shadow hover:shadow-lg">
             <CardHeader className="relative p-0">
               <img src={article.image || "/placeholder.svg"} alt={tr(article.title)} className="h-48 w-full object-cover" />
               {article.isExternal && (
@@ -73,10 +93,11 @@ export function AcademySection() {
               )}
             </CardHeader>
             <CardContent className="p-4">
-              <h3 className="font-semibold text-primary">{tr(article.title)}</h3>
+              <h3 className="font-semibold text-primary hover:underline">{tr(article.title)}</h3>
               <p className="mt-2 text-sm text-muted-foreground line-clamp-3">{tr(article.description)}</p>
             </CardContent>
           </Card>
+          </a>
         ))}
       </div>
     </section>

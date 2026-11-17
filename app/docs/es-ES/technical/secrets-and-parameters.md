@@ -23,7 +23,7 @@ Resultado esperado: se imprime una clave `base64:...`.
 
 Comprobacion: copiarla solo al secreto `APP_KEY` del entorno; no escribirla en Markdown ni en un Compose versionado.
 
-Para contrasenas de base, Redis, SMTP y OAuth, generar valores con el gestor de secretos corporativo o con un generador local seguro. No reutilizar valores entre servicios.
+Para contrasenas de base, Redis y SMTP, generar valores con el gestor de secretos corporativo o con un generador local seguro. No reutilizar valores entre servicios.
 
 ## Almacenamiento y rotacion
 
@@ -47,7 +47,7 @@ Comprobacion: revisar logs de autenticacion del proveedor y errores de Laravel/F
 | `APP_ENV` | Laravel | Si | `production` | `php artisan about` dentro de `web`. |
 | `APP_KEY` | Laravel | Si | `base64:EXAMPLE_NOT_A_SECRET=` | Sesiones cifradas no fallan. |
 | `APP_DEBUG` | Laravel | Si | `false` | Errores no muestran trazas al usuario. |
-| `APP_URL` | Laravel | Si | `https://app.example.org` | Links de correo y OAuth usan el dominio correcto. |
+| `APP_URL` | Laravel | Si | `https://app.example.org` | Los links de correo usan el dominio correcto. |
 | `APP_LOCALE` | Laravel | Recomendado | `es` | Mensajes localizados esperados. |
 | `LOG_CHANNEL` | Laravel | Si | `stderr` o `stack` | Logs visibles en plataforma. |
 | `LOG_LEVEL` | Laravel | Si | `info` | No registra datos sensibles en modo debug. |
@@ -82,14 +82,6 @@ Comprobacion: revisar logs de autenticacion del proveedor y errores de Laravel/F
 | `MAIL_FROM_ADDRESS` | Laravel/SMTP | Si para correo | `no-reply@app.example.org` | Remitente permitido. |
 | `MAIL_FROM_NAME` | Laravel/SMTP | Si para correo | `IA4Sustainability` | Nombre visible. |
 | `AUTH_REQUIRE_EMAIL_VERIFICATION` | Laravel | Recomendado | `true` | Usuarios no verificados no pasan rutas protegidas. |
-| `SOCIAL_LOGIN_ENABLED` | Laravel | Opcional | `false` | OAuth desactivado por defecto. |
-| `GOOGLE_CLIENT_ID` | Laravel/Google | Si Google | id de app | Redirect se inicia. |
-| `GOOGLE_CLIENT_SECRET` | Laravel/Google | Si Google | secreto gestionado | Callback autentica. |
-| `GOOGLE_REDIRECT_URI` | Laravel/Google | Si Google | `https://app.example.org/auth/google/callback` | Coincide exactamente en Google Cloud. |
-| `MICROSOFT_CLIENT_ID` | Laravel/Entra | Si Microsoft | id de app | Redirect se inicia. |
-| `MICROSOFT_CLIENT_SECRET` | Laravel/Entra | Si Microsoft | secreto gestionado | Callback autentica. |
-| `MICROSOFT_REDIRECT_URI` | Laravel/Entra | Si Microsoft | `https://app.example.org/auth/microsoft/callback` | Coincide exactamente en Entra. |
-| `MICROSOFT_TENANT_ID` | Laravel/Entra | Si Microsoft | `common` | Ajustar si el operador restringe tenants. |
 | `CHARACTERIZATION_GATEWAY` | Laravel | Si | `api` | No usar `mock` para operacion real. |
 | `CHARACTERIZATION_API_BASE_URL` | Laravel/FastAPI | Si | `http://ai-service:8001` (contenedores) o `http://127.0.0.1:8001` (instalación nativa) | `/healthz` responde desde red privada. |
 | `CHARACTERIZATION_API_TIMEOUT` | Laravel | Si | `60` | Timeout suficiente para prediccion. |
@@ -102,7 +94,7 @@ Comprobacion: revisar logs de autenticacion del proveedor y errores de Laravel/F
 | `ESRS_ARELLE_CACHE_DIRECTORY` | Laravel | Opcional, candidato XHTML/iXBRL | ruta absoluta externa | Caché aprovisionada de dependencias públicas XBRL/W3C para validar sin red; ruta absoluta, fuera del repositorio. |
 | `FILESYSTEM_DISK` | Laravel | Si | `local` | Documentos usan disco local forzado por modelo. |
 | `AWS_ACCESS_KEY_ID` y relacionadas | Laravel | Solo otras integraciones | ejemplo no secreto | No habilitan documentos P6 automaticamente. |
-| `P6_DOCUMENT_UPLOAD_ENABLED` | Laravel | Si | `false` | Debe seguir `false` hasta existir `/extract-document`. |
+| `P6_DOCUMENT_UPLOAD_ENABLED` | Laravel | Si | `false` | Requiere el servicio de IA con `I4S_DOCUMENT_EXTRACTION_ENABLED=true` y `ESRS_UPLOAD_EXTRACT_BASE`. |
 | `P6_DOCUMENT_EXTRACT_TIMEOUT` | Laravel | Futuro | `240` | No arregla endpoint ausente. |
 | `P6_DOCUMENT_EXTRACT_JOB_TIMEOUT` | Laravel | Futuro | `300` | No arregla endpoint ausente. |
 | `LARAVEL_INTERNAL_API_ORIGIN` | Next.js | Si | `http://web:8000` | Origen privado de Laravel para SSR y rewrites; no se expone al navegador. |
@@ -127,11 +119,10 @@ QUEUE_CONNECTION=redis
 CHARACTERIZATION_GATEWAY=api
 CHARACTERIZATION_API_BASE_URL=http://ai-service:8001
 P6_DOCUMENT_UPLOAD_ENABLED=false
-SOCIAL_LOGIN_ENABLED=false
 LEARNING_DEPLOYED=false
 ```
 
-OAuth se activa solo cuando sus proveedores estan configurados y verificados; el registro no usa desafios de terceros (Turnstile se retiro el 2026-11-13). La carga documental permanece desactivada hasta que exista un servicio compatible con `POST /extract-document`.
+El registro no usa desafios de terceros (Turnstile se retiro el 2026-11-13). La carga documental permanece desactivada hasta arrancar el servicio de IA con `I4S_DOCUMENT_EXTRACTION_ENABLED=true` (ver document-extraction.md).
 
 Con `APP_ENV=production`, el aprendizaje opcional se activa por configuración salvo que `LEARNING_DEPLOYED=false`. Mantenga `LEARNING_DEPLOYED=false` en contenedores (no soportan el aprendizaje) y en instalaciones nativas hasta completar la lista de aprovisionamiento del [runbook de activación](../../learning-activation-runbook.md).
 

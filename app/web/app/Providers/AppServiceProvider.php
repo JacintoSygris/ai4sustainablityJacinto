@@ -11,8 +11,6 @@ use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
-use SocialiteProviders\Manager\SocialiteWasCalled;
-use SocialiteProviders\Microsoft\Provider as MicrosoftProvider;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
 class AppServiceProvider extends ServiceProvider
@@ -85,10 +83,6 @@ class AppServiceProvider extends ServiceProvider
             );
 
             return CanonicalPublicUrl::root().$relativeUrl;
-        });
-
-        Event::listen(function (SocialiteWasCalled $event): void {
-            $event->extendSocialite('microsoft', MicrosoftProvider::class);
         });
     }
 }

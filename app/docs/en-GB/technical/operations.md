@@ -27,7 +27,7 @@ The failed jobs table should be queryable without error. If jobs have failed, re
 
 ## Logs
 
-Send logs from Caddy, frontend, Laravel, worker, FastAPI, PostgreSQL and Redis to the operator's observability platform. Logs must not include documents, tokens, passwords or full OAuth provider responses.
+Send logs from Caddy, frontend, Laravel, worker, FastAPI, PostgreSQL and Redis to the operator's observability platform. Logs must not include documents, tokens, passwords or full external provider responses.
 
 Prerequisite: services running.
 
@@ -47,7 +47,7 @@ Alert at least on:
 - Laravel `/healthz` degraded on the private network;
 - FastAPI `/healthz` failing;
 - worker stopped or queue accumulating;
-- repeated SMTP/OAuth errors;
+- repeated SMTP errors;
 - PostgreSQL, Redis or document volume storage above the operator threshold;
 - TLS renewal expiry or failure.
 
@@ -71,7 +71,7 @@ Check: run the post-deployment block in [acceptance and diagnostics](acceptance-
 
 ## Secret Rotation
 
-Rotate `APP_KEY` only with a specific Laravel procedure and maintenance window because it affects encrypted data and sessions. Rotate PostgreSQL, Redis, SMTP and OAuth passwords individually, verifying each dependency before revoking the previous one.
+Rotate `APP_KEY` only with a specific Laravel procedure and maintenance window because it affects encrypted data and sessions. Rotate PostgreSQL, Redis and SMTP passwords individually, verifying each dependency before revoking the previous one.
 
 ## Incident Actions
 

@@ -65,7 +65,7 @@ Check: from the public host, the firewall should only allow inbound `80` and `44
 
 Documents, if enabled in future, are stored on persistent local disk because `CharacterizationDocument` forces the `local` disk. The controller accepts PDF/DOCX up to 50 MB, validates extension and magic bytes, and must keep verified file-security validation and file-upload security controls.
 
-Extraction is not available with the included code: the job calls `POST /extract-document`, but the public FastAPI exposes only `/healthz`, `/model-profiles` and `/predict`. Keep `P6_DOCUMENT_UPLOAD_ENABLED=false`.
+Extraction: the job calls `POST /extract-document`, served by the AI service when `I4S_DOCUMENT_EXTRACTION_ENABLED=true` (TF-IDF retrieval of ESRS topic evidence from PDF/DOCX text, see [document-extraction.md](document-extraction.md)). Keep `P6_DOCUMENT_UPLOAD_ENABLED=false` until that service and the ClamAV scan are provisioned.
 
 ## Public Compose
 
