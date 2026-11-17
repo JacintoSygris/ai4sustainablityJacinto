@@ -12,7 +12,7 @@ beforeEach(function () {
     foreach (['I4S_ARELLE_CAPTURE', 'I4S_ARELLE_EXIT', 'I4S_ARELLE_OUTPUT', 'I4S_ARELLE_SLEEP'] as $name) {
         $this->arelleValidatorPreviousEnvironment[$name] = getenv($name);
     }
-    config(['services.report.arelle_command' => null]);
+    config(['services.report.arelle_command' => null, 'services.report.arelle_cache_directory' => 'off', 'services.report.arelle_probe' => false]);
     $this->profile = (new ReportingProfileRepository())->load('esrs-2023-preparatory-v1');
 });
 
@@ -316,4 +316,77 @@ it('applies one aggregate budget to JSON and stream captures', function () {
     config(['services.report.arelle_command' => [PHP_BINARY, '-n', $binary]]);
     expect(fn () => (new ArelleXhtmlIxbrlValidator(maxOutputBytes: 2048))->validate('<html/>', $this->profile, arelleValidatorManifestFixture()))
         ->toThrow(XhtmlIxbrlCandidateException::class, 'xhtml_ixbrl_arelle_validation_failed');
+});
+
+it('bootstraps an empty Arelle cache online once and validates offline afterwards', function () {
+    $cache = sys_get_temp_dir().'/i4s-arelle-validator-tests/cache-'.bin2hex(random_bytes(4));
+    config(['services.report.arelle_cache_directory' => $cache]);
+    $capturePath = arelleValidatorTempFile('capture.json', '');
+    $binary = arelleValidatorFixtureBinary($capturePath, 0, '[info] validated in 1.23 secs - candidate.xhtml');
+    config(['services.report.arelle_command' => [PHP_BINARY, '-n', $binary]]);
+
+    try {
+        (new ArelleXhtmlIxbrlValidator())->validate('<html />', $this->profile, arelleValidatorManifestFixture());
+        $first = json_decode(file_get_contents($capturePath), true, flags: JSON_THROW_ON_ERROR);
+        expect($first['argv'])->toContain('--internetConnectivity=online')
+            ->and($first['argv'])->not->toContain('--internetConnectivity=offline')
+            ->and($first['argv'])->toContain('--cacheDirectory')
+            ->and($first['argv'])->toContain($cache)
+            ->and(is_file($cache.'/.i4s-bootstrapped'))->toBeTrue();
+
+        (new ArelleXhtmlIxbrlValidator())->validate('<html />', $this->profile, arelleValidatorManifestFixture());
+        $second = json_decode(file_get_contents($capturePath), true, flags: JSON_THROW_ON_ERROR);
+        expect($second['argv'])->toContain('--internetConnectivity=offline')
+            ->and($second['argv'])->not->toContain('--internetConnectivity=online');
+    } finally {
+        @unlink($cache.'/.i4s-bootstrapped');
+        @rmdir($cache);
+    }
+});
+
+it('does not mark the cache as bootstrapped when the online run fails', function () {
+    $cache = sys_get_temp_dir().'/i4s-arelle-validator-tests/cache-'.bin2hex(random_bytes(4));
+    config(['services.report.arelle_cache_directory' => $cache]);
+    $capturePath = arelleValidatorTempFile('capture.json', '');
+    $binary = arelleValidatorFixtureBinary($capturePath, 1, '[error] boom');
+    config(['services.report.arelle_command' => [PHP_BINARY, '-n', $binary]]);
+
+    try {
+        expect(fn () => (new ArelleXhtmlIxbrlValidator())->validate('<html />', $this->profile, arelleValidatorManifestFixture()))
+            ->toThrow(XhtmlIxbrlCandidateException::class);
+        expect(is_file($cache.'/.i4s-bootstrapped'))->toBeFalse();
+    } finally {
+        @unlink($cache.'/.i4s-bootstrapped');
+        @rmdir($cache);
+    }
+});
+
+it('warms the cache by loading the taxonomy entry point online and marks it, once', function () {
+    $cache = sys_get_temp_dir().'/i4s-arelle-validator-tests/cache-'.bin2hex(random_bytes(4));
+    config(['services.report.arelle_cache_directory' => $cache]);
+    $capturePath = arelleValidatorTempFile('capture.json', '');
+    $binary = arelleValidatorFixtureBinary($capturePath, 0, '[info] loaded in 2 secs');
+    config(['services.report.arelle_command' => [PHP_BINARY, '-n', $binary]]);
+    $manifestPath = arelleValidatorTempFile('manifest.json', json_encode([
+        'schema_version' => 'external_taxonomy_manifest_v1', 'profile_id' => 'esrs-2023-preparatory-v1',
+        'taxonomy_entrypoint' => 'https://xbrl.efrag.org/taxonomy/esrs/2023-12-22/esrs_all.xsd',
+        'taxonomy_package_path' => arelleValidatorManifestFixture()['taxonomy_package_path'],
+        'taxonomy_package_checksum' => hash('sha256', 'taxonomy package'), 'external_taxonomy_package_confirmed' => true,
+    ]));
+    config(['services.report.external_taxonomy_manifest_path' => $manifestPath]);
+
+    try {
+        expect(ArelleXhtmlIxbrlValidator::cacheWarm())->toBeFalse();
+        expect((new ArelleXhtmlIxbrlValidator())->warmCache($this->profile))->toBeTrue();
+        $capture = json_decode(file_get_contents($capturePath), true, flags: JSON_THROW_ON_ERROR);
+        expect($capture['argv'])->toContain('--internetConnectivity=online')
+            ->and($capture['argv'])->toContain('https://xbrl.efrag.org/taxonomy/esrs/2023-12-22/esrs_all.xsd')
+            ->and($capture['argv'])->toContain('--cacheDirectory')
+            ->and($capture['argv'])->not->toContain('--validate')
+            ->and(ArelleXhtmlIxbrlValidator::cacheWarm())->toBeTrue();
+        expect((new ArelleXhtmlIxbrlValidator())->warmCache($this->profile))->toBeFalse();
+    } finally {
+        @unlink($cache.'/.i4s-bootstrapped');
+        @rmdir($cache);
+    }
 });

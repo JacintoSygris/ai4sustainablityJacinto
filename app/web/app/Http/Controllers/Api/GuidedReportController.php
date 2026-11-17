@@ -10,7 +10,10 @@ use App\Services\EsrsDatapointCorpusBuilder;
 use App\Services\Report\ArelleXhtmlIxbrlValidator;
 use App\Services\Report\DocxRenderer;
 use App\Services\Report\EvidenceBundleBuilder;
+use App\Jobs\WarmArelleCache;
+use App\Services\Report\ArelleCommandLocator;
 use App\Services\Report\ExternalTaxonomyManifestRepository;
+use App\Services\Report\ExternalTaxonomyProvisioner;
 use App\Services\Report\HtmlReportRenderer;
 use App\Services\Report\IxbrlReportPackage;
 use App\Services\Report\TaxonomyProfileRegistry;
@@ -50,10 +53,19 @@ class GuidedReportController extends Controller
         $profile = $this->profiles->load('esrs-2023-preparatory-v1');
         $taxonomy = $profile->taxonomy();
 
+        // Provision the published EFRAG package when the installation has no
+        // operator-managed manifest yet; failures fall through to the usual block reasons.
+        $provisioning = app(ExternalTaxonomyProvisioner::class)->ensure($profile);
+
         try {
             // Admission only: discard internal metadata, including checksums.
             $this->externalTaxonomyManifest->loadForProfile($profile);
             $availability = ['state' => 'verified'];
+            // The one-off online Arelle bootstrap takes about a minute: run it from the queue
+            // so the first "Generar XBRL" click does not wait for it.
+            if (ArelleCommandLocator::resolve() !== null && ! ArelleXhtmlIxbrlValidator::cacheWarm()) {
+                WarmArelleCache::dispatch($profile->profileId());
+            }
         } catch (RuntimeException $e) {
             $allowedReasons = [
                 'external_taxonomy_manifest_missing',
@@ -85,6 +97,8 @@ class GuidedReportController extends Controller
                 ],
                 'reporting_profile' => $profile->profileId(),
                 'availability' => $availability,
+                'provisioning' => $provisioning,
+                'validator' => ['state' => ArelleCommandLocator::resolve() === null ? 'missing' : 'available'],
             ],
         ])->header('Cache-Control', 'no-store');
     }

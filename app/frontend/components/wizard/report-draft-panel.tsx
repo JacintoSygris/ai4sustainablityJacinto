@@ -323,7 +323,8 @@ export function ReportDraftPanel() {
     if (readiness?.workflow_complete !== true) blockers.push(tr("Completa los pasos anteriores: todos los datos normativos del paso 5 deben estar decididos."))
     if (readiness?.report_content_ready !== true) blockers.push(tr("Guarda y revisa un dato factual por cada dato completado (más abajo, «Datos factuales y revisión»)."))
     if (readiness?.ixbrl_package_enabled !== true) blockers.push(tr("El paquete XBRL no está activado en esta instalación (IXBRL_PACKAGE_UI_ENABLED)."))
-    if (taxonomyStatus && taxonomyStatus.availability.state !== "verified") blockers.push(tr("La taxonomía externa no está aprovisionada en el servidor (manifiesto, paquete EFRAG y Arelle)."))
+    if (taxonomyStatus && taxonomyStatus.availability.state !== "verified") blockers.push(tr("La taxonomía EFRAG no está disponible en el servidor: se descarga sola en el primer uso; si persiste, revisa la conexión del servidor o aprovisiónala a mano."))
+    if (taxonomyStatus?.validator?.state === "missing") blockers.push(tr("El validador Arelle no está instalado en el servidor (se instala con las dependencias del servicio de IA)."))
     return blockers
   }
 

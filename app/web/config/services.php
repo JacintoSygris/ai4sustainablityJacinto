@@ -120,8 +120,12 @@ return [
 
     'report' => [
         'generic_xbrl_root' => env('XBRL_GENERIC_TAXONOMY_ROOT'),
+        // Operator assets outside the application tree; see App\Services\Report\ExternalAssetRoot.
+        'external_root' => env('ESRS_EXTERNAL_ROOT'),
         'external_taxonomy_manifest_path' => env('ESRS_EXTERNAL_TAXONOMY_MANIFEST_PATH'),
         'arelle_command' => env('ESRS_ARELLE_COMMAND'),
+        // Probe the usual Arelle locations and the AI service when no command is configured.
+        'arelle_probe' => env('ESRS_ARELLE_PROBE', true),
         'arelle_cache_directory' => env('ESRS_ARELLE_CACHE_DIRECTORY'),
         'arelle_max_output_bytes' => env('ESRS_ARELLE_MAX_OUTPUT_BYTES'),
     ],

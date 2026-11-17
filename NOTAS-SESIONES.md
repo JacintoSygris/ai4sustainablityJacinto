@@ -158,3 +158,23 @@ La prueba E2E contra producción llegó al paso 6 y solo falló `/characterizati
 con HTTP 500: `barryvdh/laravel-dompdf` estaba en `require-dev` y el despliegue instala sin dev.
 Movido a `require` (lock refrescado con la imagen `composer:2`; solo se mueven dompdf y sus
 dependencias). Tras el siguiente despliegue del backend la descarga PDF funciona.
+
+## XBRL sin acceso al servidor: aprovisionamiento automático (2026-11-17)
+
+Producción no tiene `.env` editable, así que todo lo que exigía el botón «Generar XBRL» se resuelve desde el código:
+- `IXBRL_PACKAGE_UI_ENABLED` pasa a `true` por defecto (`filter_var`, porque PHPUnit convierte `value="false"` en cadena vacía).
+- `ExternalAssetRoot`: raíz de activos externos (`ESRS_EXTERNAL_ROOT` o `<hermano del checkout>/i4s-external`, luego
+  `$HOME/.local/share`, luego `/tmp`), nunca dentro de `base_path` ni `storage_path`.
+- `ExternalTaxonomyProvisioner` + comando `esrs:provision-external-taxonomy`: descarga el ZIP de EFRAG (SHA-256 fijado
+  en `config/ixbrl.php`), lo guarda en `<raíz>/taxonomy/` y escribe el manifiesto. Lo lanza `GET /api/report/taxonomy`.
+  Probado contra EFRAG real: 1.882.168 bytes, verificado.
+- `ArelleCommandLocator`: `ESRS_ARELLE_COMMAND` → `.venv/bin/arelleCmdLine` del servicio de IA (`arelle-release==2.45.1`
+  añadido a `requirements.public.txt`; resuelve con numpy 2.5.3 en Python 3.12) → `/opt/arelle` → `/healthz` del
+  servicio de IA (nuevo bloque `arelle.command`). `ESRS_ARELLE_PROBE=false` lo desactiva (así va en `phpunit.xml`).
+- Caché de Arelle por defecto en `<raíz>/arelle-cache`; primer uso con red (job `WarmArelleCache` desde el estado de
+  taxonomía, o inline en la primera validación) y marca `.i4s-bootstrapped`; después, sin red. Medido en local: 55 s el
+  calentamiento, ~26 s cada validación posterior. Ojo: el proxy local corta a 30 s, de ahí el job en cola.
+- `GET /api/report/taxonomy` añade `provisioning` y `validator` (solo estados). El paso 6 muestra un bloqueo distinto
+  cuando falta Arelle.
+- Local: `.env` sin manifiesto/Arelle/caché explícitos y `ESRS_EXTERNAL_ROOT=/opt/i4s-external/auto` (montado desde
+  `~/.config/i4s-local/external/auto`); el flujo completo funcionó por la API.

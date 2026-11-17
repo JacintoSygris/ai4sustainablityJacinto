@@ -97,8 +97,12 @@ function taxonomyStatus201AssertSafePayload(
     $payload = $response->assertOk()->json('data');
     expect($payload)->toBeArray();
     \PHPUnit\Framework\Assert::assertEqualsCanonicalizing(
-        ['type', 'version', 'taxonomy', 'reporting_profile', 'availability'], array_keys($payload),
+        ['type', 'version', 'taxonomy', 'reporting_profile', 'availability', 'provisioning', 'validator'], array_keys($payload),
     );
+    // Auto-provisioning and validator discovery report states only, never paths or checksums.
+    expect($payload['provisioning']['state'])->toBeIn(['verified', 'skipped', 'failed']);
+    expect(array_keys($payload['provisioning']))->toBeIn([['state'], ['state', 'reason']]);
+    expect($payload['validator'])->toBe(['state' => \App\Services\Report\ArelleCommandLocator::resolve() === null ? 'missing' : 'available']);
     expect($payload['type'])->toBe('report_taxonomy_status');
     expect($payload['version'])->toBeString();
     expect(trim($payload['version']))->not->toBe('');

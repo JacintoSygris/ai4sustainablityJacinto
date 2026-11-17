@@ -38,8 +38,7 @@ class ArelleXhtmlIxbrlValidator
      */
     public function validate(string $xhtml, ReportingProfile $profile, array $internalManifest, bool $reportPackage = false): array
     {
-        $command = config('services.report.arelle_command');
-        $prefix = is_string($command) ? [$command] : $command;
+        $prefix = ArelleCommandLocator::resolve();
         if (! is_array($prefix) || ! array_is_list($prefix) || $prefix === []) {
             throw new XhtmlIxbrlCandidateException('xhtml_ixbrl_arelle_unavailable');
         }
@@ -89,12 +88,12 @@ class ArelleXhtmlIxbrlValidator
                     $xhtmlPath,
                 ];
 
-                $cache = config('services.report.arelle_cache_directory');
-                if (is_string($cache) && $cache !== '') {
-                    $args = [...$args, '--cacheDirectory', $cache];
-                }
+                [$args, $bootstrapMarker] = $this->withCache($args);
                 $result = $this->run($args, $tmpDir);
                 $summary = $this->analyzeLog($logPath);
+                if ($bootstrapMarker !== null && $summary !== null) {
+                    @file_put_contents($bootstrapMarker, date('c')."\n");
+                }
                 // `--validationExitCode` also returns non-zero for assertion messages alone; a non-zero
                 // exit without any recorded assertion error is an unexplained failure.
                 if ($summary === null || ($result['exit_code'] !== 0 && $summary['assertion_errors'] === 0)) {
@@ -114,6 +113,106 @@ class ArelleXhtmlIxbrlValidator
         } finally {
             $lock->release();
         }
+    }
+
+    /** True when the cache directory exists and the one-off online bootstrap has run. */
+    public static function cacheWarm(): bool
+    {
+        $cache = ExternalAssetRoot::arelleCacheDirectory();
+
+        return $cache === null || is_file($cache.'/.i4s-bootstrapped');
+    }
+
+    /**
+     * Loads the taxonomy entry point through the external package with network access so
+     * the schemas it imports land in the cache. No report is involved; the marker is written
+     * when Arelle finishes loading, so later validations can stay offline.
+     */
+    public function warmCache(ReportingProfile $profile): bool
+    {
+        $prefix = ArelleCommandLocator::resolve();
+        $cache = ExternalAssetRoot::arelleCacheDirectory();
+        if ($prefix === null || $cache === null || self::cacheWarm()) {
+            return false;
+        }
+        if (! is_dir($cache) && ! @mkdir($cache, 0750, true) && ! is_dir($cache)) {
+            return false;
+        }
+        try {
+            $manifest = app(ExternalTaxonomyManifestRepository::class)->loadInternalForProfile($profile);
+        } catch (\RuntimeException) {
+            return false;
+        }
+        $entrypoint = $profile->taxonomy()['entrypoint'] ?? null;
+        if (! is_string($entrypoint) || $entrypoint === '') {
+            return false;
+        }
+
+        $lock = Cache::lock(self::LOCK_NAME, max(10, $this->timeoutSeconds + 10));
+        if (! $lock->get()) {
+            return false;
+        }
+        try {
+            $tmpDir = $this->temporaryDirectory();
+            $logPath = $tmpDir.'/warmup.json';
+            try {
+                $args = [
+                    ...$prefix,
+                    '--internetConnectivity=online',
+                    '--disablePersistentConfig',
+                    '--xdgConfigHome', $tmpDir,
+                    '--logFile', $logPath,
+                    '--cacheDirectory', $cache,
+                    '--packages', $manifest['taxonomy_package_path'],
+                    '--file', $entrypoint,
+                ];
+                $result = $this->run($args, $tmpDir);
+                $loaded = $result['exit_code'] === 0 || (is_file($logPath) && filesize($logPath) > 0);
+                if ($loaded) {
+                    @file_put_contents($cache.'/.i4s-bootstrapped', date('c')."\n");
+                }
+
+                return $loaded;
+            } catch (XhtmlIxbrlCandidateException) {
+                return false;
+            } finally {
+                if (is_file($logPath)) @unlink($logPath);
+                if (is_dir($tmpDir)) @rmdir($tmpDir);
+            }
+        } finally {
+            $lock->release();
+        }
+    }
+
+    /**
+     * Adds the Arelle cache directory. The profile validates offline, so the first run
+     * against an empty cache goes online once to fetch the schemas the EFRAG package
+     * imports (xbrl.org, w3.org); a marker file records the bootstrap and every later
+     * run stays offline.
+     *
+     * @param  list<string>  $args
+     * @return array{0: list<string>, 1: ?string}
+     */
+    private function withCache(array $args): array
+    {
+        $cache = ExternalAssetRoot::arelleCacheDirectory();
+        if ($cache === null) {
+            return [$args, null];
+        }
+        if (! is_dir($cache) && ! @mkdir($cache, 0750, true) && ! is_dir($cache)) {
+            return [$args, null];
+        }
+        $args = [...$args, '--cacheDirectory', $cache];
+        $marker = $cache.'/.i4s-bootstrapped';
+        if (is_file($marker) || ! (bool) config('ixbrl.arelle_cache_bootstrap', true)) {
+            return [$args, null];
+        }
+        $args = array_map(
+            static fn (string $arg): string => $arg === '--internetConnectivity=offline' ? '--internetConnectivity=online' : $arg,
+            $args,
+        );
+
+        return [$args, $marker];
     }
 
     /** @return list<string> */

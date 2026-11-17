@@ -770,6 +770,8 @@ export type LaravelReportReadiness = {
 }
 
 export type LaravelReportTaxonomyStatus = {
+  validator?: { state: "available" | "missing" }
+  provisioning?: { state: string; reason?: string }
   type: "report_taxonomy_status"
   version: string
   taxonomy: {

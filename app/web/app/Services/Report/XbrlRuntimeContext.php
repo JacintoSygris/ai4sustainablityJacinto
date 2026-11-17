@@ -53,7 +53,8 @@ class XbrlRuntimeContext
         }
         $metadata = [];
         $package = null;
-        $configured = trim((string) config('services.report.external_taxonomy_manifest_path')) !== '';
+        $manifestPath = ExternalAssetRoot::manifestPath();
+        $configured = ExternalAssetRoot::manifestIsOperatorManaged() || ($manifestPath !== null && is_file($manifestPath));
         if ($configured) {
             $external = app(ExternalTaxonomyManifestRepository::class)->loadInternalForProfile($profile);
             $metadata = app(TaxonomyConceptMetadata::class)->load($taxonomy, $external);

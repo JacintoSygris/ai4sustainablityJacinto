@@ -16,6 +16,17 @@ The package is downloaded and installed separately on the server. It is not incl
 2. Validation must be tied to the exact file installed by the system operator. Its SHA-256 is therefore calculated on the server and recorded in a private manifest.
 3. Keeping the package separate from deployment prevents an application update from silently replacing the taxonomy and allows read access to be limited to the validation process.
 
+## Automatic provisioning (default since 2026-11-17)
+
+When `ESRS_EXTERNAL_TAXONOMY_MANIFEST_PATH` is not set, the application provisions the taxonomy itself the first time `GET /api/report/taxonomy` runs (step 6) or when the operator runs `php artisan esrs:provision-external-taxonomy`:
+
+1. The published ZIP is downloaded over HTTPS from `https://xbrl.efrag.org/downloads/ESRS-Set1-XBRL-Taxonomy.zip` and its SHA-256 is compared with the pinned value in `config/ixbrl.php`; a mismatch leaves no files behind.
+2. The ZIP and a manifest are written to `<external root>/taxonomy/`. The external root is `ESRS_EXTERNAL_ROOT` or, by default, a sibling of the checkout named `i4s-external` (never `base_path` or `storage_path`, so the existing path rules still hold).
+3. Arelle is located automatically (`app/ai-service/.venv/bin/arelleCmdLine`, installed from the AI service requirements; `/opt/arelle`; or the path reported by the AI service `/healthz`).
+4. The Arelle cache (`<external root>/arelle-cache`) is warmed once with network access by the queued job `WarmArelleCache`, so later validations run offline. The validator also bootstraps inline if the queue has not run yet.
+
+Everything below describes the manual, operator-managed installation that overrides this behaviour.
+
 ## Server installation
 
 Define an external directory that is not a checkout, image, release or Laravel storage. For example:

@@ -39,7 +39,7 @@ class ExternalTaxonomyManifestRepository
      */
     public function loadInternalForProfile(ReportingProfile $profile): array
     {
-        $manifestPath = config('services.report.external_taxonomy_manifest_path');
+        $manifestPath = ExternalAssetRoot::manifestPath();
         if (! is_string($manifestPath) || trim($manifestPath) === '' || ! is_file($manifestPath) || ! is_readable($manifestPath)) {
             throw new RuntimeException('external_taxonomy_manifest_missing');
         }

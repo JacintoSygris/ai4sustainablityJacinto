@@ -9,3 +9,6 @@ pandas==3.0.5
 scipy==1.18.1
 scikit-learn==1.7.0
 pypdf==6.21.4
+# XBRL validator for the Laravel report pipeline (ArelleCommandLocator finds it in this
+# environment's bin/ directory, so deployments without shell access still get a validator).
+arelle-release==2.45.1

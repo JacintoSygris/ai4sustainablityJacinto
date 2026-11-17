@@ -75,7 +75,10 @@ claves. Las predicciones son apoyo candidato para una revisión humana posterior
 de materialidad; nunca son materialidad final.
 
 `/healthz` incluye un bloque `learning` (ganchos disponibles, interruptores y
-`runtime_sha256`) y no lee el registro de aprendizaje. `/model-profiles` incluye
+`runtime_sha256`) y no lee el registro de aprendizaje. Incluye también `arelle.command`,
+la ruta de `arelleCmdLine` en este entorno (`arelle-release` viene en
+`requirements.public.txt`): Laravel la usa para validar el candidato iXBRL cuando
+`ESRS_ARELLE_COMMAND` no está configurado. `/model-profiles` incluye
 `serving_identity_sha256`, los mismos interruptores y, en `learning`,
 `registry_readable` y `effective_sha256`: el hash del modelo supervisado que
 este proceso serviría ahora, resuelto por la misma ruta de fallo cerrado que

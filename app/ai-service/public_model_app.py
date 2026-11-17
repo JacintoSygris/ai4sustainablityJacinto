@@ -150,6 +150,15 @@ def learning_serving_state(profile, identity: str | None) -> dict:
     return state
 
 
+def arelle_status() -> dict:
+    """Where the Arelle command line of THIS environment lives, for the Laravel validator."""
+    import shutil
+
+    bin_dir = os.path.join(sys.prefix, "bin")
+    command = shutil.which("arelleCmdLine", path=bin_dir) or shutil.which("arelleCmdLine")
+    return {"command": os.path.realpath(command) if command else None}
+
+
 @app.get("/healthz")
 def healthz():
     profile = resolve_model_profile(PUBLIC_MODEL_PROFILE)
@@ -160,6 +169,7 @@ def healthz():
         "model_profile": profile.name,
         "model_key_count": profile.expected_key_count,
         "learning": learning_runtime_status(),
+        "arelle": arelle_status(),
     }
 
 

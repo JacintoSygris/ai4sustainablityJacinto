@@ -23,6 +23,10 @@
     <php>
         <ini name="memory_limit" value="1G"/>
         <env name="ESRS_MATTER_DR_MAPPING_PATH" value="off"/>
+        <env name="IXBRL_PACKAGE_UI_ENABLED" value="false"/>
+        <env name="ESRS_EXTERNAL_TAXONOMY_AUTOPROVISION" value="false"/>
+        <env name="ESRS_ARELLE_CACHE_DIRECTORY" value="off"/>
+        <env name="ESRS_ARELLE_PROBE" value="false"/>
         <env name="LEARNING_DEPLOYED" value="false"/>
         <env name="LEARNING_ENGINE_ENABLED" value="false"/>
         <env name="LEARNING_ENGINE_SERVING_ENABLED" value="false"/>

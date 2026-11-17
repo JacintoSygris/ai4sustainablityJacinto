@@ -16,6 +16,17 @@ El paquete se descarga y se instala por separado en el servidor. No se incorpora
 2. La validación debe quedar vinculada al archivo exacto instalado por quien opera el sistema. Por eso se calcula su SHA-256 en el servidor y se registra en un manifiesto privado.
 3. Separar el paquete del despliegue evita que una actualización de aplicación sustituya silenciosamente la taxonomía y permite limitar su lectura al proceso de validación.
 
+## Aprovisionamiento automatico (por defecto desde 2026-11-17)
+
+Cuando `ESRS_EXTERNAL_TAXONOMY_MANIFEST_PATH` no esta configurada, la aplicacion aprovisiona la taxonomia por si misma la primera vez que se ejecuta `GET /api/report/taxonomy` (paso 6) o cuando el operador lanza `php artisan esrs:provision-external-taxonomy`:
+
+1. Descarga por HTTPS el ZIP publicado en `https://xbrl.efrag.org/downloads/ESRS-Set1-XBRL-Taxonomy.zip` y compara su SHA-256 con el valor fijado en `config/ixbrl.php`; si no coincide no deja ningun fichero.
+2. Escribe el ZIP y un manifiesto en `<raiz externa>/taxonomy/`. La raiz externa es `ESRS_EXTERNAL_ROOT` o, por defecto, un directorio hermano del checkout llamado `i4s-external` (nunca `base_path` ni `storage_path`, asi que las reglas de rutas existentes se mantienen).
+3. Localiza Arelle automaticamente (`app/ai-service/.venv/bin/arelleCmdLine`, instalado con los requisitos del servicio de IA; `/opt/arelle`; o la ruta que informa `/healthz` del servicio de IA).
+4. Calienta una vez la cache de Arelle (`<raiz externa>/arelle-cache`) con acceso a red mediante el trabajo en cola `WarmArelleCache`, de modo que las validaciones posteriores se hacen sin red. El validador tambien la inicializa en linea si la cola aun no lo ha hecho.
+
+Todo lo que sigue describe la instalacion manual gestionada por el operador, que sustituye este comportamiento.
+
 ## Instalación en el servidor
 
 Defina un directorio externo que no sea un checkout, imagen, release ni almacenamiento de Laravel. Por ejemplo:
