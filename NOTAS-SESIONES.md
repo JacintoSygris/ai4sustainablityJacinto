@@ -151,3 +151,10 @@ De paso, `GuidedReportApiTest` tenía un doble de `ArelleXhtmlIxbrlValidator::va
   navegador de una ejecución interrumpida que seguía vaciando su cola; no es un fallo del formulario.
 - Local, usuario de prueba con 789 datos: pasa en 2,5 min. En producción (669 datos en la cuenta del
   usuario) basta con relanzar el mismo comando.
+
+## PDF del resumen en producción (2026-11-17)
+
+La prueba E2E contra producción llegó al paso 6 y solo falló `/characterization/summary?format=pdf`
+con HTTP 500: `barryvdh/laravel-dompdf` estaba en `require-dev` y el despliegue instala sin dev.
+Movido a `require` (lock refrescado con la imagen `composer:2`; solo se mueven dompdf y sus
+dependencias). Tras el siguiente despliegue del backend la descarga PDF funciona.
