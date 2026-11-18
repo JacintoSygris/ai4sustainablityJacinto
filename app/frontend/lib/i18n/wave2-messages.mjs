@@ -28,6 +28,7 @@ export const wave2English = {
   "Aprueba la versión del informe.": "Approve the report version.",
   "Informe HTML": "HTML report",
   "Informe XBRL": "XBRL report",
+  "Salidas técnicas del paquete de preparación (ocultas por defecto)": "Technical outputs of the preparation package (hidden by default)",
   "Ver informe XBRL en el navegador": "View the XBRL report in the browser",
   "Descargar informe XBRL": "Download the XBRL report",
   "Informe DOCX": "DOCX report",

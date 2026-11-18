@@ -358,21 +358,13 @@ export function ReportDraftPanel() {
           <p className="mt-2 text-muted-foreground">
             {" "}{tr("Esto muestra qué asuntos materiales, datos normativos y evidencias están registrados, qué falta y qué descargas pueden generarse.")}{" "}</p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 md:shrink-0 md:flex-nowrap">
           <Button type="button" onClick={handleGenerateXbrl} disabled={busyAction !== null || !presentationReady}>
             <Download className="h-4 w-4" />
             {" "}{busyAction === "xbrl" ? tr("Generando XBRL...") : tr("Generar XBRL")}{" "}</Button>
           <Button type="button" variant="outline" onClick={refreshReport}>
             <RefreshCw className="h-4 w-4" />
             {" "}{tr("Recargar")}{" "}</Button>
-          {storedReadiness?.downloads?.report_package_html?.status === "ready" ? (
-            <LocalizedDownload disabled={!presentationReady} type="button" variant="outline" href={laravelApiUrl("/report/package")} target="_blank" rel="noreferrer">
-                <FileText className="h-4 w-4" />
-                {" "}{tr("Paquete HTML")}{" "}</LocalizedDownload>
-          ) : null}
-          <LocalizedDownload disabled={!presentationReady} type="button" variant="outline" href={laravelApiUrl("/report/draft")} target="_blank" rel="noreferrer">
-              <FileText className="h-4 w-4" />
-              {" "}{tr("Borrador JSON")}{" "}</LocalizedDownload>
         </div>
       </div>
 
@@ -630,28 +622,28 @@ export function ReportDraftPanel() {
                     <h3 className="text-sm font-semibold text-foreground">{tr("Salidas basadas en una versión aprobada")}</h3>
                     {approvedFreshSnapshot ? (
                       <div className="mt-3 space-y-2">
-                        <LocalizedDownload disabled={!presentationReady} type="button" variant="outline" className="w-full justify-start" href={laravelApiUrl("/report/xhtml-ixbrl-candidate?inline=1")} target="_blank" rel="noreferrer">
+                        <LocalizedDownload disabled={!presentationReady} type="button" variant="outline" className="w-full justify-start" target="_blank" rel="noreferrer" href={laravelApiUrl("/report/xhtml-ixbrl-candidate?inline=1")}>
                             <ExternalLink className="h-4 w-4" />
                             {" "}{tr("Ver informe XBRL en el navegador")}{" "}</LocalizedDownload>
-                        <LocalizedDownload disabled={!presentationReady} type="button" variant="outline" className="w-full justify-start" href={laravelApiUrl("/report/xhtml-ixbrl-candidate")}>
+                        <LocalizedDownload disabled={!presentationReady} type="button" variant="outline" className="w-full justify-start" target="_blank" rel="noreferrer" href={laravelApiUrl("/report/xhtml-ixbrl-candidate")}>
                             <Download className="h-4 w-4" />
                             {" "}{tr("Descargar informe XBRL")}{" "}</LocalizedDownload>
-                        <LocalizedDownload disabled={!presentationReady} type="button" variant="outline" className="w-full justify-start" href={laravelApiUrl("/guided-report/docx")}>
+                        <LocalizedDownload disabled={!presentationReady} type="button" variant="outline" className="w-full justify-start" target="_blank" rel="noreferrer" href={laravelApiUrl("/guided-report/docx")}>
                             <Download className="h-4 w-4" />
                             {" "}{tr("Informe DOCX")}{" "}</LocalizedDownload>
                         {readiness?.report_scope_integrity_enabled === true ? (
-                          <LocalizedDownload disabled={!presentationReady || !xhtmlPresentationAvailable(readiness, latestSnapshot)} type="button" variant="outline" className="w-full justify-start" href={laravelApiUrl("/report/xhtml")}>
+                          <LocalizedDownload disabled={!presentationReady || !xhtmlPresentationAvailable(readiness, latestSnapshot)} type="button" variant="outline" className="w-full justify-start" target="_blank" rel="noreferrer" href={laravelApiUrl("/report/xhtml")}>
                             <Download className="h-4 w-4" />
                             {tr("Descargar informe NEIS en XHTML")}
                           </LocalizedDownload>
                         ) : null}
                         {readiness?.ixbrl_package_enabled === true && readiness.workflow_complete && readiness.report_content_ready && taxonomyStatus?.availability.state === "verified" ? (
-                          <LocalizedDownload disabled={!presentationReady} type="button" variant="outline" className="w-full justify-start whitespace-normal text-left h-auto" href={laravelApiUrl("/report/ixbrl-package")}>
+                          <LocalizedDownload disabled={!presentationReady} type="button" variant="outline" className="w-full justify-start whitespace-normal text-left h-auto" target="_blank" rel="noreferrer" href={laravelApiUrl("/report/ixbrl-package")}>
                             <Download className="h-4 w-4 shrink-0" />
                             {tr("Descargar XBRL (paquete iXBRL)")}
                           </LocalizedDownload>
                         ) : null}
-                        <LocalizedDownload disabled={!presentationReady} type="button" variant="outline" className="w-full justify-start" href={laravelApiUrl("/guided-report/evidence-bundle")}>
+                        <LocalizedDownload disabled={!presentationReady} type="button" variant="outline" className="w-full justify-start" target="_blank" rel="noreferrer" href={laravelApiUrl("/guided-report/evidence-bundle")}>
                             <Download className="h-4 w-4" />
                             {" "}{tr("Paquete de evidencias")}{" "}</LocalizedDownload>
                       </div>
@@ -666,12 +658,26 @@ export function ReportDraftPanel() {
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardContent className="space-y-4 pt-6">
+              <details className="group rounded-xl border border-border bg-card text-card-foreground shadow-sm">
+                <summary className="cursor-pointer list-none px-6 py-4 text-sm text-muted-foreground">
+                  {tr("Salidas técnicas del paquete de preparación (ocultas por defecto)")}
+                </summary>
+              <Card className="border-0 shadow-none">
+                <CardContent className="space-y-4 pt-2">
                   <div>
                     <h2 className="text-lg font-semibold text-foreground">{tr("Paquete HTML de preparación")}</h2>
                     <p className="mt-1 text-sm text-muted-foreground">
                       {" "}{tr("Disponibilidad del paquete antiguo de trabajo. No es un informe aprobado.")}{" "}</p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {storedReadiness?.downloads?.report_package_html?.status === "ready" ? (
+                      <LocalizedDownload disabled={!presentationReady} type="button" variant="outline" size="sm" href={laravelApiUrl("/report/package")} target="_blank" rel="noreferrer">
+                          <FileText className="h-4 w-4" />
+                          {" "}{tr("Paquete HTML")}{" "}</LocalizedDownload>
+                    ) : null}
+                    <LocalizedDownload disabled={!presentationReady} type="button" variant="outline" size="sm" href={laravelApiUrl("/report/draft")} target="_blank" rel="noreferrer">
+                        <FileText className="h-4 w-4" />
+                        {" "}{tr("Borrador JSON")}{" "}</LocalizedDownload>
                   </div>
                   <div className="space-y-3">
                     {downloadRows.map(([key, download]) => (
@@ -698,6 +704,7 @@ export function ReportDraftPanel() {
                   </div>
                 </CardContent>
               </Card>
+              </details>
 
             </div>
           </div>

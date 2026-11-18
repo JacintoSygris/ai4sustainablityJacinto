@@ -394,6 +394,7 @@ test("el asistente se completa de principio a fin con datos de una PYME industri
     test.info().annotations.push({ type: "taxonomía", description: `${taxonomy.taxonomy.name} ${taxonomy.taxonomy.version}: ${taxonomy.availability.state}${taxonomy.availability.reason_code ? ` (${taxonomy.availability.reason_code})` : ""}` })
 
     // Todas las descargas del paquete de preparación quedan listas.
+    await page.getByText("Salidas técnicas del paquete de preparación").click()
     const packageCard = page.locator('[data-slot="card"]', { has: page.getByRole("heading", { name: "Paquete HTML de preparación" }) }).first()
     await expect(packageCard.getByText("Pendiente", { exact: true })).toHaveCount(0)
     expect(await packageCard.getByText("Abrir", { exact: true }).count()).toBeGreaterThanOrEqual(6)
