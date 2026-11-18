@@ -16,6 +16,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Bus;
+use App\Services\PlatformAdmin;
 
 class CharacterizationController extends Controller
 {
@@ -83,7 +84,7 @@ class CharacterizationController extends Controller
 
     public function summary(Request $request)
     {
-        $characterization = Characterization::forUser($request->user()->id)->firstOrFail();
+        $characterization = Characterization::forUser(PlatformAdmin::viewedUserId($request))->firstOrFail();
         $format = $request->query('format', 'html');
 
         $data = $this->buildSummaryData($characterization);

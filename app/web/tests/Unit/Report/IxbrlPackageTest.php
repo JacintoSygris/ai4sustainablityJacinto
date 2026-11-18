@@ -105,7 +105,8 @@ it('uses fiscal dates, instant and duration contexts, UTR units, percentages, si
     expect($xpath->evaluate('string(//xbrli:instant)'))->toBe('2026-06-30');
     expect($xpath->evaluate('string(//ix:nonFraction[@name="esrs:Count"]/@contextRef)'))->toBe('c_instant');
     expect($xpath->evaluate('string(//ix:nonFraction[@name="esrs:Revenue"]/@sign)'))->toBe('-');
-    expect($xpath->evaluate('string(//ix:nonFraction[@name="esrs:Revenue"])'))->toBe('1234.50');
+    expect($xpath->evaluate('string(//ix:nonFraction[@name="esrs:Revenue"])'))->toBe('1.234,50');
+    expect($xpath->evaluate('string(//ix:nonFraction[@name="esrs:Revenue"]/@format)'))->toBe('ixt:num-comma-decimal');
     expect($xpath->evaluate('string(//ix:nonFraction[@name="esrs:Percent"]/@scale)'))->toBe('-2');
     expect($xpath->evaluate('string(//ix:nonFraction[@name="esrs:Percent"]/@decimals)'))->toBe('2');
     expect($xml)->toContain('scheme="http://standards.iso.org/iso/17442"', 'utr:tCO2e', 'utr:MWh', 'style="display:none"', 'esrs_set1_2023-12-22', '&amp; &lt;script&gt;');

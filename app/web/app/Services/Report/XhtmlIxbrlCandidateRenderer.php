@@ -22,6 +22,8 @@ class XhtmlIxbrlCandidateRenderer
         private readonly TaxonomyProfileRegistry $registry = new TaxonomyProfileRegistry,
     ) {}
 
+    private const TEXT_ITEM_TYPES = ['stringItemType', 'textBlockItemType'];
+
     public function render(array $ir, ReportingProfile $profile, array $internalManifest, string $locale = 'es', ?string $taxonomyProfileId = null): string
     {
         if (ReportDisplayProjection::coherent($ir)) return $this->renderCoherent($ir, $profile, $internalManifest, $locale, $taxonomyProfileId);
@@ -37,10 +39,30 @@ class XhtmlIxbrlCandidateRenderer
         if ($facts === []) {
             throw new XhtmlIxbrlCandidateException('xhtml_ixbrl_no_renderable_claims');
         }
+        // Claims lacking an id (synthetic IRs) get an internal key that never reaches the visible document.
+        foreach ($ir['claims'] ?? [] as $index => $claim) {
+            if (is_array($claim) && ! is_string($claim['claim_id'] ?? null)) $ir['claims'][$index]['claim_id'] = '_claim_'.$index;
+        }
+        $factsByClaim = [];
+        foreach ($ir['claims'] ?? [] as $claim) {
+            if (! is_array($claim) || ! in_array($claim['value_type'] ?? null, self::NUMERIC_VALUE_TYPES, true)) continue;
+            foreach ($facts as $fact) {
+                if ($fact['datapoint_id'] === (string) ($claim['datapoint_id'] ?? '') && ! isset($factsByClaim[$claim['claim_id']])) {
+                    $factsByClaim[$claim['claim_id']] = $fact;
+                    break;
+                }
+            }
+        }
 
-        $doc = new DOMDocument('1.0', 'UTF-8');
-        $html = $doc->createElementNS(self::XHTML_NS, 'html');
-        $doc->appendChild($html);
+        // The report itself is the Inline XBRL document: same design as the other outputs.
+        try {
+            $built = (new ReportXhtmlDocument)->build($ir, $locale);
+        } catch (\DomainException|\RuntimeException $e) {
+            // Fail closed on XML-incompatible text or unknown dimensions, as the other visible paths do.
+            throw new XhtmlIxbrlCandidateException('xhtml_ixbrl_invalid_visible_content', previous: $e);
+        }
+        $doc = $built['doc'];
+        $html = $doc->documentElement;
         $html->setAttribute('xml:lang', $display->locale);
         foreach ([
             'ix' => self::IX_NS, 'ixt' => self::IXT_NS, 'xbrli' => self::XBRLI_NS,
@@ -49,15 +71,14 @@ class XhtmlIxbrlCandidateRenderer
             'utr' => 'http://www.xbrl.org/2009/utr', 'esrs' => $taxonomy['namespace'],
         ] as $prefix => $namespace) $html->setAttribute('xmlns:'.$prefix, $namespace);
 
-        $head = $html->appendChild($doc->createElementNS(self::XHTML_NS, 'head'));
-        $this->text($doc, $head, self::XHTML_NS, 'title', $display->text('Candidato XHTML/iXBRL NEIS'));
+        $head = $doc->getElementsByTagNameNS(self::XHTML_NS, 'head')->item(0);
         foreach (['taxonomy-profile' => $taxonomy['id'], 'taxonomy-status' => $taxonomy['status']] as $name => $value) {
             $meta = $head->appendChild($doc->createElementNS(self::XHTML_NS, 'meta'));
             $meta->setAttribute('name', $name);
             $meta->setAttribute('content', $value);
         }
-        $body = $html->appendChild($doc->createElementNS(self::XHTML_NS, 'body'));
-        $hidden = $body->appendChild($doc->createElementNS(self::XHTML_NS, 'div'));
+        $body = $doc->getElementsByTagNameNS(self::XHTML_NS, 'body')->item(0);
+        $hidden = $body->insertBefore($doc->createElementNS(self::XHTML_NS, 'div'), $body->firstChild);
         $hidden->setAttribute('style', 'display:none');
         $header = $hidden->appendChild($doc->createElementNS(self::IX_NS, 'ix:header'));
         $references = $header->appendChild($doc->createElementNS(self::IX_NS, 'ix:references'));
@@ -65,7 +86,10 @@ class XhtmlIxbrlCandidateRenderer
         $schemaRef->setAttributeNS(self::XLINK_NS, 'xlink:type', 'simple');
         $schemaRef->setAttributeNS(self::XLINK_NS, 'xlink:href', $taxonomy['entrypoint']);
         $resources = $header->appendChild($doc->createElementNS(self::IX_NS, 'ix:resources'));
-        foreach (array_unique(array_column($facts, 'period_type')) as $periodType) {
+        $textFacts = $this->textFacts($ir, $concepts, $mapping);
+        $periodTypes = array_unique([...array_column($facts, 'period_type'), ...array_column($textFacts, 'period_type')]);
+        sort($periodTypes);
+        foreach ($periodTypes as $periodType) {
             $this->appendContext($doc, $resources, 'c_'.$periodType, $context, $periodType);
         }
         $units = [];
@@ -76,42 +100,78 @@ class XhtmlIxbrlCandidateRenderer
             $unit->setAttribute('id', $id);
             $this->text($doc, $unit, self::XBRLI_NS, 'xbrli:measure', $measure);
         }
-        $this->text($doc, $body, self::XHTML_NS, 'h1', $display->text('Candidato XHTML/iXBRL NEIS'));
-        $this->text($doc, $body, self::XHTML_NS, 'p', $display->text('Candidato iXBRL provisional (no es una presentación ESEF/ESAP oficial)'));
-        $this->text($doc, $body, self::XHTML_NS, 'p', $context['entity_name'].' — '.$context['start'].' / '.$context['end']);
-        $this->text($doc, $body, self::XHTML_NS, 'p', $taxonomy['id']);
-        $this->text($doc, $body, self::XHTML_NS, 'p', $display->text('Solo se etiquetan datos numéricos sin dimensiones; el contenido narrativo no se etiqueta.'));
-        $iroLines = IroContextPresentation::lines($ir['iro_context_v1'] ?? [], $display->locale);
-        if ($iroLines !== []) {
-            $this->text($doc, $body, self::XHTML_NS, 'h2', array_shift($iroLines));
-            foreach ($iroLines as $line) {
-                $this->text($doc, $body, self::XHTML_NS, 'p', $line);
-            }
-        }
-        foreach ($ir['claims'] ?? [] as $claim) {
-            if (($claim['value_type'] ?? null) === 'text') {
-                $this->text($doc, $body, self::XHTML_NS, 'p', (string) ReportFactValue::scalar($claim));
-            }
-        }
-        foreach ($facts as $index => $fact) {
-            $p = $body->appendChild($doc->createElementNS(self::XHTML_NS, 'p'));
-            $this->text($doc, $p, self::XHTML_NS, 'span', $display->claimLabel($fact['datapoint_id']).': ');
-            if ($fact['negative']) $p->appendChild($doc->createTextNode('-'));
-            $node = $p->appendChild($doc->createElementNS(self::IX_NS, 'ix:nonFraction'));
+
+        // Numbers: tag the visible, localised value in place; the unit stays in unitRef only.
+        $tagged = 0;
+        $seen = [];
+        foreach ($built['numeric'] as $entry) {
+            $fact = $factsByClaim[$entry['claim_id']] ?? null;
+            if ($fact === null) continue;
+            $key = $fact['concept'].'|'.$fact['period_type'];
+            if (isset($seen[$key])) continue;
+            $seen[$key] = true;
+            $span = $entry['span'];
+            $value = $span->textContent;
+            $prefix = str_starts_with($value, '-') || str_starts_with($value, '+') ? substr($value, 0, 1) : '';
+            $node = $doc->createElementNS(self::IX_NS, 'ix:nonFraction');
             foreach ([
                 'name' => $fact['concept'], 'contextRef' => 'c_'.$fact['period_type'],
                 'unitRef' => $fact['unit_id'], 'decimals' => $fact['decimals'],
-                'format' => 'ixt:num-dot-decimal', 'id' => 'f'.($index + 1),
-            ] as $key => $value) $node->setAttribute($key, $value);
+                'format' => $locale === 'en' ? 'ixt:num-dot-decimal' : 'ixt:num-comma-decimal', 'id' => 'f'.(++$tagged),
+            ] as $key => $attribute) $node->setAttribute($key, $attribute);
             if ($fact['negative']) $node->setAttribute('sign', '-');
             if ($fact['scale'] !== null) $node->setAttribute('scale', $fact['scale']);
-            $node->appendChild($doc->createTextNode($fact['value']));
-            $this->text($doc, $p, self::XHTML_NS, 'span', ' '.$fact['display_unit']);
+            $node->appendChild($doc->createTextNode($prefix === '' ? $value : substr($value, 1)));
+            while ($span->firstChild) $span->removeChild($span->firstChild);
+            if ($prefix !== '') $span->appendChild($doc->createTextNode($prefix));
+            $span->appendChild($node);
         }
+        if ($tagged === 0) throw new XhtmlIxbrlCandidateException('xhtml_ixbrl_render_failed');
+
+        // Narratives: tag text answers whose concept is a string or text block.
+        $textSeen = [];
+        foreach ($built['text'] as $entry) {
+            $fact = $textFacts[$entry['claim_id']] ?? null;
+            if ($fact === null || isset($textSeen[$fact['concept']])) continue;
+            $textSeen[$fact['concept']] = true;
+            $paragraph = $entry['node'];
+            $node = $doc->createElementNS(self::IX_NS, 'ix:nonNumeric');
+            $node->setAttribute('name', $fact['concept']);
+            $node->setAttribute('contextRef', 'c_'.$fact['period_type']);
+            $node->setAttribute('id', 'f'.(++$tagged));
+            while ($paragraph->firstChild) $node->appendChild($paragraph->firstChild);
+            $paragraph->appendChild($node);
+        }
+
         $xml = $doc->saveXML();
         if (! is_string($xml) || $xml === '') throw new XhtmlIxbrlCandidateException('xhtml_ixbrl_render_failed');
 
         return $xml;
+    }
+
+    /**
+     * Text claims whose mapped concept accepts free text, keyed by claim id.
+     *
+     * @return array<string, array{concept: string, period_type: string}>
+     */
+    private function textFacts(array $ir, array $concepts, XbrlConceptMap $mapping): array
+    {
+        $facts = [];
+        foreach ($ir['claims'] ?? [] as $claim) {
+            if (! is_array($claim) || ($claim['value_type'] ?? null) !== 'text' || ($claim['nil'] ?? false) === true) continue;
+            if (($claim['dimensions'] ?? []) !== []) continue;
+            $mapped = $mapping->conceptFor((string) ($claim['datapoint_id'] ?? ''));
+            $concept = $mapped['concept_id'] ?? '';
+            if (! is_array($mapped) || ($mapped['taggable_state'] ?? null) !== 'mapped' || ($mapped['required_context'] ?? []) !== []
+                || ! is_string($concept) || ! preg_match('/\Aesrs:[A-Za-z_][A-Za-z0-9._-]*\z/', $concept)) continue;
+            $metadata = $concepts[$concept] ?? null;
+            if (! is_array($metadata) || ($metadata['abstract'] ?? false) || ! in_array($metadata['period_type'] ?? null, ['duration', 'instant'], true)) continue;
+            $type = substr((string) $metadata['type'], (int) strrpos((string) $metadata['type'], '}') + 1);
+            if (! in_array($type, self::TEXT_ITEM_TYPES, true)) continue;
+            $facts[(string) $claim['claim_id']] = ['concept' => $concept, 'period_type' => $metadata['period_type']];
+        }
+
+        return $facts;
     }
 
     /** Complete XHTML presentation without taxonomy, contexts, units or Arelle prerequisites. */

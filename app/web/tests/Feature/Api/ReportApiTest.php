@@ -28,7 +28,7 @@ it('conforms to the bounded OpenAPI readiness and draft response schemas in both
             configureApprovedReportDrMap($this->e2Topic);
             $mappingPath = config('services.esrs_datapoints.matter_dr_mapping_path');
             completeDoubleMaterialityProcess($characterization);
-            completeReportDatapointResponses($characterization);
+            completeReportDatapointResponses($characterization, $state === 'factual_ready');
         } else {
             // Exercise all conditional limitation keys using persisted legacy data.
             $formData = $characterization->form_data;
@@ -36,28 +36,6 @@ it('conforms to the bounded OpenAPI readiness and draft response schemas in both
             $formData['materiality_confirmation']['p6_snapshot'] = ['topic_ids' => [$otherTopic->id]];
             $formData['esrs_datapoint_responses']['responses']['obsolete_datapoint'] = ['status' => 'completed', 'value' => 'Historical user value'];
             $characterization->forceFill(['form_data' => $formData])->save();
-        }
-        if ($state === 'factual_ready') {
-            $corpus = app(EsrsDatapointCorpusBuilder::class)->build($characterization);
-            foreach (reportDatapointIds($corpus) as $id) {
-                ReportingFact::create([
-                    'characterization_id' => $characterization->id,
-                    'fact_id' => 'rf_contract_'.hash('sha256', $id),
-                    'schema_version' => ReportingFact::SCHEMA_VERSION,
-                    'profile_id' => ReportingFact::PROFILE_ID,
-                    'datapoint_id' => $id,
-                    'applicability' => 'applicable',
-                    'value_type' => 'text',
-                    'value' => ['text' => 'Synthetic reviewed user text'],
-                    'dimensions' => [],
-                    'language' => 'es',
-                    'nil' => false,
-                    'evidence_refs' => [['type' => 'note', 'value' => 'Synthetic contract fixture']],
-                    'provenance' => 'api',
-                    'approval_status' => 'reviewed',
-                    'blocking_reasons' => [],
-                ]);
-            }
         }
         $before = $characterization->fresh()->getRawOriginal('form_data');
         $contract = new FrontendCompatibilitySchema();
@@ -640,33 +618,19 @@ it('separates a completed workflow from factual report readiness', function () {
         ->assertJsonPath('data.workflow_complete', true)
         ->assertJsonPath('data.report_content_ready', false)
         ->assertJsonPath('data.sections.final_report_generation.status', 'blocked')
-        ->assertJsonPath('data.sections.final_report_generation.reason_code', 'no_persisted_facts')
+        ->assertJsonPath('data.sections.final_report_generation.reason_code', 'no_claimable_report_content')
         ->assertJsonPath('data.downloads.report_package_html.status', 'ready');
 
-    ReportingFact::create([
-        'characterization_id' => $characterization->id,
-        'fact_id' => 'rf_partial_report_content',
-        'schema_version' => ReportingFact::SCHEMA_VERSION,
-        'profile_id' => ReportingFact::PROFILE_ID,
-        'datapoint_id' => $datapointIds[0],
-        'applicability' => 'applicable',
-        'value_type' => 'text',
-        'value' => ['text' => 'Hecho empresarial revisado para comprobar cobertura parcial.'],
-        'unit' => null,
-        'decimals' => null,
-        'dimensions' => [],
-        'language' => 'es',
-        'nil' => false,
-        'nil_reason' => null,
-        'evidence_refs' => [['type' => 'note', 'value' => 'Evidencia sintética de prueba.']],
-        'provenance' => 'api',
-        'approval_status' => 'reviewed',
-        'blocking_reasons' => [],
-    ]);
+    // Giving one completed answer a value turns it into a reviewed report fact.
+    $characterization->refresh();
+    $formData = $characterization->form_data;
+    $formData['esrs_datapoint_responses']['responses'][$datapointIds[0]]['value'] = 'Hecho empresarial para comprobar cobertura parcial.';
+    $characterization->forceFill(['form_data' => $formData])->save();
 
     $this->actingAs($this->user)
         ->getJson('/api/report')
         ->assertOk()
+        ->assertJsonPath('data.sections.report_content.endpoint', '/api/esrs-datapoints/responses')
         ->assertJsonPath('data.sections.report_content.claimable_count', 1)
         ->assertJsonPath('data.sections.report_content.required_count', 10)
         ->assertJsonPath('data.sections.report_content.reason_code', 'completed_datapoint_facts_missing')
@@ -775,11 +739,11 @@ it('generates a self-contained report package and evidence bundle when report in
     $readiness = $this->actingAs($this->user)
         ->getJson('/api/report')
         ->assertOk()
-        ->assertJsonPath('data.status', 'incomplete')
+        ->assertJsonPath('data.status', 'ready')
         ->assertJsonPath('data.workflow_complete', true)
-        ->assertJsonPath('data.report_content_ready', false)
-        ->assertJsonPath('data.sections.final_report_generation.status', 'blocked')
-        ->assertJsonPath('data.sections.final_report_generation.reason_code', 'no_persisted_facts')
+        ->assertJsonPath('data.report_content_ready', true)
+        ->assertJsonPath('data.sections.final_report_generation.status', 'ready')
+        ->assertJsonPath('data.sections.final_report_generation.reason_code', null)
         ->assertJsonPath('data.downloads.report_package_html.endpoint', '/api/report/package')
         ->assertJsonPath('data.downloads.report_package_html.status', 'ready')
         ->assertJsonPath('data.downloads.evidence_bundle_json.endpoint', '/api/report/evidence-bundle')
@@ -815,7 +779,7 @@ it('generates a self-contained report package and evidence bundle when report in
         ->assertJsonPath('data.version', 'v0')
         ->assertJsonPath('data.characterization_id', $characterization->id)
         ->assertJsonPath('data.bundle.company.name', 'Entidad Demo')
-        ->assertJsonPath('data.bundle.readiness.status', 'incomplete')
+        ->assertJsonPath('data.bundle.readiness.status', 'ready')
         ->assertJsonPath('data.traceability.ar16_to_dr_mapping.status', 'loaded')
         ->assertJsonPath('data.traceability.source_endpoints.report_package', '/api/report/package');
 });
@@ -928,7 +892,11 @@ function configureApprovedReportDrMap(EsrsTopic $topic): void
     config(['services.esrs_datapoints.matter_dr_mapping_path' => $mappingPath]);
 }
 
-function completeReportDatapointResponses(Characterization $characterization): void
+/**
+ * Completed answers with a value become reviewed report facts automatically;
+ * without a value the datapoint stays decided but has nothing to report.
+ */
+function completeReportDatapointResponses(Characterization $characterization, bool $withValues = true): void
 {
     $corpus = app(EsrsDatapointCorpusBuilder::class)->build($characterization);
     $datapointIds = reportDatapointIds($corpus);
@@ -938,7 +906,7 @@ function completeReportDatapointResponses(Characterization $characterization): v
             $id => [
                 'datapoint_id' => $id,
                 'status' => 'completed',
-                'value' => "Prepared response for {$id}.",
+                ...($withValues ? ['value' => "Prepared response for {$id}."] : []),
                 'evidence_reference' => "Evidence pack {$id}",
                 'updated_at' => now()->toJSON(),
             ],

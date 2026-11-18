@@ -18,6 +18,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use App\Services\PlatformAdmin;
 
 class ReportSnapshotController extends Controller
 {
@@ -39,7 +40,7 @@ class ReportSnapshotController extends Controller
     {
         $snapshots = ReportSnapshot::query()
             ->with('approval')
-            ->where('user_id', $request->user()->id)
+            ->where('user_id', PlatformAdmin::viewedUserId($request))
             ->orderByDesc('created_at')
             ->orderByDesc('id')
             ->get()

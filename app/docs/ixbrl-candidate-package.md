@@ -1,6 +1,6 @@
 # Paquete candidato iXBRL provisional
 
-Paquete técnico con un informe Inline XBRL candidato, generado desde una versión factual aprobada en P10. No es una presentación ESEF/ESAP oficial ni acredita el cumplimiento de las NEIS o de la obligación de etiquetado. La taxonomía EFRAG ESRS Set 1 es la taxonomía final de referencia; la revisión de 2026 sigue siendo provisional. Esta función no activa aprendizaje ni cambia modelos.
+Paquete técnico con un informe Inline XBRL candidato, generado desde una versión del informe aprobada en el paso 6; etiqueta las respuestas numéricas del paso 5 (tipo numérico, valor exacto, unidad y decimales). No es una presentación ESEF/ESAP oficial ni acredita el cumplimiento de las NEIS o de la obligación de etiquetado. La taxonomía EFRAG ESRS Set 1 es la taxonomía final de referencia; la revisión de 2026 sigue siendo provisional. Esta función no activa aprendizaje ni cambia modelos.
 
 ## Configuración y uso
 
@@ -24,6 +24,8 @@ El botón «Candidato iXBRL provisional» de P10 solo aparece cuando se cumplen 
 `GET /api/report/ixbrl-package` usa la sesión Laravel, consulta únicamente las versiones de la persona usuaria, exige el flujo completo y una versión aprobada vigente, y comparte el límite de solicitudes del candidato XHTML. Revalida la vigencia después de Arelle. Un error de perfil, representación o validación devuelve 409 con un código controlado. Desactivar la opción vuelve a ocultar el botón y bloquea la ruta. La ruta `/api/report/xhtml-ixbrl-candidate` sigue disponible y comparte las mismas reglas de representación.
 
 ## Representación y paquete
+
+El documento XHTML es el propio informe de sostenibilidad, con diseño (`App\Services\Report\ReportXhtmlDocument`): portada con empresa, ejercicio, periodo y LEI, avisos, capítulos y requisitos de información con su código ESRS, y una tarjeta por dato con código, pregunta (etiqueta del inventario) y respuesta. Las cifras se muestran localizadas dentro de `span.numeric-value` y ahí se inyecta `ix:nonFraction` (`format="ixt:num-comma-decimal"` en español, `ixt:num-dot-decimal` en inglés); la unidad `pure` solo viaja en `unitRef`, nunca en el texto visible. Las respuestas de texto cuyo concepto es `stringItemType` o `textBlockItemType` se etiquetan con `ix:nonNumeric` (un hecho por concepto, contexto de duración o instante según el concepto). Las referencias de evidencia no se imprimen. `GET /api/report/xhtml-ixbrl-candidate?inline=1` sirve el documento con `Content-Disposition: inline` para verlo en el navegador; sin el parámetro se descarga. El paso 6 y la página de administración enlazan este documento en lugar del antiguo informe HTML (`/api/report/html` sigue disponible pero no se enlaza).
 
 El generador consulta `periodType`, tipo y carácter abstracto en el esquema del paquete externo cuyo SHA-256 está verificado. Usa las fechas congeladas del informe para los contextos de duración y el fin del periodo para los contextos instantáneos. El LEI se comprueba con MOD-97 y se emite con `http://standards.iso.org/iso/17442`; el lector admite el antiguo esquema HTTPS en versiones inmutables y normaliza únicamente la salida.
 

@@ -14,7 +14,7 @@ import { connectRealtime } from '../public/consent/realtime.mjs'
 import { wizardStepsForView } from '../lib/wizard-steps-data.mjs'
 
 const pure = {}
-for (const name of ['dma-nlp-state', 'esrs-datapoints-state', 'materiality-confirmation-state', 'materiality-confirmation-draft', 'materiality-guided-state', 'double-materiality-guide-state', 'materiality-proposal-review', 'p6-document-evidence', 'learning-case-state']) pure[`@/lib/${name}.mjs`] = await import(`../lib/${name}.mjs`)
+for (const name of ['dma-nlp-state', 'esrs-datapoints-state', 'materiality-confirmation-state', 'materiality-confirmation-draft', 'materiality-guided-state', 'double-materiality-guide-state', 'materiality-proposal-review', 'p6-document-evidence']) pure[`@/lib/${name}.mjs`] = await import(`../lib/${name}.mjs`)
 const frontend = new URL('../', import.meta.url)
 class ApiError extends Error { constructor(status) { super('synthetic transport failure'); this.status = status } }
 
@@ -223,7 +223,7 @@ test('material topic UI starts collapsed, translates summary and keeps three ind
   })
   c.render(); await c.settle()
   let tree = c.render(), html = renderToStaticMarkup(tree)
-  assert.match(html, /La IA ha propuesto 1 temas NEIS candidatos/)
+  assert.match(html, /La IA ha recomendado 1 temas/)
   assert.doesNotMatch(html, /Resumen técnico no visible|Nota de revisión opcional|Sin revisar/)
   assert.equal(c.handlers.expandedTopics.length, 0)
   const button = label => elements(tree, el => el.props.children === label && typeof el.props.onClick === 'function')[0]
@@ -538,7 +538,7 @@ test('held locale persistence keeps Spanish and disables every server-localized 
     ['p9_datapoints_csv', '/api/esrs-datapoints/export.localized.csv'], ['p9_responses_csv', '/api/esrs-datapoints/responses/export.localized.csv'],
     ['xhtml_candidate', '/api/report/xhtml-ixbrl-candidate'],
   ].map(([key, endpoint]) => [key, { status: 'ready', endpoint, content_type: 'application/octet-stream' }]))
-  const p10 = consumer('components/wizard/report-draft-panel', 'ReportDraftPanel', ['updateFactForm', 'factForm'], harness(), {
+  const p10 = consumer('components/wizard/report-draft-panel', 'ReportDraftPanel', ['setApprovalDeclaration', 'approvalDeclaration'], harness(), {
     ...shared,
     getLaravelReportingFacts: async () => ({ data: null }),
     getLaravelReportTaxonomyStatus: async () => ({ data: null }), getLaravelReportSnapshots: async () => ({ data: [{ id: 1, stale_state: 'fresh', is_approved: true }] }),
@@ -550,14 +550,14 @@ test('held locale persistence keeps Spanish and disables every server-localized 
   p8.handlers.chooseMode('direct'); p8.handlers.setChangeNotes({ 1: 'Texto libre unchanged' })
   p7.handlers.updateActaField('participants', 'Texto libre unchanged')
   p9.handlers.updateDraft('BP-1_01', { value: 'Texto libre unchanged', evidence_reference: '=1+1' })
-  p10.handlers.updateFactForm('value', '9007199254740993'); p10.handlers.updateFactForm('evidenceRef', '=1+1')
+  p10.handlers.setApprovalDeclaration('Texto libre unchanged =1+1')
   for (const c of consumers) await c.settle()
   const revisionOwner = p9.handlers.saveQueueRef.current
   const urls = [
     ['/double-materiality-guide/templates/iro_register.csv'],
     ['/materiality-confirmation/decision-sheet'],
     ['/esrs-datapoints/export.localized.csv', '/esrs-datapoints/responses/export.localized.csv'],
-    ['/report/package', '/report/draft', '/report/html', '/guided-report/docx', '/guided-report/evidence-bundle', '/report/xhtml-ixbrl-candidate', '/esrs-datapoints/export.localized.csv', '/esrs-datapoints/responses/export.localized.csv'],
+    ['/report/package', '/report/draft', '/report/xhtml-ixbrl-candidate?inline=1', '/guided-report/docx', '/guided-report/evidence-bundle', '/report/xhtml-ixbrl-candidate', '/esrs-datapoints/export.localized.csv', '/esrs-datapoints/responses/export.localized.csv'],
   ]
   function assertDownloads(enabled) {
     consumers.forEach((c, index) => {
@@ -598,37 +598,13 @@ test('held locale persistence keeps Spanish and disables every server-localized 
   assert.equal(p8.handlers.changeNotes[1], 'Texto libre unchanged')
   assert.equal(p8.handlers.confirmation.confirmation.revision, 4)
   assert.match(renderToStaticMarkup(p9.render()), /Responses CSV/)
-  assert.match(renderToStaticMarkup(p10.render()), /Factual HTML/)
+  assert.match(renderToStaticMarkup(p10.render()), /Download the XBRL report/)
   assert.equal(p7.handlers.actaDraft.participants, 'Texto libre unchanged')
   assert.equal(p9.handlers.drafts['BP-1_01'].value, 'Texto libre unchanged')
   assert.equal(p9.handlers.drafts['BP-1_01'].evidence_reference, '=1+1')
   assert.equal(p9.handlers.saveQueueRef.current, revisionOwner)
-  assert.equal(p10.handlers.factForm.value, '9007199254740993'); assert.equal(p10.handlers.factForm.evidenceRef, '=1+1')
+  assert.equal(p10.handlers.approvalDeclaration, 'Texto libre unchanged =1+1')
   consumers.forEach(c => c.dispose()); provider.dispose()
-})
-
-test('actual fact submit preserves numeric lexemes in the outgoing JSON payload in both locales', async () => {
-  const saved = []
-  const c = consumer('components/wizard/report-draft-panel', 'ReportDraftPanel', ['updateFactForm', 'handleSaveFact'], harness(), {
-    fetch: async (url, request) => {
-      if (request.method === 'PUT') {
-        assert.equal(url, '/api/report/facts'); saved.push(JSON.parse(request.body))
-      }
-      return Response.json({ data: url === '/api/report/snapshots' ? [] : null })
-    },
-  })
-  c.render(); await c.settle()
-  for (const locale of ['es', 'en']) {
-    c.setLocale(locale); await c.settle()
-    for (const [valueType, value, decimals] of [['integer', '9007199254740993', '0'], ['number', '9007199254740993.125', '3'], ['monetary', '+0009007199254740993.10', '2']]) {
-      for (const [key, field] of Object.entries({ datapointId: 'BP-1_01', valueType, value, decimals, unit: 'pure' })) c.handlers.updateFactForm(key, field)
-      await c.settle(); await c.handlers.handleSaveFact({ preventDefault() {} }); await c.settle()
-      assert.equal(saved.at(-1).facts[0].value, value)
-      assert.equal(saved.at(-1).facts[0].value_type, valueType)
-    }
-  }
-  assert.equal(saved.length, 6)
-  c.dispose()
 })
 
 test('expectations and topic assistant render both languages and retain notes and signal codes', async () => {
@@ -696,7 +672,7 @@ test('forgot password, help and dashboard produce Spanish and English render tre
 
 test('report presentation has one fetch owner and late old-language replies cannot replace the new display or draft', async () => {
   let oldReadiness, oldDraft, reads = 0, draftsRead = 0, factsRead = 0
-  const c = consumer('components/wizard/report-draft-panel', 'ReportDraftPanel', ['readiness', 'draft', 'factForm', 'updateFactForm'], harness(), {
+  const c = consumer('components/wizard/report-draft-panel', 'ReportDraftPanel', ['readiness', 'draft', 'approvalDeclaration', 'setApprovalDeclaration'], harness(), {
     getLaravelSession: async () => ({ data: {} }),
     getLaravelReportingFacts: async () => { factsRead++; return { data: null } },
     getLaravelReportTaxonomyStatus: async () => ({ data: null }), getLaravelReportSnapshots: async () => ({ data: [] }),
@@ -704,13 +680,13 @@ test('report presentation has one fetch owner and late old-language replies cann
     getLaravelReportDraft: () => ++draftsRead === 1 ? new Promise(resolve => { oldDraft = resolve }) : Promise.resolve({ data: null }),
   })
   c.render(); await c.settle()
-  c.handlers.updateFactForm('value', 'Texto libre unchanged'); c.handlers.updateFactForm('evidenceRef', '=1+1'); await c.settle()
+  c.handlers.setApprovalDeclaration('Texto libre unchanged =1+1'); await c.settle()
   c.setLocale('en'); await c.settle()
   oldReadiness({ data: { locale: 'es', sections: {}, downloads: {} } })
   oldDraft({ data: { locale: 'es', materiality: { confirmed_topics: [] } } })
   await c.settle()
   assert.equal(c.handlers.readiness, null); assert.equal(c.handlers.draft, null)
-  assert.equal(c.handlers.factForm.value, 'Texto libre unchanged'); assert.equal(c.handlers.factForm.evidenceRef, '=1+1')
+  assert.equal(c.handlers.approvalDeclaration, 'Texto libre unchanged =1+1')
   assert.equal(factsRead, 1); assert.equal(reads, 2); assert.equal(draftsRead, 2)
   assert.match(renderToStaticMarkup(c.render()), /report/i); c.dispose()
 })
@@ -774,54 +750,6 @@ test('a delayed locale publication cannot replace a reloaded atomic P9 workspace
   c.dispose()
 })
 
-test('learning panel localizes synthetic-only copy without granting review or mutation authority', async () => {
-  for (const [status, spanish, english] of [
-    ['disabled', 'Deshabilitado', 'Disabled'], ['blocked', 'Bloqueado', 'Blocked'],
-    ['ready', 'Disponible para revisión', 'Available for review'], ['closed', 'Cerrado', 'Closed'],
-    ['stale', 'Fuentes modificadas', 'Sources changed'], ['withdrawn', 'Retirado', 'Withdrawn'],
-  ]) {
-    let writes = 0, sessions = 0, reads = 0
-    const c = consumer('components/wizard/learning-case-panel', 'LearningCasePanel', ['patch', 'perform', 'ui'], harness(), {
-      getLaravelLearningCaseDraft: async () => { reads++; return { data: { status, can_close: false, can_withdraw: false, source_token: null, expected_revisions: null, expected_authorization_generation: null, draft: null } } },
-      getLaravelSession: async () => { sessions++; return { data: { csrf_token: 'synthetic' } } },
-      saveLaravelLearningCaseDraft: async () => { writes++ }, closeLaravelLearningCase: async () => { writes++ }, withdrawLaravelLearningCase: async () => { writes++ },
-    })
-    c.render(); await c.settle()
-    const initial = JSON.stringify(c.handlers.ui)
-    for (const locale of ['es', 'en', 'es']) {
-      c.setLocale(locale); await c.settle()
-      const html = renderToStaticMarkup(c.render())
-      assert.ok(html.includes(locale === 'es' ? spanish : english))
-      assert.match(html, locale === 'es' ? /Solo mecanismo local sintético.*no es consentimiento jurídico aprobado/ : /Local synthetic mechanism only.*not approved legal consent/)
-      assert.match(html, locale === 'es' ? /no concede derechos reales y no acredita mejora predictiva/ : /grants no real rights and does not establish predictive improvement/)
-      assert.match(html, /<fieldset disabled=""/)
-      for (const label of locale === 'es' ? ['Guardar revisión', 'Cerrar caso', 'Retirar caso'] : ['Save review', 'Close case', 'Withdraw case']) {
-        assert.ok(html.match(/<button\b[^>]*disabled=""[^>]*>.*?<\/button>/g)?.some(button => button.includes(label)), label)
-      }
-      c.handlers.patch('reviewed_universe', true); c.handlers.patch('final_for_period_scope', true)
-      await c.handlers.perform('save'); await c.handlers.perform('close'); await c.settle()
-      assert.equal(JSON.stringify(c.handlers.ui), initial)
-      assert.equal(writes, 0); assert.equal(sessions, 0)
-    }
-    assert.equal(reads, 1, 'a language choice must not refresh learning authority')
-    c.dispose()
-  }
-})
-
-test('learning panel retains and translates authored read errors when language changes', async () => {
-  const c = consumer('components/wizard/learning-case-panel', 'LearningCasePanel', [], harness(), {
-    getLaravelLearningCaseDraft: async () => { throw new ApiError(503) },
-  })
-  c.render(); await c.settle()
-  assert.match(renderToStaticMarkup(c.render()), /No se pudo leer el estado\. Reintente la lectura\./)
-  c.setLocale('en'); await c.settle()
-  const english = renderToStaticMarkup(c.render())
-  assert.match(english, /Reading status…/)
-  assert.match(english, /Could not read the status\. Try reading it again\./)
-  assert.doesNotMatch(english, /No se pudo leer|Leyendo estado/)
-  c.dispose()
-})
-
 test('P5 hides stale option labels and opaque LEI errors during held and failed EN to ES refresh without losing draft', async () => {
   let held = false, rejectOptions
   const options = locale => ({ locale, levels: { core: { required_fields: [], draft_clearable_fields: [],
@@ -861,7 +789,7 @@ test('P5 hides stale option labels and opaque LEI errors during held and failed 
 test('P10 gates held failed and invalid-locale presentation while retaining facts snapshots and editor input', async () => {
   for (const outcome of ['failed', 'invalid']) {
     let held = false, completeDraft
-    const c = consumer('components/wizard/report-draft-panel', 'ReportDraftPanel', ['draft', 'storedDraft', 'storedReadiness', 'facts', 'snapshots', 'factForm', 'updateFactForm'], harness(), {
+    const c = consumer('components/wizard/report-draft-panel', 'ReportDraftPanel', ['draft', 'storedDraft', 'storedReadiness', 'facts', 'snapshots', 'approvalDeclaration', 'setApprovalDeclaration'], harness(), {
       getLaravelSession: async () => ({ data: {} }), getLaravelReportingFacts: async () => ({ data: { revision: 7, facts: [] } }), getLaravelReportTaxonomyStatus: async () => ({ data: null }), getLaravelReportSnapshots: async () => ({ data: [{ id: 8, revision: 3 }] }),
       getLaravelReportReadiness: async () => ({ data: { locale: c.locale, status: 'ready', sections: {}, downloads: {} } }),
       getLaravelReportDraft: () => held ? new Promise((resolve, reject) => { completeDraft = outcome === 'failed' ? () => reject(new ApiError(503)) : () => resolve({ data: draft('fr') }) }) : Promise.resolve({ data: draft(c.locale) }),
@@ -869,8 +797,8 @@ test('P10 gates held failed and invalid-locale presentation while retaining fact
     function draft(locale) { return { locale, company: {}, materiality: { confirmed_topics: [] }, datapoints: { blocks: [{ key: 'topical', title: 'Topical English title', summary: {} }] }, exports: {}, limitations: [] } }
     c.setLocale('en'); await c.settle()
     assert.match(renderToStaticMarkup(c.render()), /Topical English title/)
-    c.handlers.updateFactForm('value', '9007199254740993.125'); c.handlers.updateFactForm('evidenceRef', '=1+1'); await c.settle()
-    const preserved = JSON.stringify([c.handlers.factForm, c.handlers.facts, c.handlers.snapshots, c.handlers.storedDraft, c.handlers.storedReadiness])
+    c.handlers.setApprovalDeclaration('9007199254740993.125 =1+1'); await c.settle()
+    const preserved = JSON.stringify([c.handlers.approvalDeclaration, c.handlers.facts, c.handlers.snapshots, c.handlers.storedDraft, c.handlers.storedReadiness])
     held = true; c.setLocale('es'); await c.settle()
     for (const phase of ['held', 'finished']) {
       if (phase === 'finished') { completeDraft(); await c.settle() }
@@ -878,28 +806,11 @@ test('P10 gates held failed and invalid-locale presentation while retaining fact
       assert.doesNotMatch(html, /Topical English title/)
       assert.doesNotMatch(html, /href="\/report\/draft"/)
       assert.match(html, phase === 'held' ? /Actualizando las etiquetas/ : /No se pudieron actualizar las etiquetas/)
-      assert.equal(JSON.stringify([c.handlers.factForm, c.handlers.facts, c.handlers.snapshots, c.handlers.storedDraft, c.handlers.storedReadiness]), preserved)
+      assert.equal(JSON.stringify([c.handlers.approvalDeclaration, c.handlers.facts, c.handlers.snapshots, c.handlers.storedDraft, c.handlers.storedReadiness]), preserved)
     }
     c.dispose()
   }
 })
-
-test('real display helpers localize booleans and unavailable enums without changing fact lexemes', () => {
-  const c = consumer('components/wizard/report-draft-panel', 'ReportDraftPanel', ['safeFactValue', 'applicabilityLabel'], harness(), {
-    getLaravelSession: async () => ({ data: {} }), getLaravelReportingFacts: async () => ({ data: null }), getLaravelReportTaxonomyStatus: async () => ({ data: null }), getLaravelReportSnapshots: async () => ({ data: [] }), getLaravelReportReadiness: async () => ({ data: null }), getLaravelReportDraft: async () => ({ data: null }),
-  })
-  c.render()
-  for (const [locale, yes, no, unavailable] of [['es', 'Sí', 'No', 'No disponible'], ['en', 'Yes', 'No', 'Unavailable']]) {
-    for (const [value, expected] of [[true, yes], [false, no], ['9007199254740993.125', '9007199254740993.125'], ['true', 'true']]) {
-      const fact = { nil: false, value }; const bytes = JSON.stringify(fact)
-      assert.equal(c.handlers.safeFactValue(fact, locale), expected)
-      assert.equal(JSON.stringify(fact), bytes)
-    }
-    assert.equal(c.handlers.applicabilityLabel('future_unknown_code', locale), unavailable)
-  }
-  c.dispose()
-})
-
 
 test('P8 direct reload renders related topics for a saved user-added topic outside P6', async () => {
   for (const enabled of [false, true]) {
@@ -940,7 +851,7 @@ test('sector comparison loads once in real P6 and both P8 modes without changing
   const capability = { sector_comparison_enabled: true, sector_comparison_input_fingerprint: fingerprint }
   const topic = { ...proposalTopic, id: 1, theme: { es: 'Cambio climático', en: 'Climate change' } }
   let p6Calls = 0
-  const p6 = consumer('components/wizard/material-topics-form', 'MaterialTopicsForm', ['topicActions'], harness(), {
+  const p6 = consumer('components/wizard/material-topics-form', 'MaterialTopicsForm', ['topicActions', 'expandAll'], harness(), {
     getLaravelSession: async () => ({ data: {} }), getLaravelCharacterization: async () => ({ data: { status: 'completed', form_data: {} } }),
     getLaravelMaterialityProposal: async () => ({ data: { ...completedProposal, ...capability, characterization_id: 7, proposal_topics: [topic] } }),
     getLaravelSectorComparison: async id => { p6Calls++; return { data: { ...fixture, characterization_id: id, input_fingerprint: fingerprint } } },
@@ -948,6 +859,8 @@ test('sector comparison loads once in real P6 and both P8 modes without changing
   try {
     p6.render(); await p6.settle()
     const decisions = structuredClone(p6.handlers.topicActions)
+    // The comparison lives in the topic details, which "Expandir todo" opens.
+    p6.handlers.expandAll(); await p6.settle()
     assert.match(renderToStaticMarkup(p6.render()), /3 de 5 empresas con evaluación conocida/)
     p6.setLocale('en'); await p6.settle()
     assert.match(renderToStaticMarkup(p6.render()), /3 of 5 companies with a known assessment/)

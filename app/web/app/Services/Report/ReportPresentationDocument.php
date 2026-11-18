@@ -24,6 +24,9 @@ final class ReportPresentationDocument
         $meta = $head->appendChild($doc->createElementNS(self::NS, 'meta'));
         $meta->setAttribute('http-equiv', 'Content-Type');
         $meta->setAttribute('content', 'text/html; charset=UTF-8');
+        $style = $head->appendChild($doc->createElementNS(self::NS, 'style'));
+        $style->setAttribute('type', 'text/css');
+        $style->appendChild($doc->createTextNode(ReportXhtmlDocument::stylesheet()));
         $body = $html->appendChild($doc->createElementNS(self::NS, 'body'));
         $stack = [$body];
         foreach ($events as $event) {

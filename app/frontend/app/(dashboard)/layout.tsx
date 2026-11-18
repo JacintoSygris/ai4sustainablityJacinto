@@ -21,7 +21,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-secondary/30">
-      <DashboardHeader user={session.user} learningAdmin={session.learning_admin === true} />
+      <DashboardHeader user={session.user} learningAdmin={session.learning_admin === true} admin={session.admin === true} />
       <main className="container mx-auto px-4 py-8">{session.usability_study_enabled === true ? <StudyKit>{children}</StudyKit> : children}</main>
     </div>
   )

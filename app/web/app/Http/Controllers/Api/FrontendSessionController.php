@@ -16,6 +16,7 @@ class FrontendSessionController extends Controller
             'data' => [
                 'authenticated' => true,
                 'learning_admin' => \App\Services\LearningActivationStatus::isAdmin($user),
+                'admin' => \App\Services\PlatformAdmin::isAdmin($user),
                 'learning_consent_invitation' => \App\Services\ConsentLearningAuthorizationAuthority::enabled()
                     && ! app(\App\Services\ConsentLearningAuthorizationAuthority::class)->permits($user),
                 'xbrl_runtime_identification_enabled' => (bool) config('xbrl_suggestions.runtime_enabled', false),

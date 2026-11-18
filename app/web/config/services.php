@@ -118,6 +118,13 @@ return [
         })(),
     ],
 
+    // Platform administrators: verified users whose email domain is listed here
+    // (comma separated). They can read every account's reports and the AI
+    // usefulness report. No role table is involved.
+    'admin' => [
+        'email_domains' => array_values(array_filter(array_map('trim', explode(',', (string) env('ADMIN_EMAIL_DOMAINS', 'sygris.com'))))),
+    ],
+
     'report' => [
         'generic_xbrl_root' => env('XBRL_GENERIC_TAXONOMY_ROOT'),
         // Operator assets outside the application tree; see App\Services\Report\ExternalAssetRoot.

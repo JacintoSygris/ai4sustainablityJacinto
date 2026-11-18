@@ -2473,8 +2473,9 @@
                   },
                   "endpoint": {
                     "type": "string",
+                    "description": "Report content is derived from the step 5 answers, so a gap is fixed there.",
                     "enum": [
-                      "/api/report/facts"
+                      "/api/esrs-datapoints/responses"
                     ]
                   },
                   "claimable_count": {
@@ -2554,7 +2555,7 @@
           },
           "next_actions": {
             "type": "array",
-            "description": "Ordered endpoints for incomplete workflow or report-content sections, including /api/report/facts when factual content is incomplete. Empty when every required section is ready.",
+            "description": "Ordered endpoints for incomplete workflow or report-content sections, including /api/esrs-datapoints/responses when a completed answer still lacks a usable value. Empty when every required section is ready.",
             "items": {
               "type": "string"
             }
@@ -4341,6 +4342,13 @@
               "$ref": "#/components/schemas/MaterialityTopicSummary"
             }
           },
+          "ai_topic_ids": {
+            "type": "array",
+            "description": "Proposal topic ids recommended by the AI. The remaining proposal topics were stored or added by the user.",
+            "items": {
+              "type": "integer"
+            }
+          },
           "ready_for_confirmation": {
             "type": "boolean",
             "description": "True when a completed characterization has at least one current P6 proposal topic. This is readiness to move into P8 confirmation; it does not mean the P6 review map is complete."
@@ -4401,9 +4409,18 @@
             "minimum": 0,
             "description": "Revision returned by the P6 review state that the user actually reviewed."
           },
+          "added_topic_ids": {
+            "type": "array",
+            "description": "Full list of ESRS topic ids the user adds on top of the AI proposal. Omitting it or sending [] removes every earlier addition. Each id must exist in the ESRS catalogue; ids already in the base proposal are ignored. Added topics become part of the current proposal, so they accept review actions and are stored as the step 2 outcome for later steps.",
+            "maxItems": 200,
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
           "topic_actions": {
             "type": "object",
-            "description": "Object keyed by canonical positive integer strings for topic ids in the current P6 proposal. Malformed keys such as 4abc, 4.9, 04, 0, or negative values are rejected.",
+            "description": "Object keyed by canonical positive integer strings for topic ids in the current P6 proposal (AI/stored topics plus added_topic_ids). Malformed keys such as 4abc, 4.9, 04, 0, or negative values are rejected.",
             "minProperties": 1,
             "propertyNames": {
               "type": "string",
@@ -4517,6 +4534,13 @@
             "description": "Current-proposal note map keyed by canonical positive integer topic id strings.",
             "additionalProperties": {
               "type": "string"
+            }
+          },
+          "added_topic_ids": {
+            "type": "array",
+            "description": "Topic ids the user added on top of the AI proposal in the current review (subset of proposal_topic_ids).",
+            "items": {
+              "type": "integer"
             }
           },
           "reviewed_at": {

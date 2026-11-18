@@ -30,8 +30,8 @@ El recorrido público debe leerse como tareas:
 2. Revisa los asuntos ASG candidatos propuestos.
 3. Realiza con tu equipo el análisis de doble materialidad fuera o dentro de tus herramientas habituales.
 4. Confirma en la aplicación la selección final y los motivos que decidas registrar.
-5. Reúne indicadores/datos ESRS, marca lo pendiente y justifica lo que no aplique.
-6. En P10, registra y revisa los datos factuales que se usarán, prepara un snapshot y apruébalo antes de descargar salidas factuales.
+5. Reúne indicadores/datos ESRS con su valor, tipo y unidad, marca lo pendiente y justifica lo que no aplique.
+6. En el último paso, prepara una versión del informe con esas respuestas y apruébala antes de descargar las salidas.
 
 ## Qué salidas produce
 
@@ -42,10 +42,10 @@ Las salidas actuales se nombran por lo que contienen:
 - lista de requisitos de divulgación, indicadores/datos y respuestas en CSV;
 - resumen de preparación y cobertura en JSON;
 - paquete HTML imprimible con identificación, temas confirmados, contadores y límites;
-- HTML factual, DOCX factual y paquete JSON de evidencias generados desde un snapshot fresco y aprobado;
+- informe HTML, informe DOCX y paquete JSON de evidencias generados desde una versión vigente y aprobada;
 - candidato técnico XHTML/iXBRL sólo mediante la ruta técnica protegida, tras validación externa de taxonomía y Arelle.
 
-Una respuesta P9 ayuda a organizar el trabajo, pero no se incorpora automáticamente al informe factual. Cada dato debe registrarse y revisarse; una modificación posterior obliga a preparar y aprobar otro snapshot. El candidato XHTML/iXBRL no es una descarga ordinaria del recorrido y nunca equivale a una presentación oficial.
+Las respuestas completadas en el paso 5 son el contenido del informe; no hay que volver a registrarlas ni revisarlas una a una. Una modificación posterior obliga a preparar y aprobar otra versión. El candidato XHTML/iXBRL no es una descarga ordinaria del recorrido y nunca equivale a una presentación oficial.
 
 Ninguna de estas salidas equivale por sí sola a un informe ESRS desarrollado, presentado oficialmente o aceptado por una autoridad.
 

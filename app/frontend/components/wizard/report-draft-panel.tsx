@@ -11,10 +11,10 @@ import { EuTaxonomyPanel } from "@/components/wizard/eu-taxonomy-panel"
 import { ui, formatUi } from "@/lib/i18n/messages.mjs"
 import { useLocale } from "@/components/locale-provider"
 
-import { useCallback, useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { AlertCircle, CheckCircle2, Download, FileText, RefreshCw, Save, ShieldCheck } from "lucide-react"
+import { AlertCircle, CheckCircle2, Download, ExternalLink, FileText, RefreshCw, ShieldCheck } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { LocalizedDownload } from "@/components/localized-download"
@@ -27,7 +27,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import {
   LaravelApiError,
@@ -41,18 +40,12 @@ import {
   getLaravelEsrsDatapoints,
   getLaravelSession,
   laravelApiUrl,
-  reviewLaravelReportingFact,
-  saveLaravelReportingFacts,
   type LaravelReportDownload,
   type LaravelReportDraft,
   type LaravelReportReadiness,
   type LaravelReportSnapshot,
   type LaravelReportTaxonomyStatus,
-  type LaravelReportingFact,
-  type LaravelReportingFactApplicability,
-  type LaravelReportingFactInput,
   type LaravelReportingFactState,
-  type LaravelReportingFactValueType,
 } from "@/lib/laravel-api"
 import {
   actionLabel,
@@ -74,34 +67,6 @@ import {
   statusTone,
   visibleNextActions,
 } from "@/lib/report-draft-state.mjs"
-
-type FactFormState = {
-  datapointId: string
-  applicability: LaravelReportingFactApplicability
-  valueType: LaravelReportingFactValueType
-  value: string
-  unit: string
-  decimals: string
-  language: string
-  evidenceRef: string
-  dimensionAxis: string
-  dimensionMember: string
-  nilReason: string
-}
-
-const initialFactForm: FactFormState = {
-  datapointId: "",
-  applicability: "applicable",
-  valueType: "text",
-  value: "",
-  unit: "",
-  decimals: "0",
-  language: "es",
-  evidenceRef: "",
-  dimensionAxis: "",
-  dimensionMember: "",
-  nilReason: "",
-}
 
 export function ReportDraftPanel() {
 
@@ -128,19 +93,12 @@ export function ReportDraftPanel() {
   const [errorMessage, setErrorMessage] = useSystemMessage(null)
   useStudyError(6, errorMessage)
   const [operationMessage, setOperationMessage] = useSystemMessage(null)
-  const [formError, setFormError] = useSystemMessage(null)
-  useStudyError(6, formError)
-  const [factForm, setFactForm] = useState<FactFormState>(initialFactForm)
-  const [reviewFact, setReviewFact] = useState<LaravelReportingFact | null>(null)
-  const [reviewDeclaration, setReviewDeclaration] = useState("")
-  const [reviewError, setReviewError] = useSystemMessage(null)
-  useStudyError(6, reviewError)
   const [approveDialogOpen, setApproveDialogOpen] = useState(false)
   const [approvalDeclaration, setApprovalDeclaration] = useState("")
   const [approvalError, setApprovalError] = useSystemMessage(null)
   useStudyError(6, approvalError)
   const [busyAction, setBusyAction] = useState<string | null>(null)
-  // «Generar XBRL»: prepara la versión factual si hace falta, pide la aprobación y descarga el paquete.
+  // «Generar XBRL»: prepara la versión del informe si hace falta, pide la aprobación y descarga el paquete.
   const [xbrlPending, setXbrlPending] = useState(false)
   const confirmedMaterialThemes = useMemo(
     () => materialThemeGroups(draft?.materiality.confirmed_topics ?? [], locale),
@@ -243,73 +201,24 @@ export function ReportDraftPanel() {
   )
   const nextActionRows = useMemo(() => visibleNextActions(readiness) as string[], [readiness])
   const reportOnlyNextAction = allSectionsReady(readiness)
+  // Completed answers that still have no value: the platform lists them as missing report content.
+  const missingValueCount = Number((readiness?.sections?.report_content as { missing_datapoint_count?: number } | undefined)?.missing_datapoint_count ?? 0)
+  const numericFactCount = (facts?.persisted_facts ?? []).filter(
+    (fact) => fact.approval_status === "reviewed" && fact.applicability === "applicable" && ["number", "integer", "monetary"].includes(fact.value_type),
+  ).length
   const latestSnapshot = latestReportSnapshot(snapshots) as LaravelReportSnapshot | null
   const snapshotBlockers = snapshotDownloadBlockers(latestSnapshot).map(tr)
   const approvedFreshSnapshot = snapshotBlockers.length === 0
-
-  function updateFactForm<K extends keyof FactFormState>(key: K, value: FactFormState[K]) {
-    setFactForm((current) => ({ ...current, [key]: value }))
-  }
-
-  async function handleSaveFact(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    setFormError(null)
-    setOperationMessage(null)
-
-    const payload = buildFactPayload(factForm, locale)
-
-    if (typeof payload === "string") {
-      setFormError(payload)
-
-      return
-    }
-
-    try {
-      setBusyAction("save-fact")
-      await saveLaravelReportingFacts({ facts: [payload] })
-      setFactForm(initialFactForm)
-      setOperationMessage(systemCopy("Dato factual guardado. Queda pendiente de revisión."))
-      refreshReport()
-    } catch (error) {
-      setFormError(apiErrorMessage(error, tr("No se ha podido guardar el dato factual."), locale))
-    } finally {
-      setBusyAction(null)
-    }
-  }
-
-  async function handleReviewFact() {
-    const declaration = reviewDeclaration.trim()
-
-    if (!reviewFact?.id || declaration === "") {
-      setReviewError(systemCopy("Escribe una declaración de revisión antes de continuar."))
-
-      return
-    }
-
-    try {
-      setBusyAction("review-fact")
-      setReviewError(null)
-      await reviewLaravelReportingFact(reviewFact.id, { review_declaration: declaration })
-      setReviewFact(null)
-      setReviewDeclaration("")
-      setOperationMessage(systemCopy("Dato factual marcado como revisado."))
-      refreshReport()
-    } catch (error) {
-      setReviewError(apiErrorMessage(error, tr("No se ha podido revisar el dato factual."), locale))
-    } finally {
-      setBusyAction(null)
-    }
-  }
 
   async function handleCreateSnapshot() {
     try {
       setBusyAction("create-snapshot")
       setOperationMessage(null)
       await createLaravelReportSnapshot()
-      setOperationMessage(systemCopy("Versión factual preparada."))
+      setOperationMessage(systemCopy("Versión del informe preparada."))
       refreshReport()
     } catch (error) {
-      setOperationMessage(apiErrorMessage(error, tr("No se ha podido preparar la versión factual."), locale))
+      setOperationMessage(apiErrorMessage(error, tr("No se ha podido preparar la versión del informe."), locale))
     } finally {
       setBusyAction(null)
     }
@@ -321,7 +230,7 @@ export function ReportDraftPanel() {
   function xbrlBlockers(): string[] {
     const blockers: string[] = []
     if (readiness?.workflow_complete !== true) blockers.push(tr("Completa los pasos anteriores: todos los datos normativos del paso 5 deben estar decididos."))
-    if (readiness?.report_content_ready !== true) blockers.push(tr("Guarda y revisa un dato factual por cada dato completado (más abajo, «Datos factuales y revisión»)."))
+    if (readiness?.report_content_ready !== true) blockers.push(tr("Cada dato marcado como completado en el paso 5 necesita un valor; corrígelo allí."))
     if (readiness?.ixbrl_package_enabled !== true) blockers.push(tr("El paquete XBRL no está activado en esta instalación (IXBRL_PACKAGE_UI_ENABLED)."))
     if (taxonomyStatus && taxonomyStatus.availability.state !== "verified") blockers.push(tr("La taxonomía EFRAG no está disponible en el servidor: se descarga sola en el primer uso; si persiste, revisa la conexión del servidor o aprovisiónala a mano."))
     if (taxonomyStatus?.validator?.state === "missing") blockers.push(tr("El validador Arelle no está instalado en el servidor (se instala con las dependencias del servicio de IA)."))
@@ -332,7 +241,7 @@ export function ReportDraftPanel() {
   function xbrlFailureMessage(reason: string) {
     switch (reason) {
       case "xhtml_ixbrl_context_missing":
-        return systemCopy("No se ha podido generar el documento XBRL: faltan el LEI o las fechas de inicio y fin del periodo. Complétalos en el paso 1 («Editar la encuesta inicial»), guarda y vuelve a preparar y aprobar la versión factual.")
+        return systemCopy("No se ha podido generar el documento XBRL: faltan el LEI o las fechas de inicio y fin del periodo. Complétalos en el paso 1 («Editar la encuesta inicial»), guarda y vuelve a preparar y aprobar la versión del informe.")
       case "xhtml_ixbrl_arelle_busy":
         return systemCopy("El validador está ocupado con otra validación. Espera un minuto y vuelve a intentarlo.")
       case "xhtml_ixbrl_arelle_unavailable":
@@ -340,7 +249,7 @@ export function ReportDraftPanel() {
       case "xhtml_ixbrl_arelle_validation_failed":
         return systemCopy("No se ha podido generar el documento XBRL: la validación técnica del documento ha fallado. Si es el primer intento tras instalar, espera un minuto a que termine la preparación del validador y repite.")
       case "xhtml_ixbrl_no_taggable_claims":
-        return systemCopy("No se ha podido generar el documento XBRL: ningún dato factual revisado es numérico. Añade al menos un dato numérico (por ejemplo, número de empleados o ingresos) y apruébalo.")
+        return systemCopy("No se ha podido generar el documento XBRL: ningún dato completado es numérico. En el paso 5, marca al menos un dato con tipo numérico y unidad (por ejemplo, número de empleados o ingresos) y vuelve a aprobar la versión.")
       case "":
         return systemCopy("No se ha podido generar el documento XBRL.")
       default:
@@ -430,10 +339,10 @@ export function ReportDraftPanel() {
       await approveLaravelReportSnapshot(latestSnapshot.id, { single_person_declaration: declaration })
       setApproveDialogOpen(false)
       setApprovalDeclaration("")
-      setOperationMessage(systemCopy("Versión factual aprobada. Las descargas quedan habilitadas mientras siga vigente."))
+      setOperationMessage(systemCopy("Versión del informe aprobada. Las descargas quedan habilitadas mientras siga vigente."))
       refreshReport()
     } catch (error) {
-      setApprovalError(apiErrorMessage(error, tr("No se ha podido aprobar la versión factual."), locale))
+      setApprovalError(apiErrorMessage(error, tr("No se ha podido aprobar la versión del informe."), locale))
     } finally {
       setBusyAction(null)
     }
@@ -487,8 +396,8 @@ export function ReportDraftPanel() {
           ))}
           {approvedFreshSnapshot ? (
             <div className="flex flex-wrap gap-2">
-              <LocalizedDownload disabled href={laravelApiUrl("/report/html")}>{tr("HTML factual")}</LocalizedDownload>
-              <LocalizedDownload disabled href={laravelApiUrl("/guided-report/docx")}>{tr("DOCX factual")}</LocalizedDownload>
+              <LocalizedDownload disabled href={laravelApiUrl("/report/xhtml-ixbrl-candidate")}>{tr("Informe XBRL")}</LocalizedDownload>
+              <LocalizedDownload disabled href={laravelApiUrl("/guided-report/docx")}>{tr("Informe DOCX")}</LocalizedDownload>
               <LocalizedDownload disabled href={laravelApiUrl("/guided-report/evidence-bundle")}>{tr("Paquete de evidencias")}</LocalizedDownload>
             </div>
           ) : null}
@@ -670,140 +579,22 @@ export function ReportDraftPanel() {
               </Card>
 
               <Card>
-                <CardContent className="space-y-5 pt-6">
+                <CardContent className="space-y-4 pt-6">
                   <div>
-                    <h2 className="text-lg font-semibold text-foreground">{tr("Datos factuales y revisión")}</h2>
+                    <h2 className="text-lg font-semibold text-foreground">{tr("Datos del informe")}</h2>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      {" "}{tr("Las respuestas de datos normativos no se convierten automáticamente en hechos aprobados. Guarda cada dato factual que quieras usar en las salidas y revísalo antes de preparar la aprobación.")}{" "}</p>
+                      {" "}{tr("Las respuestas completadas en el paso 5 son el contenido del informe: no hay que volver a registrarlas ni revisarlas aquí. Si falta un valor, corrígelo en el paso 5.")}{" "}</p>
                   </div>
-
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <SummaryMetric label={tr("Datos factuales guardados")} value={facts?.persisted_fact_count ?? 0} />
-                    <SummaryMetric label={tr("Propuestas de datos pendientes")} value={facts?.pending_p9_suggestion_count ?? 0} />
+                  <div className="grid gap-4 md:grid-cols-3">
+                    <SummaryMetric label={tr("Datos con valor listos para el informe")} value={facts?.claimable_fact_count ?? 0} />
+                    <SummaryMetric label={tr("Datos completados sin valor")} value={missingValueCount} />
+                    <SummaryMetric label={tr("Datos numéricos etiquetables en XBRL")} value={numericFactCount} />
                   </div>
-
-                  <FactList
-                    facts={facts?.persisted_facts ?? []}
-                    legacyFacts={facts?.pending_p9_suggestions ?? []}
-                    onReview={(fact) => {
-                      setReviewFact(fact)
-                      setReviewDeclaration("")
-                      setReviewError(null)
-                    }}
-                  />
-
-                  <form className="space-y-4 rounded-md border border-border p-4" onSubmit={handleSaveFact}>
-                    <div>
-                      <h3 className="text-base font-semibold text-foreground">{tr("Añadir o actualizar dato factual")}</h3>
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        {" "}{tr("El guardado crea un dato con revisión requerida; la evidencia queda en la plataforma y no se imprime como descarga pública.")}{" "}</p>
-                    </div>
-
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <LabeledInput
-                        id="fact-datapoint-id"
-                        label={tr("Identificador del dato normativo")}
-                        value={factForm.datapointId}
-                        onChange={(event) => updateFactForm("datapointId", event.target.value)}
-                      />
-                      <LabeledSelect
-                        id="fact-applicability"
-                        label={tr("Aplicabilidad")}
-                        value={factForm.applicability}
-                        onChange={(event) =>
-                          updateFactForm("applicability", event.target.value as LaravelReportingFactApplicability)
-                        }
-                        options={[
-                          ["applicable", tr("Aplicable")],
-                          ["not_applicable", tr("No aplicable")],
-                          ["pending", tr("Pendiente")],
-                          ["unavailable", tr("No disponible")],
-                          ["blocked", tr("Bloqueado")],
-                        ]}
-                      />
-                      <LabeledSelect
-                        id="fact-value-type"
-                        label={tr("Tipo")}
-                        value={factForm.valueType}
-                        onChange={(event) => updateFactForm("valueType", event.target.value as LaravelReportingFactValueType)}
-                        options={[
-                          ["text", tr("Texto")],
-                          ["number", tr("Número")],
-                          ["monetary", tr("Importe")],
-                          ["integer", tr("Número entero")],
-                          ["boolean", tr("Sí o no")],
-                          ["date", tr("Fecha")],
-                          ["enumeration", tr("Enumeración")],
-                          ["nil", tr("Sin valor")],
-                        ]}
-                      />
-                      <LabeledInput
-                        id="fact-value"
-                        label={tr("Valor")}
-                        value={factForm.value}
-                        disabled={factForm.valueType === "nil"}
-                        onChange={(event) => updateFactForm("value", event.target.value)}
-                      />
-                      <LabeledInput
-                        id="fact-unit"
-                        label={tr("Unidad")}
-                        value={factForm.unit}
-                        onChange={(event) => updateFactForm("unit", event.target.value)}
-                      />
-                      <LabeledInput
-                        id="fact-decimals"
-                        label={tr("Decimales")}
-                        type="number"
-                        min="0"
-                        max="12"
-                        value={factForm.decimals}
-                        onChange={(event) => updateFactForm("decimals", event.target.value)}
-                      />
-                      <LabeledInput
-                        id="fact-language"
-                        label={tr("Idioma")}
-                        value={factForm.language}
-                        onChange={(event) => updateFactForm("language", event.target.value)}
-                      />
-                      <LabeledInput
-                        id="fact-nil-reason"
-                        label={tr("Motivo sin valor")}
-                        value={factForm.nilReason}
-                        onChange={(event) => updateFactForm("nilReason", event.target.value)}
-                      />
-                      <LabeledInput
-                        id="fact-dimension-axis"
-                        label={tr("Eje de la dimensión")}
-                        value={factForm.dimensionAxis}
-                        onChange={(event) => updateFactForm("dimensionAxis", event.target.value)}
-                      />
-                      <LabeledInput
-                        id="fact-dimension-member"
-                        label={tr("Valor de la dimensión")}
-                        value={factForm.dimensionMember}
-                        onChange={(event) => updateFactForm("dimensionMember", event.target.value)}
-                      />
-                    </div>
-
-                    <div>
-                      <label htmlFor="fact-evidence" className="text-sm font-medium text-foreground">
-                        {" "}{tr("Referencia de evidencia")}{" "}</label>
-                      <Textarea
-                        id="fact-evidence"
-                        className="mt-1"
-                        value={factForm.evidenceRef}
-                        onChange={(event) => updateFactForm("evidenceRef", event.target.value)}
-                      />
-                    </div>
-
-                    {formError ? <p className="text-sm text-destructive">{formError}</p> : null}
-                    {(factForm.applicability === "pending" || factForm.applicability === "blocked") ? (
-                      <p className="text-sm text-amber-700">{tr("Los datos pendientes o bloqueados no pueden revisarse.")}</p>
-                    ) : null}
-                    <Button type="submit" disabled={busyAction === "save-fact"}>
-                      <Save className="h-4 w-4" />
-                      {" "}{tr("Guardar dato factual")}{" "}</Button>
-                  </form>
+                  {missingValueCount > 0 ? (
+                    <Button type="button" variant="outline" asChild>
+                      <Link href="/wizard/step-5">{tr("Corregir en el paso 5")}</Link>
+                    </Button>
+                  ) : null}
                 </CardContent>
               </Card>
             </div>
@@ -812,9 +603,9 @@ export function ReportDraftPanel() {
               <Card>
                 <CardContent className="space-y-4 pt-6">
                   <div>
-                    <h2 className="text-lg font-semibold text-foreground">{tr("Versión factual y aprobación")}</h2>
+                    <h2 className="text-lg font-semibold text-foreground">{tr("Versión del informe y aprobación")}</h2>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      {" "}{tr("Las salidas factuales se habilitan solo con una versión vigente y aprobada.")}{" "}</p>
+                      {" "}{tr("Las descargas del informe se habilitan solo con una versión vigente y aprobada; la versión congela las respuestas del paso 5 tal y como están ahora.")}{" "}</p>
                   </div>
 
                   <SnapshotSummary snapshot={latestSnapshot} />
@@ -827,11 +618,11 @@ export function ReportDraftPanel() {
                   <div className="flex flex-col gap-2">
                     <Button type="button" onClick={handleCreateSnapshot} disabled={busyAction === "create-snapshot"}>
                       <ShieldCheck className="h-4 w-4" />
-                      {" "}{tr("Preparar versión factual")}{" "}</Button>
+                      {" "}{tr("Preparar versión del informe")}{" "}</Button>
                     {latestSnapshot && !latestSnapshot.is_approved ? (
                       <Button type="button" variant="outline" disabled={!snapshotApprovalAllowed(latestSnapshot)} onClick={() => setApproveDialogOpen(true)}>
                         <CheckCircle2 className="h-4 w-4" />
-                        {" "}{tr("Aprobar versión factual")}{" "}</Button>
+                        {" "}{tr("Aprobar versión del informe")}{" "}</Button>
                     ) : null}
                   </div>
 
@@ -839,12 +630,15 @@ export function ReportDraftPanel() {
                     <h3 className="text-sm font-semibold text-foreground">{tr("Salidas basadas en una versión aprobada")}</h3>
                     {approvedFreshSnapshot ? (
                       <div className="mt-3 space-y-2">
-                        <LocalizedDownload disabled={!presentationReady} type="button" variant="outline" className="w-full justify-start" href={laravelApiUrl("/report/html")}>
+                        <LocalizedDownload disabled={!presentationReady} type="button" variant="outline" className="w-full justify-start" href={laravelApiUrl("/report/xhtml-ixbrl-candidate?inline=1")} target="_blank" rel="noreferrer">
+                            <ExternalLink className="h-4 w-4" />
+                            {" "}{tr("Ver informe XBRL en el navegador")}{" "}</LocalizedDownload>
+                        <LocalizedDownload disabled={!presentationReady} type="button" variant="outline" className="w-full justify-start" href={laravelApiUrl("/report/xhtml-ixbrl-candidate")}>
                             <Download className="h-4 w-4" />
-                            {" "}{tr("HTML factual")}{" "}</LocalizedDownload>
+                            {" "}{tr("Descargar informe XBRL")}{" "}</LocalizedDownload>
                         <LocalizedDownload disabled={!presentationReady} type="button" variant="outline" className="w-full justify-start" href={laravelApiUrl("/guided-report/docx")}>
                             <Download className="h-4 w-4" />
-                            {" "}{tr("DOCX factual")}{" "}</LocalizedDownload>
+                            {" "}{tr("Informe DOCX")}{" "}</LocalizedDownload>
                         {readiness?.report_scope_integrity_enabled === true ? (
                           <LocalizedDownload disabled={!presentationReady || !xhtmlPresentationAvailable(readiness, latestSnapshot)} type="button" variant="outline" className="w-full justify-start" href={laravelApiUrl("/report/xhtml")}>
                             <Download className="h-4 w-4" />
@@ -910,37 +704,10 @@ export function ReportDraftPanel() {
         </>
       )}
 
-      <Dialog open={reviewFact !== null} onOpenChange={(open) => !open && setReviewFact(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{tr("Marcar dato factual como revisado")}</DialogTitle>
-            <DialogDescription>
-              {" "}{tr("Escribe una declaración propia de revisión. La plataforma no la rellena por ti.")}{" "}</DialogDescription>
-          </DialogHeader>
-          <div>
-            <label htmlFor="fact-review-declaration" className="text-sm font-medium text-foreground">
-              {" "}{tr("Declaración de revisión")}{" "}</label>
-            <Textarea
-              id="fact-review-declaration"
-              className="mt-1"
-              value={reviewDeclaration}
-              onChange={(event) => setReviewDeclaration(event.target.value)}
-            />
-            {reviewError ? <p className="mt-2 text-sm text-destructive">{reviewError}</p> : null}
-          </div>
-          <DialogFooter>
-            <Button type="button" variant="ghost" onClick={() => setReviewFact(null)}>
-              {" "}{tr("Cancelar")}{" "}</Button>
-            <Button type="button" onClick={handleReviewFact} disabled={busyAction === "review-fact"}>
-              {" "}{tr("Marcar como revisado")}{" "}</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
       <Dialog open={approveDialogOpen} onOpenChange={setApproveDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{tr("Aprobar versión factual")}</DialogTitle>
+            <DialogTitle>{tr("Aprobar versión del informe")}</DialogTitle>
             <DialogDescription>
               {" "}{tr("Declara que una única persona asume la preparación, la revisión y la aprobación de esta versión.")}{" "}</DialogDescription>
           </DialogHeader>
@@ -959,139 +726,12 @@ export function ReportDraftPanel() {
             <Button type="button" variant="ghost" onClick={() => setApproveDialogOpen(false)}>
               {" "}{tr("Cancelar")}{" "}</Button>
             <Button type="button" onClick={handleApproveSnapshot} disabled={busyAction === "approve-snapshot"}>
-              {" "}{tr("Aprobar versión factual")}{" "}</Button>
+              {" "}{tr("Aprobar versión del informe")}{" "}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
   )
-}
-
-function buildFactPayload(form: FactFormState, locale: "es" | "en" = "es"): LaravelReportingFactInput | string {
-  const tr = (message: string) => ui(locale, message)
-
-  const datapointId = form.datapointId.trim()
-  const evidence = form.evidenceRef.trim()
-  const language = form.language.trim()
-  const unit = form.unit.trim()
-  const nilReason = form.nilReason.trim()
-
-  if (datapointId === "") {
-    return tr("Indica el identificador del dato normativo.")
-  }
-
-  if (["not_applicable", "unavailable"].includes(form.applicability) && evidence === "") {
-    return tr("Los datos no aplicables o no disponibles necesitan una referencia de evidencia.")
-  }
-
-  const dimensions = []
-  const axis = form.dimensionAxis.trim()
-  const member = form.dimensionMember.trim()
-
-  if ((axis === "") !== (member === "")) {
-    return tr("La dimensión opcional necesita un eje y un valor.")
-  }
-
-  if (axis !== "" && member !== "") {
-    dimensions.push({ axis, member })
-  }
-
-  let value: LaravelReportingFactInput["value"] = null
-  let nil = false
-  let decimals: number | null = null
-  let finalUnit: string | null = unit || null
-  let finalLanguage: string | null = language || null
-  let finalNilReason: string | null = nilReason || null
-
-  if (form.valueType === "text") {
-    if (form.value.trim() === "") {
-      return tr("El texto no puede estar vacío.")
-    }
-
-    if (language === "") {
-      return tr("El idioma es obligatorio para los datos de texto.")
-    }
-
-    value = { text: form.value.trim() }
-    finalNilReason = null
-  } else if (["number", "monetary", "integer"].includes(form.valueType)) {
-    const rawValue = form.value.trim()
-    const rawDecimals = form.decimals.trim()
-
-    if (rawValue === "") {
-      return tr("El valor numérico no es válido.")
-    }
-
-    if (form.valueType === "integer" && !/^[+-]?\d+$/.test(rawValue)) {
-      return tr("El valor entero no admite decimales.")
-    }
-
-    if (form.valueType !== "integer" && !/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(rawValue)) {
-      return tr("El valor numérico no es válido.")
-    }
-
-    const decimalValue = Number(rawDecimals)
-
-    if (unit === "") {
-      return tr("Los datos numéricos necesitan una unidad.")
-    }
-
-    if (!/^\d+$/.test(rawDecimals) || !Number.isInteger(decimalValue) || decimalValue < 0 || decimalValue > 12) {
-      return tr("Los decimales deben ser un entero entre 0 y 12.")
-    }
-
-    // The backend accepts decimal strings; preserve every digit before serialization.
-    value = rawValue
-    decimals = decimalValue
-    finalLanguage = null
-    finalNilReason = null
-  } else if (form.valueType === "boolean") {
-    const normalized = form.value.trim().toLowerCase()
-
-    if (!["true", "false", "verdadero", "falso", "sí", "si", "yes", "no"].includes(normalized)) {
-      return tr("El valor debe ser sí/no o verdadero/falso.")
-    }
-
-    value = ["true", "verdadero", "sí", "si", "yes"].includes(normalized)
-    finalLanguage = null
-    finalUnit = null
-    finalNilReason = null
-  } else if (form.valueType === "date" || form.valueType === "enumeration") {
-    if (form.value.trim() === "") {
-      return tr("El valor no puede estar vacío.")
-    }
-
-    value = form.value.trim()
-    finalLanguage = null
-    finalUnit = null
-    finalNilReason = null
-  } else {
-    nil = true
-    value = null
-    finalUnit = null
-    finalLanguage = null
-
-    if (nilReason === "") {
-      return tr("Los datos sin valor necesitan un motivo.")
-    }
-  }
-
-  return {
-    datapoint_id: datapointId,
-    applicability: form.applicability,
-    value_type: form.valueType,
-    value,
-    unit: finalUnit,
-    decimals,
-    dimensions,
-    language: finalLanguage,
-    nil,
-    nil_reason: finalNilReason,
-    evidence_refs: evidence === "" ? [] : [{ type: "ui_reference", value: evidence }],
-    provenance: "api",
-    approval_status: "review_required",
-    blocking_reasons: [],
-  }
 }
 
 function apiErrorMessage(error: unknown, fallback: string, locale: "es" | "en" = "es"): string {
@@ -1114,75 +754,6 @@ function apiErrorMessage(error: unknown, fallback: string, locale: "es" | "en" =
   return fallback
 }
 
-function FactList({
-  facts,
-  legacyFacts,
-  onReview,
-}: {
-  facts: LaravelReportingFact[]
-  legacyFacts: LaravelReportingFact[]
-  onReview: (fact: LaravelReportingFact) => void
-}) {
-  const { locale } = useLocale()
-  const tr = (message: string) => ui(locale, message)
-
-  return (
-    <div className="space-y-4">
-      <div className="space-y-2">
-        <h3 className="text-sm font-semibold text-foreground">{tr("Datos factuales guardados")}</h3>
-        {facts.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{tr("Aún no hay datos factuales guardados.")}</p>
-        ) : (
-          facts.map((fact) => {
-            const reviewBlocked = fact.applicability === "pending" || fact.applicability === "blocked" || fact.blocking_reasons.length > 0
-
-            return (
-              <div key={fact.fact_id} className="rounded-md border border-border px-3 py-3 text-sm">
-                <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-                  <div className="min-w-0">
-                    <p className="break-words font-medium text-foreground">{fact.datapoint_id}</p>
-                    <p className="mt-1 text-muted-foreground">
-                      {factStatusLabel(fact.approval_status, locale)} · {applicabilityLabel(fact.applicability, locale)} ·{" "}
-                      {valueTypeLabel(fact.value_type, locale)}: {safeFactValue(fact, locale)}
-                    </p>
-                    {reviewBlocked ? (
-                      <p className="mt-2 text-amber-700">{tr("Este dato está bloqueado o pendiente y no puede revisarse.")}</p>
-                    ) : null}
-                  </div>
-                  {fact.approval_status === "review_required" ? (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      disabled={!fact.id || reviewBlocked}
-                      onClick={() => onReview(fact)}
-                    >
-                      {" "}{tr("Marcar como revisado")}{" "}</Button>
-                  ) : (
-                    <Badge className={statusTone(fact.approval_status)}>{factStatusLabel(fact.approval_status, locale)}</Badge>
-                  )}
-                </div>
-              </div>
-            )
-          })
-        )}
-      </div>
-
-      {legacyFacts.length > 0 ? (
-        <div className="space-y-2">
-          <h3 className="text-sm font-semibold text-foreground">{tr("Propuestas de datos pendientes")}</h3>
-          {legacyFacts.map((fact) => (
-            <div key={fact.fact_id} className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950">
-              <p className="font-medium">{fact.datapoint_id}</p>
-              <p className="mt-1">{tr("Requiere revisión antes de convertirse en dato factual guardado.")}</p>
-            </div>
-          ))}
-        </div>
-      ) : null}
-    </div>
-  )
-}
-
 function SnapshotSummary({ snapshot }: { snapshot: LaravelReportSnapshot | null }) {
   const { locale } = useLocale()
   const tr = (message: string) => ui(locale, message)
@@ -1190,7 +761,7 @@ function SnapshotSummary({ snapshot }: { snapshot: LaravelReportSnapshot | null 
   if (!snapshot) {
     return (
       <div className="rounded-md border border-border p-3 text-sm text-muted-foreground">
-        {" "}{tr("Aún no hay una versión factual preparada.")}{" "}</div>
+        {" "}{tr("Aún no hay una versión del informe preparada.")}{" "}</div>
     )
   }
 
@@ -1219,138 +790,6 @@ function SummaryMetric({ label, value }: { label: string; value: number | string
       <p className="mt-1 text-lg font-semibold text-foreground">{value}</p>
     </div>
   )
-}
-
-function LabeledInput({
-  id,
-  label,
-  value,
-  onChange,
-  type = "text",
-  min,
-  max,
-  disabled,
-}: {
-  id: string
-  label: string
-  value: string
-  onChange: (event: ChangeEvent<HTMLInputElement>) => void
-  type?: string
-  min?: string
-  max?: string
-  disabled?: boolean
-}) {
-  return (
-    <div>
-      <label htmlFor={id} className="text-sm font-medium text-foreground">
-        {label}
-      </label>
-      <Input id={id} className="mt-1" type={type} min={min} max={max} value={value} disabled={disabled} onChange={onChange} />
-    </div>
-  )
-}
-
-function LabeledSelect({
-  id,
-  label,
-  value,
-  options,
-  onChange,
-}: {
-  id: string
-  label: string
-  value: string
-  options: Array<[string, string]>
-  onChange: (event: ChangeEvent<HTMLSelectElement>) => void
-}) {
-  return (
-    <div>
-      <label htmlFor={id} className="text-sm font-medium text-foreground">
-        {label}
-      </label>
-      <select
-        id={id}
-        className="border-input mt-1 h-9 w-full rounded-md border bg-transparent px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-        value={value}
-        onChange={onChange}
-      >
-        {options.map(([optionValue, optionLabel]) => (
-          <option key={optionValue} value={optionValue}>
-            {optionLabel}
-          </option>
-        ))}
-      </select>
-    </div>
-  )
-}
-
-function valueTypeLabel(valueType: string, locale: "es" | "en" = "es"): string {
-  const tr = (message: string) => ui(locale, message)
-
-  const labels: Record<string, string> = {
-    text: tr("Texto"),
-    number: tr("Número"),
-    monetary: tr("Importe"),
-    integer: tr("Número entero"),
-    boolean: tr("Sí o no"),
-    date: tr("Fecha"),
-    enumeration: tr("Opción"),
-    nil: tr("Sin valor"),
-  }
-
-  return labels[valueType] ?? tr("Tipo no disponible")
-}
-
-function factStatusLabel(status: string, locale: "es" | "en" = "es"): string {
-  const tr = (message: string) => ui(locale, message)
-
-  if (status === "review_required") {
-    return tr("Revisión requerida")
-  }
-
-  if (status === "reviewed") {
-    return tr("Revisado")
-  }
-
-  if (status === "approved") {
-    return tr("Aprobado")
-  }
-
-  return tr(statusLabel(status))
-}
-
-function applicabilityLabel(applicability: string, locale: "es" | "en" = "es"): string {
-  const tr = (message: string) => ui(locale, message)
-
-  const labels: Record<string, string> = {
-    applicable: tr("Aplicable"),
-    not_applicable: tr("No aplicable"),
-    pending: tr("Pendiente"),
-    unavailable: tr("No disponible"),
-    blocked: tr("Bloqueado"),
-  }
-
-  return labels[applicability] ?? tr("No disponible")
-}
-
-function safeFactValue(fact: LaravelReportingFact, locale: "es" | "en" = "es"): string {
-  const tr = (message: string) => ui(locale, message)
-
-  if (fact.nil) {
-    return fact.nil_reason || tr("Sin valor")
-  }
-
-  if (fact.value === null) {
-    return "-"
-  }
-
-  if (typeof fact.value === "object") {
-    return fact.value.text ?? tr("Valor estructurado")
-  }
-
-  if (typeof fact.value === "boolean") return fact.value ? tr("Sí") : tr("No")
-
-  return String(fact.value)
 }
 
 function formatDate(value: string | null, locale: "es" | "en" = "es"): string {

@@ -6,8 +6,8 @@ import { wizardStepsForView } from "@/lib/wizard-steps"
 const academyTips = {
   title: "Consejos prácticos",
   tips: [
-    "Revisa cada tema propuesto por la IA y marca si lo aceptas, lo rechazas o lo dejas en duda para la doble importancia relativa.",
-    "Si rechazas un tema, deja una nota breve: esa explicación será útil para la trazabilidad posterior.",
+    "Marca o desmarca los temas recomendados por la IA y añade cualquier otro del catálogo completo que sea relevante para tu empresa.",
+    "Si descartas un tema recomendado, deja una nota breve: esa explicación será útil para la trazabilidad posterior.",
   ],
 }
 

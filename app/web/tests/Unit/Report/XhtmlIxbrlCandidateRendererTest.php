@@ -12,6 +12,8 @@ beforeEach(function () {
     $this->mock(\App\Services\Report\TaxonomyConceptMetadata::class)
         ->shouldReceive('load')->andReturn([
             'esrs:Revenue' => ['type' => '{http://www.xbrl.org/2003/instance}monetaryItemType', 'period_type' => 'duration', 'abstract' => false],
+            'esrs:NumberOfExecutiveMembers' => ['type' => '{http://www.xbrl.org/2003/instance}integerItemType', 'period_type' => 'instant', 'abstract' => false],
+            'esrs:DisclosureOfTransitionPlanForClimateChangeMitigationExplanatory' => ['type' => '{http://www.xbrl.org/dtr/type/2024-01-31}textBlockItemType', 'period_type' => 'duration', 'abstract' => false],
         ]);
 });
 
@@ -31,7 +33,9 @@ it('renders deterministic parseable XHTML with iXBRL namespaces and schemaRef', 
     expect($first)->toContain('<ix:nonFraction');
     expect($first)->toContain('unitRef="u_EUR"');
     expect($first)->toContain('decimals="2"');
-    expect($first)->toMatch('/<ix:nonFraction[^>]*>123\.45<\/ix:nonFraction>/');
+    expect($first)->toMatch('/<ix:nonFraction[^>]*>123,45<\/ix:nonFraction>/');
+    expect($first)->toContain('format="ixt:num-comma-decimal"');
+    expect($first)->toContain('<style type="text/css">')->toContain('class="code">SBM-1_06</span>')->toContain('class="question">');
     expect($first)->toContain('scheme="http://standards.iso.org/iso/17442"');
     expect($first)->toContain('TEST0000000000000075');
     expect($first)->not->toContain('snapshot-entity-')
@@ -134,8 +138,8 @@ it('localizes the visible candidate shell while preserving machine taxonomy and 
     foreach (['es', 'en'] as $locale) {
         $xhtml = app(XhtmlIxbrlCandidateRenderer::class)->render($ir, $profile, xhtmlIxbrlRendererManifest(), $locale);
         expect($xhtml)->toContain('xml:lang="'.$locale.'"');
-        expect($xhtml)->toContain($locale === 'es' ? 'Candidato XHTML/iXBRL NEIS' : 'ESRS XHTML/iXBRL candidate');
-        expect($xhtml)->toMatch('/<ix:nonFraction[^>]*>123\.45<\/ix:nonFraction>/');
+        expect($xhtml)->toContain($locale === 'es' ? 'Informe de sostenibilidad NEIS' : 'ESRS sustainability report');
+        expect($xhtml)->toMatch($locale === 'es' ? '/<ix:nonFraction[^>]*>123,45<\/ix:nonFraction>/' : '/<ix:nonFraction[^>]*>123\.45<\/ix:nonFraction>/');
         expect($xhtml)->toContain('https://xbrl.efrag.org/taxonomy/esrs/2023-12-22/esrs_all.xsd');
     }
 });
@@ -168,7 +172,7 @@ it('binds the mapped Revenue QName to the official ESRS core namespace', functio
     $fact = $facts->item(0);
     expect($fact)->toBeInstanceOf(DOMElement::class);
     expect($fact->getAttribute('name'))->toBe('esrs:Revenue');
-    expect($fact->textContent)->toBe('1234.56');
+    expect($fact->textContent)->toBe('1.234,56');
     expect($fact->getAttribute('unitRef'))->toBe('u_EUR');
     expect($fact->getAttribute('decimals'))->toBe('2');
 
@@ -278,3 +282,35 @@ it('does not change renderer tagging after a reviewed runtime identification', f
     'runtime only' => [false, true],
     'both on' => [true, true],
 ]);
+
+it('keeps the pure unit in the tag only and tags narrative answers as nonNumeric text blocks', function () {
+    $renderer = app(XhtmlIxbrlCandidateRenderer::class);
+    $profile = (new ReportingProfileRepository())->load('esrs-2023-preparatory-v1');
+    $ir = xhtmlIxbrlRendererIr([
+        'claims' => [
+            xhtmlIxbrlRendererClaim(['claim_id' => 'claim_count', 'fact_id' => 'rf_count', 'datapoint_id' => 'GOV-1_01', 'value_type' => 'integer', 'value' => ['value' => '48'], 'unit' => 'pure', 'decimals' => 0]),
+            xhtmlIxbrlRendererClaim(['claim_id' => 'claim_story', 'fact_id' => 'rf_story', 'datapoint_id' => 'E1-1_01', 'value_type' => 'text', 'value' => ['text' => 'Plan de transición <b>sintético</b> & ambicioso.'], 'unit' => null, 'decimals' => null]),
+        ],
+    ]);
+
+    $xhtml = $renderer->render($ir, $profile, xhtmlIxbrlRendererManifest());
+    $doc = new DOMDocument();
+    expect($doc->loadXML($xhtml, LIBXML_NONET))->toBeTrue();
+    $xp = new DOMXPath($doc);
+    $xp->registerNamespace('ix', 'http://www.xbrl.org/2013/inlineXBRL');
+    $xp->registerNamespace('x', 'http://www.w3.org/1999/xhtml');
+
+    $count = $xp->query('//ix:nonFraction[@unitRef="u_pure"]')->item(0);
+    expect($count)->toBeInstanceOf(DOMElement::class)->and($count->textContent)->toBe('48');
+    expect($count->parentNode->parentNode->textContent)->toBe('48');
+    expect($xhtml)->toContain('<xbrli:measure>xbrli:pure</xbrli:measure>');
+    $visible = preg_replace('/<style[^>]*>.*?<\/style>|<ix:header[^>]*>.*?<\/ix:header>/s', '', $xhtml);
+    expect(preg_match('/>[^<]*\bpure\b[^<]*</', $visible, $leak) === 1 ? $leak[0] : '')->toBe('');
+
+    $story = $xp->query('//ix:nonNumeric')->item(0);
+    expect($story)->toBeInstanceOf(DOMElement::class)
+        ->and($story->getAttribute('name'))->toBe('esrs:DisclosureOfTransitionPlanForClimateChangeMitigationExplanatory')
+        ->and($story->getAttribute('contextRef'))->toBe('c_duration')
+        ->and($story->textContent)->toBe('Plan de transición <b>sintético</b> & ambicioso.');
+    expect($xhtml)->toContain('class="code">E1-1_01</span>')->toContain('class="code">GOV-1_01</span>')->not->toContain('claim_')->not->toContain('rf_');
+});

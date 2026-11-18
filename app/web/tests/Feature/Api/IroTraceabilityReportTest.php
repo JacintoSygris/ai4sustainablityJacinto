@@ -15,17 +15,9 @@ it('freezes the reviewed IRO graph through P9 approval evidence and all renderer
     $corpus = IroTraceabilityFixture::confirm($this, $f);
     $this->putJson('/api/esrs-datapoints/responses', ['expected_revision' => 0,
         'expected_authority_digest' => $corpus['p9_authority_digest'], 'responses' => [
-            ['datapoint_id' => 'SBM-1_06', 'status' => 'completed', 'value' => '123.45'],
+            // The typed answer is the reviewed report fact; nothing is created by hand.
+            ['datapoint_id' => 'SBM-1_06', 'status' => 'completed', 'value' => '123.45', 'value_type' => 'number', 'unit' => 'EUR', 'decimals' => 2, 'note' => 'Synthetic evidence only'],
         ]])->assertOk();
-    ReportingFact::create([
-        'characterization_id' => $f['characterization']->id, 'fact_id' => 'rf_synthetic_iro',
-        'schema_version' => ReportingFact::SCHEMA_VERSION, 'profile_id' => ReportingFact::PROFILE_ID,
-        'datapoint_id' => 'SBM-1_06', 'applicability' => 'applicable', 'value_type' => 'number',
-        'value' => ['value' => '123.45'], 'unit' => 'EUR', 'decimals' => 2, 'dimensions' => [],
-        'language' => 'es', 'nil' => false, 'nil_reason' => null,
-        'evidence_refs' => [['type' => 'note', 'value' => 'Synthetic evidence only']],
-        'provenance' => 'api', 'approval_status' => 'reviewed', 'blocking_reasons' => [],
-    ]);
     $id = $this->postJson('/api/report/snapshot')->assertCreated()->json('data.id');
     $this->postJson('/api/report/snapshots/'.$id.'/approve', ['single_person_declaration' => 'Synthetic test declaration'])->assertSuccessful();
     $snapshot = ReportSnapshot::findOrFail($id);

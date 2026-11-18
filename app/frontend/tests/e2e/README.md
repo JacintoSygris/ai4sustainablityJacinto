@@ -1,7 +1,7 @@
 # Pruebas de extremo a extremo (Playwright)
 
 Recorren el asistente completo (pasos 1 a 6) en un navegador real contra una pila en marcha,
-hasta dejar el informe del paso 6 con versión factual aprobada y comprobar cada descarga:
+hasta dejar el informe del paso 6 con una versión aprobada y comprobar cada descarga:
 Next, Laravel y el servicio de IA. No arrancan nada: usan la URL de `E2E_BASE_URL`
 (por defecto `https://localhost:8443`, la pila local «como producción»).
 
@@ -32,13 +32,13 @@ El informe HTML queda en `test-results/html`.
 - Paso 2: propuesta con el servicio de IA y decisión en cada tema.
 - Paso 3: acta del análisis. Paso 4: confirmación de la selección final.
 - Paso 5: inventario rápido por estándar y decisión en los 190 datos: 12 con cifras de la empresa,
-  hasta 16 completados en total y el resto «No aplica» justificado. Cada dato completado exige en el
-  paso 6 un dato factual revisado uno a uno y la revisión está limitada a 20 por minuto, de ahí el tope.
-- Paso 6: primer dato factual y su revisión por la interfaz; el resto se carga por la API con la
-  sesión del navegador (`PUT /api/report/facts`, `POST /api/report/facts/{id}/review`), se prepara y
-  aprueba la versión factual y se comprueba que cada descarga responde con su formato: borrador y
-  trazabilidad JSON, paquete HTML, HTML y DOCX factuales, paquete de evidencias, hoja de decisión,
-  CSV de datos y respuestas y PDF de caracterización.
+  hasta 16 completados en total y el resto «No aplica» justificado. Las cifras se registran con su
+  tipo (entero, importe, número), unidad y decimales en la propia respuesta: son los hechos del
+  informe y lo que el XBRL etiqueta, sin volver a introducirlas en el paso 6.
+- Paso 6: comprueba por `GET /api/report/facts` que cada respuesta completada con valor es ya un hecho
+  revisado del informe, prepara y aprueba la versión del informe y verifica que cada descarga responde
+  con su formato: borrador y trazabilidad JSON, paquete HTML, informe HTML y DOCX, paquete de
+  evidencias, hoja de decisión, CSV de datos y respuestas y PDF de caracterización.
 - Documento XBRL: con la taxonomía EFRAG, su manifiesto y Arelle aprovisionados (`GET /api/report/taxonomy`
   en `verified`), descarga el candidato XHTML/iXBRL y el paquete iXBRL (ZIP con `reports/candidate.xhtml`),
   comprueba los cinco hechos numéricos etiquetados (`ix:nonFraction` con sus conceptos `esrs:*`), el LEI y la
@@ -59,3 +59,11 @@ inventario, así que también cuenta lo decidido en ejecuciones anteriores del m
 
 No lances dos ejecuciones seguidas sin esperar: si se interrumpe una, su navegador sigue vaciando la
 cola de autoguardados unos minutos y la siguiente recibirá un conflicto de revisión en el paso 5.
+
+## Empresas ficticias y vídeos (`demo-walkthrough.spec.ts`)
+
+Las cinco cuentas `test1..5@airis.com` se generan en el servidor con `php artisan i4s:demo:companies`
+(ver `app/docs/demo-companies.md`). Este spec no rellena nada: entra con cada cuenta, recorre los
+seis pasos con los datos ya generados y guarda el vídeo en `app/web/storage/app/private/demo-videos/`,
+de donde lo descargan los administradores en `/admin`. Variables: `DEMO_COMPANIES_PASSWORD` y,
+opcionalmente, `DEMO_COMPANIES_ONLY` (correos separados por comas).

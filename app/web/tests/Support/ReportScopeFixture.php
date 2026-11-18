@@ -66,15 +66,38 @@ final class ReportScopeFixture
         return $c->fresh();
     }
 
+    /**
+     * The report fact of a datapoint is derived from its step 5 answer. The default
+     * writes the synthetic narrative as the BP-1_01 answer and syncs; overrides that
+     * only historical snapshots can hold (dimensions, custom ids, withdrawn reasons)
+     * are forced on the derived row afterwards.
+     */
     public static function fact(Characterization $c, array $overrides = []): ReportingFact
     {
-        return ReportingFact::create(array_replace([
-            'characterization_id' => $c->id, 'fact_id' => 'rf_synthetic_scope', 'schema_version' => ReportingFact::SCHEMA_VERSION,
-            'profile_id' => ReportingFact::PROFILE_ID, 'datapoint_id' => 'BP-1_01', 'applicability' => 'applicable', 'value_type' => 'text',
-            'value' => ['text' => 'Synthetic approved narrative <script> & evidence'], 'unit' => null, 'decimals' => null, 'dimensions' => [],
-            'language' => 'es', 'nil' => false, 'nil_reason' => null, 'evidence_refs' => [['type' => 'note', 'value' => 'Synthetic evidence <script>']],
-            'provenance' => 'api', 'approval_status' => 'reviewed', 'blocking_reasons' => [],
-        ], $overrides));
+        $datapointId = $overrides['datapoint_id'] ?? 'BP-1_01';
+        $valueType = $overrides['value_type'] ?? 'text';
+        $value = $overrides['value'] ?? ['text' => 'Synthetic approved narrative <script> & evidence'];
+        $form = $c->form_data;
+        $response = $form['esrs_datapoint_responses']['responses'][$datapointId] ?? ['datapoint_id' => $datapointId];
+        $form['esrs_datapoint_responses']['responses'][$datapointId] = array_merge($response, [
+            'datapoint_id' => $datapointId,
+            'status' => ($overrides['applicability'] ?? 'applicable') === 'not_applicable' ? 'not_applicable' : 'completed',
+            'value' => is_array($value) ? (string) ($value['text'] ?? $value['value'] ?? '') : (string) $value,
+            'value_type' => $valueType,
+            'unit' => $overrides['unit'] ?? null,
+            'decimals' => $overrides['decimals'] ?? null,
+            'note' => 'Synthetic evidence',
+            'updated_at' => now()->toJSON(),
+        ]);
+        $c->update(['form_data' => $form]);
+        app(\App\Services\Report\ReportingFactSync::class)->sync($c->fresh());
+        $fact = ReportingFact::query()->where('characterization_id', $c->id)->where('datapoint_id', $datapointId)->firstOrFail();
+        $legacy = array_intersect_key($overrides, array_flip(['fact_id', 'dimensions', 'nil_reason', 'evidence_refs', 'applicability', 'value', 'value_type', 'unit', 'decimals', 'nil', 'language', 'provenance', 'approval_status']));
+        if ($legacy !== []) {
+            $fact->forceFill($legacy)->save();
+        }
+
+        return $fact->fresh();
     }
 
     public static function approve(Characterization $c): ReportSnapshot

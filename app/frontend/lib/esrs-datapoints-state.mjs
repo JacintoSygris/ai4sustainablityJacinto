@@ -63,6 +63,75 @@ export function flattenCorpus(corpus) {
   )
 }
 
+// Typed answers: the report facts and the iXBRL tagging read these directly from step 5.
+export const VALUE_TYPE_OPTIONS = [
+  { value: "text", label: "Texto" },
+  { value: "number", label: "Número" },
+  { value: "integer", label: "Número entero" },
+  { value: "monetary", label: "Importe" },
+  { value: "boolean", label: "Sí o no" },
+  { value: "date", label: "Fecha" },
+]
+
+export const NUMERIC_VALUE_TYPES = ["number", "integer", "monetary"]
+
+export function valueTypeOptions(locale = "es") {
+  return translateSystem(VALUE_TYPE_OPTIONS, locale)
+}
+
+/** Mirrors ReportingFactProjector::suggestedValueType on the platform. */
+/** @param {string | null | undefined} dataType */
+export function suggestedValueType(dataType) {
+  const normalized = String(dataType ?? "").trim().toLowerCase()
+  if (normalized === "" || normalized.includes("narrative")) return "text"
+  if (normalized.includes("mone")) return "monetary"
+  if (normalized.includes("integer")) return "integer"
+  if (normalized.includes("gyear") || normalized.includes("date")) return "date"
+  if (/percent|decimal|numerical|mass|volume|area|energy|ghg|intensity/.test(normalized)) return "number"
+  return "text"
+}
+
+export function valueTypeRequiresUnit(valueType) {
+  return NUMERIC_VALUE_TYPES.includes(valueType)
+}
+
+/**
+ * @param {string} valueType
+ * @param {string | null | undefined} [dataType]
+ */
+export function defaultUnitFor(valueType, dataType = null) {
+  const normalized = String(dataType ?? "").toLowerCase()
+  if (valueType === "monetary") return "EUR"
+  if (valueType === "integer") return "pure"
+  if (valueType === "number") return normalized.includes("percent") ? "%" : "pure"
+  return ""
+}
+
+export function defaultDecimalsFor(valueType) {
+  if (valueType === "integer") return 0
+  if (valueType === "monetary" || valueType === "number") return 2
+  return null
+}
+
+/** The platform rejects answers that contradict their type; warn before saving. */
+export function valueMatchesType(valueType, value) {
+  const text = String(value ?? "").trim()
+  if (text === "" || !valueType || valueType === "text") return true
+  switch (valueType) {
+    case "number":
+    case "monetary":
+      return /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(text)
+    case "integer":
+      return /^[+-]?\d+$/.test(text)
+    case "boolean":
+      return ["true", "false", "1", "0", "sí", "si", "no", "yes"].includes(text.toLowerCase())
+    case "date":
+      return /^\d{4}(?:-\d{2}(?:-\d{2})?)?$/.test(text)
+    default:
+      return true
+  }
+}
+
 export function emptyDraft() {
   return {
     evidence_reference: "",
@@ -92,6 +161,16 @@ export function compactDrafts(drafts, authorityReviewConfirmed = false) {
       }
       if (draft?.triage) {
         base.triage = draft.triage
+      }
+      const valueType = trimOptional(draft?.value_type)
+      if (valueType) {
+        base.value_type = valueType
+        if (valueTypeRequiresUnit(valueType)) {
+          const unit = trimOptional(draft?.unit)
+          if (unit) base.unit = unit
+          const decimals = Number.parseInt(String(draft?.decimals ?? ""), 10)
+          if (Number.isInteger(decimals) && decimals >= 0) base.decimals = decimals
+        }
       }
       return base
     })

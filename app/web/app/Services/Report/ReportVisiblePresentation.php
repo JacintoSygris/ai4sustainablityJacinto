@@ -205,13 +205,14 @@ final class ReportVisiblePresentation
             }
 
             $singular = is_string($value) ? preg_match('/^[+-]?0*1(?:\.0*)?$/D', $value) === 1 : abs($value) == 1;
-            $displayUnit = $locale === 'en'
+            // "pure" is the XBRL unit of plain counts and ratios: it travels in the tag, never on screen.
+            $displayUnit = $unit === 'pure' ? '' : ($locale === 'en'
                 ? match ($unit) {
                     'personas', 'persons' => $singular ? 'person' : 'persons',
                     'percent' => '%',
                     default => $unit,
                 }
-                : self::visibleUnit($unit, $singular);
+                : self::visibleUnit($unit, $singular));
             $displayValue = $displayUnit === '' ? $formatted : $formatted.' '.$displayUnit;
 
             return self::withVisibleDimensions($displayValue, $dimensions, $locale, $allowUnknownDimensions);

@@ -15,13 +15,13 @@ The summary may include organisation identification, reporting year, activity co
 - **Responses CSV**: structured responses and references entered.
 - **Summary JSON**: preparation status, coverage and technical traceability.
 - **HTML package**: printable preparation, topic and coverage summary.
-- **Factual HTML, factual DOCX and evidence bundle**: approved-snapshot outputs containing only reviewed factual data and structured evidence references.
+- **XBRL report, DOCX report and evidence bundle**: approved-version outputs containing the answers completed in step 5 (with their type and unit). The XBRL report is an Inline XBRL document with the same design as the other outputs: a cover with company, period and LEI, chapters and disclosure requirements with their ESRS code, and one card per datapoint with code, question and answer. Figures carry `ix:nonFraction` tags (the `pure` unit travels only in the tag and is not displayed) and narratives whose concept accepts text carry `ix:nonNumeric`. It can be opened in the browser or downloaded; evidence references are not printed.
 - **XHTML/iXBRL candidate**: protected technical output, not offered as an ordinary download. It requires an approved snapshot, compatible data, LEI, external EFRAG taxonomy and Arelle validation.
 
-## Factual data and snapshot
+## Answers and report version
 
-A P9 response is not automatically an approved factual datum. In P10, the datum is recorded, reviewed through a declaration and included in a snapshot. The snapshot retains the state used for the output; if characterisation, a fact or the reporting profile changes, it is no longer current and another must be prepared and approved.
+Every answer completed in step 5 is report content: its value, data type (text, number, integer, amount, yes/no or date), unit and decimals are recorded once, there. Nothing is re-entered or reviewed in step 6: a report version is prepared, which freezes those answers, and approved with a declaration. If the characterisation, an answer or the reporting profile changes, the version is no longer current and another must be prepared and approved.
 
 ## How To Read Ready
 
-A ready factual download means a fresh approved snapshot allows it to be generated. It does not mean the content is complete, accurate, assured, legally sufficient or accepted by a regulator.
+A ready report download means a current approved version allows it to be generated. It does not mean the content is complete, accurate, assured, legally sufficient or accepted by a regulator.

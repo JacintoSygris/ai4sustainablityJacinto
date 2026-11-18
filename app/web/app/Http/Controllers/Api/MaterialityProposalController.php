@@ -57,6 +57,10 @@ class MaterialityProposalController extends Controller
             'action_reasons.*.*' => ['string', Rule::in(self::REASON_KEYS)],
             'action_notes' => ['sometimes', 'array'],
             'action_notes.*' => ['nullable', 'string', 'max:300'],
+            // Topics the user adds on top of the AI proposal. The payload is the
+            // full list: omitting it (or sending []) removes every earlier addition.
+            'added_topic_ids' => ['sometimes', 'array', 'max:200'],
+            'added_topic_ids.*' => ['integer', 'min:1', Rule::exists('esrs_topics', 'id')],
         ]);
 
         $characterizationId = Characterization::forUser($request->user()->id)->firstOrFail()->id;
@@ -67,7 +71,9 @@ class MaterialityProposalController extends Controller
                 return ['conflict' => true, 'current_revision' => $currentRevision];
             }
 
-            $proposalTopicIds = $this->proposalTopicIds($characterization);
+            $baseTopicIds = $this->baseProposalTopicIds($characterization);
+            $addedTopicIds = array_values(array_diff($this->topicIds($validated['added_topic_ids'] ?? []), $baseTopicIds));
+            $proposalTopicIds = array_values(array_unique(array_merge($baseTopicIds, $addedTopicIds)));
             $this->validateReviewPrecondition($characterization, $proposalTopicIds);
             $this->validateReviewActionCoverage($validated['topic_actions']);
             $this->validateReviewTopicKeys($validated, $proposalTopicIds);
@@ -78,10 +84,17 @@ class MaterialityProposalController extends Controller
                 'topic_actions' => $this->normalizeKeyedStrings($validated['topic_actions']),
                 'action_reasons' => $this->normalizeKeyedArrays($validated['action_reasons'] ?? []),
                 'action_notes' => $this->normalizeKeyedStrings($validated['action_notes'] ?? []),
+                'added_topic_ids' => $addedTopicIds,
                 'reviewed_at' => now()->toJSON(),
             ]);
+            // The stored proposal (base + user additions) is what later steps read
+            // as the step 2 outcome, so keep both projections in sync with it.
+            Arr::set($formData, 'esg_focus.topic_ids', $proposalTopicIds);
 
-            $characterization->forceFill(['form_data' => $formData])->save();
+            $characterization->forceFill([
+                'form_data' => $formData,
+                'esrs_topic_ids' => $proposalTopicIds,
+            ])->save();
 
             return ['conflict' => false, 'characterization_id' => $characterization->id];
         });
@@ -108,7 +121,10 @@ class MaterialityProposalController extends Controller
         $candidateTopics = Arr::get($resultData, 'candidate_topics', []);
         $candidateTopicIds = is_array($candidateTopics) ? $this->candidateTopicIds($resultData) : [];
         $topicIds = $this->proposalTopicIds($characterization);
-        $topicSyncStatus = $this->topicSyncStatus($characterization, $topicIds, $candidateTopicIds);
+        $addedTopicIds = $this->storedAddedTopicIds($characterization, $topicIds);
+        // User additions never turn an AI proposal into a "stored override".
+        $baseTopicIds = array_values(array_diff($topicIds, $addedTopicIds));
+        $topicSyncStatus = $this->topicSyncStatus($characterization, $baseTopicIds, $candidateTopicIds);
         $rawPrediction = Arr::get($resultData, 'raw_prediction', []);
         $reviewRequiredPredictionKeys = Arr::get($resultData, 'review_required_prediction_keys', []);
 
@@ -120,6 +136,9 @@ class MaterialityProposalController extends Controller
                 : 'stored_topic_ids',
             'proposal_topic_ids' => $topicIds,
             'proposal_topics' => $this->topicSummaries($topicIds),
+            // Topics the AI recommended among the current proposal, so the UI can
+            // tell them apart from topics the user added by hand.
+            'ai_topic_ids' => array_values(array_intersect($candidateTopicIds, $topicIds)),
             'ready_for_confirmation' => $characterization->status === Characterization::STATUS_COMPLETED
                 && $topicIds !== [],
             'submitted_at' => $characterization->submitted_at?->toJSON(),
@@ -198,8 +217,37 @@ class MaterialityProposalController extends Controller
             'topic_actions' => $topicActions,
             'action_reasons' => $this->filterToCurrentTopicKeys(Arr::get($review, 'action_reasons', []), $validTopicKeys),
             'action_notes' => $this->filterToCurrentTopicKeys(Arr::get($review, 'action_notes', []), $validTopicKeys),
+            'added_topic_ids' => array_values(array_intersect($this->topicIds($this->arrayOrEmpty(Arr::get($review, 'added_topic_ids'))), $proposalTopicIds)),
             'reviewed_at' => Arr::get($review, 'reviewed_at'),
         ];
+    }
+
+    /**
+     * Topics the user added on top of the AI proposal in the current review.
+     *
+     * @param  array<int, int>  $proposalTopicIds
+     * @return array<int, int>
+     */
+    private function storedAddedTopicIds(Characterization $characterization, array $proposalTopicIds): array
+    {
+        $review = Arr::get($characterization->form_data ?? [], 'materiality_proposal_review', []);
+        if (! is_array($review) || $this->reviewPredatesCurrentProposal($characterization, $review)) {
+            return [];
+        }
+
+        return array_values(array_intersect($this->topicIds($this->arrayOrEmpty(Arr::get($review, 'added_topic_ids'))), $proposalTopicIds));
+    }
+
+    /**
+     * The proposal without the user's additions (AI candidates or stored ids).
+     *
+     * @return array<int, int>
+     */
+    private function baseProposalTopicIds(Characterization $characterization): array
+    {
+        $topicIds = $this->proposalTopicIds($characterization);
+
+        return array_values(array_diff($topicIds, $this->storedAddedTopicIds($characterization, $topicIds)));
     }
 
     /**
@@ -213,6 +261,7 @@ class MaterialityProposalController extends Controller
             'topic_actions' => [],
             'action_reasons' => [],
             'action_notes' => [],
+            'added_topic_ids' => [],
             'reviewed_at' => null,
         ];
     }

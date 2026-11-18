@@ -30,8 +30,8 @@ The public journey should be read as tasks:
 2. Review the proposed ESG candidate matters.
 3. Carry out double materiality analysis with your team outside or within your usual tools.
 4. Confirm the final selection and the reasons you decide to record.
-5. Gather ESRS indicators/data, mark pending items and justify what does not apply.
-6. In P10, record and review the factual data to be used, prepare a snapshot and approve it before downloading factual outputs.
+5. Gather ESRS indicators/data with their value, type and unit, mark pending items and justify what does not apply.
+6. In the last step, prepare a report version from those answers and approve it before downloading the outputs.
 
 ## What Outputs It Produces
 
@@ -42,10 +42,10 @@ Current outputs are named by what they contain:
 - Disclosure Requirement, indicators/data and response list in CSV;
 - preparation and coverage summary in JSON;
 - printable HTML package with identification, confirmed topics, counters and limits;
-- factual HTML, factual DOCX and JSON evidence bundle generated from a fresh approved snapshot;
+- HTML report, DOCX report and JSON evidence bundle generated from a current approved version;
 - technical XHTML/iXBRL candidate only through the protected technical path after external taxonomy and Arelle validation.
 
-A P9 response helps organise work, but it is not automatically included in the factual report. Each fact must be recorded and reviewed; a later change requires a new snapshot and approval. The XHTML/iXBRL candidate is not an ordinary journey download and never constitutes an official submission.
+The answers completed in step 5 are the report content; nothing is re-entered or reviewed one by one. A later change requires a new version and approval. The XHTML/iXBRL candidate is not an ordinary journey download and never constitutes an official submission.
 
 None of these outputs is, by itself, a developed ESRS report, an official submission or an accepted filing.
 

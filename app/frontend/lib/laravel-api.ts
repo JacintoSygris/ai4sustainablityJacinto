@@ -25,6 +25,8 @@ export type LaravelApiEnvelope<T> = {
 export type LaravelFrontendSession = {
   xbrl_runtime_identification_enabled?: boolean
   learning_admin?: boolean
+  // Platform administrator: verified email in one of the configured domains.
+  admin?: boolean
   learning_consent_invitation?: boolean
   eu_taxonomy_eligibility_enabled?: boolean
   locale: "es" | "en"
@@ -230,6 +232,8 @@ export type LaravelMaterialityProposalReview = {
   topic_actions: Record<string, LaravelTopicAction>
   action_reasons: Record<string, string[]>
   action_notes: Record<string, string>
+  // Topics the user added on top of the AI proposal (subset of proposal_topic_ids).
+  added_topic_ids?: number[]
   reviewed_at: string | null
 }
 
@@ -241,6 +245,8 @@ export type LaravelMaterialityProposal = {
   source: "ai_prediction" | "stored_topic_ids"
   proposal_topic_ids: number[]
   proposal_topics: LaravelMaterialityTopic[]
+  // Proposal topics recommended by the AI (the rest were stored or added by the user).
+  ai_topic_ids?: number[]
   ready_for_confirmation: boolean
   submitted_at: string | null
   completed_at: string | null
@@ -274,6 +280,8 @@ export type LaravelMaterialityProposalReviewPayload = {
   topic_actions: Record<string, LaravelTopicAction>
   action_reasons?: Record<string, string[]>
   action_notes?: Record<string, string>
+  // Full list of user-added topics; omitting it clears earlier additions.
+  added_topic_ids?: number[]
 }
 
 export type LaravelLocalizedText = {
@@ -560,13 +568,20 @@ export type LaravelDatapointFeedback = {
   decisions: Array<{ datapoint_id: string; relevant: boolean; selected_to_answer: boolean; reason_codes: string[]; note: string | null }>
 }
 
+export type LaravelEsrsDatapointValueType = "text" | "number" | "integer" | "monetary" | "boolean" | "date"
+
 export type LaravelEsrsDatapointResponse = {
   previous_status?: LaravelEsrsDatapointResponseStatus
   datapoint_id: string
   status: LaravelEsrsDatapointResponseStatus
+  // Always the exact text typed by the person; numeric lexemes are never parsed client-side.
   value?: string
   evidence_reference?: string
   note?: string
+  // Typed answers become the report facts and the iXBRL tagging without re-entry.
+  value_type?: LaravelEsrsDatapointValueType
+  unit?: string
+  decimals?: number
   updated_at?: string
   triage?: "have_it" | "need_to_find" | "not_applicable_candidate"
 }
@@ -908,33 +923,16 @@ export type LaravelReportingFact = {
   updated_at?: string | null
 }
 
-export type LaravelReportingFactInput = {
-  datapoint_id: string
-  applicability: LaravelReportingFactApplicability
-  value_type: LaravelReportingFactValueType
-  value: LaravelReportingFactValue
-  unit: string | null
-  decimals: number | null
-  dimensions: LaravelReportingFactDimension[]
-  language: string | null
-  nil: boolean
-  nil_reason: string | null
-  evidence_refs: LaravelReportingFactEvidenceRef[]
-  provenance: "api"
-  approval_status: "review_required"
-  blocking_reasons: string[]
-}
-
+// Report facts are derived from the step 5 answers by the platform; this is a read model.
 export type LaravelReportingFactState = {
   characterization_id: number
   schema_version: string
   profile_id: string
+  source: "esrs_datapoint_responses"
   persisted_facts: LaravelReportingFact[]
   persisted_fact_count: number
-  legacy_projection: LaravelReportingFact[]
-  legacy_projection_count: number
-  pending_p9_suggestions: LaravelReportingFact[]
-  pending_p9_suggestion_count: number
+  reviewed_fact_count: number
+  claimable_fact_count: number
 }
 
 export type LaravelReportSnapshotApproval = {
@@ -1284,6 +1282,130 @@ export function updateLaravelMaterialityConfirmation(
   })
 }
 
+export type LaravelAdminUserProgress = {
+  proposal_completed: boolean
+  review_started: boolean
+  acta_registered: boolean
+  confirmed: boolean
+  datapoint_responses: number
+  snapshots: number
+  approved_snapshots: number
+  latest_snapshot_at: string | null
+  report: { status: string; workflow_complete: boolean } | null
+}
+
+export type LaravelAdminUser = {
+  id: number
+  name: string | null
+  email: string
+  email_verified: boolean
+  is_admin: boolean
+  created_at: string | null
+  // A recorded walkthrough video exists for this account (demo data).
+  demo_video?: boolean
+  characterization: {
+    id: number
+    status: string
+    company_name: string | null
+    nace_code: string | null
+    submitted_at: string | null
+    completed_at: string | null
+    updated_at: string | null
+  } | null
+  progress: LaravelAdminUserProgress
+}
+
+export type LaravelAdminUsers = {
+  users: LaravelAdminUser[]
+  admin_domains: string[]
+}
+
+export type LaravelAiUsefulnessTopic = {
+  id: number
+  esrs_code: string | null
+  label: { es: string | null; en: string | null }
+  count: number
+}
+
+export type LaravelAiUsefulnessCompany = {
+  user_id: number
+  user_name: string | null
+  user_email: string
+  company_name: string | null
+  nace_code: string | null
+  status: string
+  completed_at: string | null
+  ai_recommended_count: number
+  proposal_count: number
+  review: {
+    available: boolean
+    status: string
+    accepted: number
+    unsure: number
+    rejected: number
+    pending: number
+    acceptance_rate: number | null
+    added_by_client: number
+  }
+  final: {
+    available: boolean
+    confirmed_count: number
+    ai_kept: number
+    ai_discarded: number
+    added_by_client: number
+    precision: number | null
+    coverage: number | null
+  }
+}
+
+export type LaravelAiUsefulnessReport = {
+  generated_at: string
+  summary: {
+    users: number
+    companies_with_proposal: number
+    companies_with_review: number
+    companies_with_confirmation: number
+    ai_recommended_total: number
+    review: {
+      ai_recommended_total: number
+      accepted: number
+      unsure: number
+      rejected: number
+      pending: number
+      acceptance_rate: number | null
+      average_acceptance_rate: number | null
+      added_by_client: number
+    }
+    final: {
+      ai_recommended_total: number
+      confirmed_total: number
+      ai_kept: number
+      ai_discarded: number
+      added_by_client: number
+      precision: number | null
+      coverage: number | null
+      average_precision: number | null
+    }
+    acceptance_distribution: Array<{ key: string; count: number }>
+  }
+  top_accepted_topics: LaravelAiUsefulnessTopic[]
+  top_rejected_topics: LaravelAiUsefulnessTopic[]
+  top_added_topics: LaravelAiUsefulnessTopic[]
+  companies: LaravelAiUsefulnessCompany[]
+}
+
+export function getLaravelAdminUsers(
+  options: Omit<LaravelApiOptions, "body" | "method"> = {},
+): Promise<LaravelApiEnvelope<LaravelAdminUsers>> {
+  return laravelApi<LaravelApiEnvelope<LaravelAdminUsers>>("/admin/users", { ...options, method: "GET" })
+}
+
+export function getLaravelAdminAiUsefulness(
+  options: Omit<LaravelApiOptions, "body" | "method"> = {},
+): Promise<LaravelApiEnvelope<LaravelAiUsefulnessReport>> {
+  return laravelApi<LaravelApiEnvelope<LaravelAiUsefulnessReport>>("/admin/ai-usefulness", { ...options, method: "GET" })
+}
+
 export function getLaravelEsrsTopics(
   params: { search?: string; esrs_code?: string; per_page?: number } = {},
   options: Omit<LaravelApiOptions, "body" | "method"> = {},
@@ -1392,29 +1514,6 @@ export function getLaravelReportingFacts(
     cache: "no-store",
     ...options,
     method: "GET",
-  })
-}
-
-export function saveLaravelReportingFacts(
-  payload: { facts: LaravelReportingFactInput[] },
-  options: Omit<LaravelApiOptions, "body" | "method"> = {},
-): Promise<LaravelApiEnvelope<LaravelReportingFactState>> {
-  return laravelApi<LaravelApiEnvelope<LaravelReportingFactState>>("/report/facts", {
-    ...options,
-    body: payload,
-    method: "PUT",
-  })
-}
-
-export function reviewLaravelReportingFact(
-  factId: number,
-  payload: { review_declaration: string },
-  options: Omit<LaravelApiOptions, "body" | "method"> = {},
-): Promise<LaravelApiEnvelope<LaravelReportingFact>> {
-  return laravelApi<LaravelApiEnvelope<LaravelReportingFact>>(`/report/facts/${factId}/review`, {
-    ...options,
-    body: payload,
-    method: "POST",
   })
 }
 

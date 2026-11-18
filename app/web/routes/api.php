@@ -37,6 +37,12 @@ Route::middleware(['web'])->get('auth/register-config', function () {
 })->name('api.auth.register_config');
 
 Route::middleware(['web', 'private-dev-user', 'auth', 'verified.required'])->group(function () {
+    Route::get('admin/users', [\App\Http\Controllers\Api\AdminOverviewController::class, 'users'])
+        ->middleware('throttle:30,1,admin-overview')->name('api.admin.users');
+    Route::get('admin/ai-usefulness', [\App\Http\Controllers\Api\AdminOverviewController::class, 'aiUsefulness'])
+        ->middleware('throttle:30,1,admin-overview')->name('api.admin.ai-usefulness');
+    Route::get('admin/users/{user}/demo-video', [\App\Http\Controllers\Api\AdminOverviewController::class, 'demoVideo'])
+        ->whereNumber('user')->middleware('throttle:30,1,admin-overview')->name('api.admin.demo-video');
     Route::get('admin/learning', [\App\Http\Controllers\Api\LearningAdminController::class, 'show'])->middleware('throttle:20,1,learning-admin-read');
     Route::post('admin/learning/actions', [\App\Http\Controllers\Api\LearningAdminController::class, 'store'])->middleware('throttle:5,1,learning-admin-actions');
     Route::get('learning-case/draft', [\App\Http\Controllers\Api\LearningCaseController::class, 'show'])->name('api.learning_case.draft');
@@ -138,21 +144,14 @@ Route::middleware(['web', 'private-dev-user', 'auth', 'verified.required'])->gro
     Route::get('report/xhtml', [GuidedReportController::class, 'xhtml'])
         ->middleware('throttle:10,1,report-xhtml-presentation')->name('api.report.xhtml');
     Route::get('report/xhtml-ixbrl-candidate', [GuidedReportController::class, 'xhtmlIxbrlCandidate'])
-        ->middleware('throttle:2,1,report-xhtml-ixbrl')
+        ->middleware('throttle:6,1,report-xhtml-ixbrl')
         ->name('api.report.xhtml-ixbrl-candidate');
     Route::get('report/ixbrl-package', [GuidedReportController::class, 'ixbrlPackage'])
-        ->middleware('throttle:2,1,report-xhtml-ixbrl')
+        ->middleware('throttle:6,1,report-xhtml-ixbrl')
         ->name('api.report.ixbrl-package');
     Route::get('report/facts', [ReportFactController::class, 'index'])
         ->middleware('throttle:30,1,report-facts-read')
         ->name('api.report.facts.index');
-    Route::put('report/facts', [ReportFactController::class, 'update'])
-        ->middleware('throttle:10,1,report-facts-write')
-        ->name('api.report.facts.update');
-    Route::post('report/facts/{fact}/review', [ReportFactController::class, 'review'])
-        ->whereNumber('fact')
-        ->middleware('throttle:20,1,report-facts-review')
-        ->name('api.report.facts.review');
     Route::post('report/snapshot', [ReportSnapshotController::class, 'store'])
         ->name('api.report.snapshot.store');
     Route::get('report/snapshots', [ReportSnapshotController::class, 'index'])

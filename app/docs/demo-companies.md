@@ -1,0 +1,39 @@
+# Empresas ficticias de demostración
+
+Cinco cuentas con el asistente completo (pasos 1 a 6) para enseñar la herramienta, comparar qué temas propone la IA frente a los que añade cada empresa y revisar informes largos sin rellenar nada a mano. Los datos son inventados; los nombres, cifras y LEI no corresponden a ninguna entidad real.
+
+| Cuenta | Empresa | Actividad (NACE) |
+|---|---|---|
+| test1@airis.com | Panificadora Castellana, S.A. | C10.7.1 panadería industrial |
+| test2@airis.com | Logística Ibérica del Ebro, S.L. | H49.4.1 transporte de mercancías |
+| test3@airis.com | Hoteles Mediterráneo Azul, S.A. | I55.1.0 hoteles (grupo cotizado) |
+| test4@airis.com | Componentes Eléctricos Norte, S.L. | C29.3.1 componentes de automoción |
+| test5@airis.com | Energías Renovables del Sur, S.A. | D35.1.2 generación renovable |
+
+Los perfiles están en `app/web/data/demo_companies.json`: encuesta inicial, preguntas de actividad, decisiones sobre la propuesta de la IA (aceptar, duda, rechazar y temas añadidos), acta del análisis de doble importancia, cifras etiquetables en XBRL con su tipo y unidad, los cinco datos «no aplica» como máximo y los documentos de evidencia. El resto de respuestas narrativas se generan de forma determinista a partir de la etiqueta de cada dato.
+
+## Crear las cuentas y los datos
+
+Desde `app/web`, en cualquier instalación (también en producción, donde el registro de cuentas puede estar cerrado):
+
+```
+php artisan i4s:demo:companies --password='una-contraseña-larga'
+php artisan i4s:demo:companies --only=test3@airis.com --reset --password='...'
+php artisan i4s:demo:companies --list
+```
+
+El comando crea la cuenta verificada (o reutiliza la existente), envía la encuesta inicial y espera la propuesta real del servicio de IA, registra la revisión del paso 2 con los temas añadidos, el acta, la confirmación de materialidad, todas las respuestas del paso 5 (con tipo, unidad y decimales en las cifras) y prepara y aprueba la versión del informe. Pasa por los mismos controladores que el navegador, así que cualquier regla de la plataforma se aplica igual. `--reset` borra los datos previos de la cuenta antes de regenerarlos; sin él, una cuenta con datos se deja intacta. La contraseña también puede venir de `DEMO_COMPANIES_PASSWORD`.
+
+Las cuentas no son administradoras (el dominio `airis.com` no está en `ADMIN_EMAIL_DOMAINS`), por lo que aparecen en `/admin` como clientes normales y cuentan en el informe de utilidad de la IA.
+
+## Vídeos del recorrido
+
+`app/frontend/tests/e2e/demo-walkthrough.spec.ts` graba, con un navegador real, un recorrido por los seis pasos de cada cuenta ya generada y deja el vídeo en `app/web/storage/app/private/demo-videos/<correo>.webm`:
+
+```
+cd app/frontend
+DEMO_COMPANIES_PASSWORD='...' corepack pnpm test:e2e tests/e2e/demo-walkthrough.spec.ts
+DEMO_COMPANIES_ONLY=test1@airis.com,test2@airis.com DEMO_COMPANIES_PASSWORD='...' corepack pnpm test:e2e tests/e2e/demo-walkthrough.spec.ts
+```
+
+Los administradores ven el enlace «Vídeo del recorrido» en `/admin` para cada cuenta que tenga un vídeo en esa carpeta (`GET /api/admin/users/{id}/demo-video`). Para publicarlos en otra instalación basta con copiar los ficheros `.webm` a la misma carpeta del servidor; no se guardan en el repositorio.

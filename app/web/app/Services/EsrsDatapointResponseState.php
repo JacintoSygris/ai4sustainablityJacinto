@@ -302,7 +302,7 @@ final class EsrsDatapointResponseState
                     'updated_at' => $updatedAt,
                 ];
 
-                foreach (['value', 'evidence_reference', 'note', 'triage'] as $field) {
+                foreach (['value', 'evidence_reference', 'note', 'triage', 'value_type', 'unit', 'decimals'] as $field) {
                     if (array_key_exists($field, $response) && filled($response[$field])) {
                         $normalized[$field] = $response[$field];
                     }

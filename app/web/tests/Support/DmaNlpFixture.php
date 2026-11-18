@@ -133,16 +133,7 @@ final class DmaNlpFixture
         $corpus = $test->getJson('/api/esrs-datapoints')->assertOk()->json('data');
         $test->putJson('/api/esrs-datapoints/responses', ['expected_revision' => 0,
             'expected_authority_digest' => $corpus['p9_authority_digest'],
-            'responses' => [['datapoint_id' => 'BP-1_01', 'status' => 'completed', 'value' => 'Synthetic reporting basis.']]])->assertOk();
-        \App\Models\ReportingFact::create([
-            'characterization_id' => $f['record']->id, 'fact_id' => 'rf_nlp_frozen',
-            'schema_version' => \App\Models\ReportingFact::SCHEMA_VERSION,
-            'profile_id' => \App\Models\ReportingFact::PROFILE_ID,
-            'datapoint_id' => 'BP-1_01', 'applicability' => 'applicable', 'value_type' => 'text',
-            'value' => ['text' => 'Synthetic reporting basis.'], 'unit' => null, 'decimals' => null,
-            'dimensions' => [], 'language' => 'en', 'nil' => false, 'nil_reason' => null,
-            'evidence_refs' => [['type' => 'note', 'value' => 'Synthetic test support.']],
-            'provenance' => 'api', 'approval_status' => 'reviewed', 'blocking_reasons' => [],
-        ]);
+            // The completed answer is the reviewed report fact; nothing is created by hand.
+            'responses' => [['datapoint_id' => 'BP-1_01', 'status' => 'completed', 'value' => 'Synthetic reporting basis.', 'note' => 'Synthetic test support.']]])->assertOk();
     }
 }

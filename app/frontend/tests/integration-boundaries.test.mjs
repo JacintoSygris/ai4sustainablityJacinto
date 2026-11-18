@@ -850,12 +850,13 @@ test("public locale contract publishes the guest protocol and exact supported en
   }
 })
 
-test("report fact request types reject numeric literals while historical response values remain readable", () => {
+test("typed step 5 answers reject numeric literals while historical fact values remain readable", () => {
   const filename = join(root, "tests/report-fact-type-regression.ts")
-  const source = `import type { LaravelReportingFactInput, LaravelReportingFact } from "../lib/laravel-api"
-    const exact: LaravelReportingFactInput["value"] = "9007199254740993.125"
-    // @ts-expect-error New numeric writes must preserve their exact lexical value.
-    const literal: LaravelReportingFactInput["value"] = 9007199254740993.125
+  const source = `import type { LaravelEsrsDatapointResponse, LaravelReportingFact } from "../lib/laravel-api"
+    const exact: LaravelEsrsDatapointResponse["value"] = "9007199254740993.125"
+    // @ts-expect-error Typed answers keep their exact lexical value; the platform parses them.
+    const literal: LaravelEsrsDatapointResponse["value"] = 9007199254740993.125
+    const typed: LaravelEsrsDatapointResponse["value_type"] = "monetary"
     const historical: LaravelReportingFact["value"] = 42.5
   `
   const config = ts.readConfigFile(join(root, "tsconfig.json"), ts.sys.readFile)

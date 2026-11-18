@@ -439,5 +439,10 @@
     "Motivo sin valor": "Reason for no value",
     "Referencia de evidencia": "Evidence reference",
     "Abrir menú de usuario": "Open user menu",
-    "Configuración": "Settings"
+    "Configuración": "Settings",
+    "Informe de sostenibilidad NEIS": "ESRS sustainability report",
+    "Periodo": "Period",
+    "Identificador de entidad (LEI)": "Entity identifier (LEI)",
+    "Informe generado desde una versión aprobada": "Report generated from an approved version",
+    "Datos informados": "Reported data"
 }

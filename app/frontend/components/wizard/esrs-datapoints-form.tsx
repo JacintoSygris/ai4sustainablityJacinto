@@ -14,7 +14,7 @@ import { useStudyError } from "@/lib/use-study-error"
 import { useSystemMessage, systemCopy } from "@/lib/i18n/use-system-message"
 
 import { useLocale } from "@/components/locale-provider"
-import { ui } from "@/lib/i18n/messages.mjs"
+import { ui, formatUi } from "@/lib/i18n/messages.mjs"
 
 import { useOptionalStorage } from "@/lib/consent-storage"
 
@@ -44,7 +44,13 @@ import {
 import {
   validateDatapointWorkspace,
   DEFAULT_OBLIGATION_FILTER,
+  defaultDecimalsFor,
+  defaultUnitFor,
+  suggestedValueType,
   triageOptions,
+  valueMatchesType,
+  valueTypeOptions,
+  valueTypeRequiresUnit,
   datapointDisplayName,
   applyObligationFilter,
   compactDrafts,
@@ -85,6 +91,10 @@ type DraftResponse = {
   value: string
   evidence_reference: string
   note: string
+  // Typed answer: becomes the report fact and, for figures, the iXBRL tag.
+  value_type?: string
+  unit?: string
+  decimals?: number | string
   triage?: "have_it" | "need_to_find" | "not_applicable_candidate"
 }
 
@@ -105,6 +115,7 @@ export function EsrsDatapointsForm() {
   const { locale, changing } = useLocale()
   const tr = (message: string) => ui(locale, message)
   const TRIAGE_OPTIONS = triageOptions(locale) as Record<NonNullable<DraftResponse["triage"]>, string>
+  const valueTypeChoices = valueTypeOptions(locale) as Array<{ value: string; label: string }>
   const statusOptions: Array<{ value: LaravelEsrsDatapointResponseStatus; label: string }> = [
   { value: "draft", label: tr("Borrador") },
   { value: "completed", label: tr("Completado") },
@@ -862,6 +873,8 @@ export function EsrsDatapointsForm() {
                                   const showsDisplay = datapoint.display?.locale === locale
                                   const hasContext = Boolean((showsDisplay && (datapoint.display?.qualification || datapoint.display?.data_type)) || applicability.reason || applicability.mappingBasisLabel || applicability.phaseInLessThan750 || applicability.phaseInAllUndertakings || phaseLabel || applicability.limitations.length > 0 || (datapoint.related_datapoints?.length ?? 0) > 0)
                                   const fieldClass = "h-9 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                                  const suggestedType = suggestedValueType(datapoint.data_type)
+                                  const effectiveValueType = draft.value_type || suggestedType
                                   return (
                                     <Collapsible key={datapoint.id} open={expanded} onOpenChange={(open) => setExpandedDatapoints(open ? { [datapoint.id]: true } : {})} className="border-b border-border last:border-b-0 data-[state=open]:bg-primary/5">
                                       <div className="grid grid-cols-[minmax(16rem,1fr)_19rem]">
@@ -966,6 +979,12 @@ export function EsrsDatapointsForm() {
                                                 value={draft.value}
                                                 onInput={(event) => updateDraft(datapoint.id, { value: event.currentTarget.value })}
                                               />
+                                              {draft.status === "completed" && !draft.value.trim() ? (
+                                                <p className="text-xs text-amber-700">{tr("Un dato completado sin valor no entra en el informe.")}</p>
+                                              ) : null}
+                                              {!valueMatchesType(effectiveValueType, draft.value) ? (
+                                                <p className="text-xs text-destructive">{tr("El valor no coincide con el tipo de dato elegido.")}</p>
+                                              ) : null}
                                             </div>
                                             <div className="space-y-1.5">
                                               <Label htmlFor={`${datapoint.id}-evidence`}>{tr("Evidencia")}</Label>
@@ -976,6 +995,54 @@ export function EsrsDatapointsForm() {
                                                 onInput={(event) => updateDraft(datapoint.id, { evidence_reference: event.currentTarget.value })}
                                               />
                                             </div>
+                                            <div className="space-y-1.5">
+                                              <Label htmlFor={`${datapoint.id}-value-type`}>{tr("Tipo de dato")}</Label>
+                                              <select
+                                                id={`${datapoint.id}-value-type`}
+                                                className={fieldClass}
+                                                value={effectiveValueType}
+                                                onChange={(event) => {
+                                                  const nextType = event.target.value
+                                                  updateDraft(datapoint.id, {
+                                                    value_type: nextType,
+                                                    unit: valueTypeRequiresUnit(nextType) ? (draft.unit || defaultUnitFor(nextType, datapoint.data_type)) : "",
+                                                    decimals: valueTypeRequiresUnit(nextType) ? (draft.decimals ?? defaultDecimalsFor(nextType) ?? 0) : "",
+                                                  })
+                                                }}
+                                              >
+                                                {valueTypeChoices.map((option) => (
+                                                  <option key={option.value} value={option.value}>{option.label}</option>
+                                                ))}
+                                              </select>
+                                              <p className="text-xs text-muted-foreground">{formatUi(locale, "Sugerido por el inventario: {0}", [valueTypeChoices.find((option) => option.value === suggestedType)?.label ?? ""])}</p>
+                                            </div>
+                                            {valueTypeRequiresUnit(effectiveValueType) ? (
+                                              <>
+                                                <div className="space-y-1.5">
+                                                  <Label htmlFor={`${datapoint.id}-unit`}>{tr("Unidad")}</Label>
+                                                  <Input
+                                                    id={`${datapoint.id}-unit`}
+                                                    className="bg-background"
+                                                    value={draft.unit ?? ""}
+                                                    placeholder={defaultUnitFor(effectiveValueType, datapoint.data_type)}
+                                                    onInput={(event) => updateDraft(datapoint.id, { unit: event.currentTarget.value })}
+                                                  />
+                                                  <p className="text-xs text-muted-foreground">{tr("Para el XBRL, las cifras necesitan tipo numérico y unidad (por ejemplo EUR, pure o %).")}</p>
+                                                </div>
+                                                <div className="space-y-1.5">
+                                                  <Label htmlFor={`${datapoint.id}-decimals`}>{tr("Decimales")}</Label>
+                                                  <Input
+                                                    id={`${datapoint.id}-decimals`}
+                                                    className="bg-background"
+                                                    type="number"
+                                                    min={0}
+                                                    max={12}
+                                                    value={String(draft.decimals ?? defaultDecimalsFor(effectiveValueType) ?? 0)}
+                                                    onInput={(event) => updateDraft(datapoint.id, { decimals: event.currentTarget.value })}
+                                                  />
+                                                </div>
+                                              </>
+                                            ) : null}
                                             <div className="space-y-1.5 lg:col-span-3">
                                               <Label htmlFor={`${datapoint.id}-note`}>{tr("Nota")}</Label>
                                               <Textarea

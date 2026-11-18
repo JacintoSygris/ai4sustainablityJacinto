@@ -520,3 +520,116 @@ it('treats malformed manual review prediction keys as empty evidence', function 
         ->assertOk()
         ->assertJsonPath('data.ai.review_required_prediction_keys', []);
 });
+
+it('stores user-added topics alongside the AI proposal and exposes them for later steps', function () {
+    $characterization = Characterization::factory()->create([
+        'user_id' => $this->user->id,
+        'status' => Characterization::STATUS_COMPLETED,
+        'esrs_topic_ids' => [$this->e1Topic->id],
+        'result_data' => [
+            'status' => 'completed',
+            'candidate_topics' => [
+                ['ar16_topic_id' => $this->e1Topic->id, 'suggested' => true],
+            ],
+            'raw_prediction' => [],
+        ],
+        'submitted_at' => now()->subMinute(),
+        'completed_at' => now()->subSecond(),
+    ]);
+
+    $this->actingAs($this->user)
+        ->putJson('/api/materiality-proposal', [
+            'expected_revision' => 0,
+            'topic_actions' => [
+                (string) $this->e1Topic->id => 'accepted',
+                (string) $this->e2Topic->id => 'accepted',
+            ],
+            'added_topic_ids' => [$this->e2Topic->id],
+        ])
+        ->assertOk()
+        ->assertJsonPath('data.source', 'ai_prediction')
+        ->assertJsonPath('data.ai.topic_sync_status', 'synced')
+        ->assertJsonPath('data.proposal_topic_ids', [$this->e1Topic->id, $this->e2Topic->id])
+        ->assertJsonPath('data.ai_topic_ids', [$this->e1Topic->id])
+        ->assertJsonPath('data.review.added_topic_ids', [$this->e2Topic->id])
+        ->assertJsonPath('data.review.topic_actions.'.$this->e2Topic->id, 'accepted')
+        ->assertJsonPath('data.review.status', 'reviewed');
+
+    $characterization->refresh();
+
+    expect($characterization->esrs_topic_ids)->toBe([$this->e1Topic->id, $this->e2Topic->id]);
+    expect(data_get($characterization->form_data, 'esg_focus.topic_ids'))->toBe([$this->e1Topic->id, $this->e2Topic->id]);
+    expect(data_get($characterization->form_data, 'materiality_proposal_review.added_topic_ids'))->toBe([$this->e2Topic->id]);
+});
+
+it('removes user-added topics when the next review omits them', function () {
+    $characterization = Characterization::factory()->create([
+        'user_id' => $this->user->id,
+        'status' => Characterization::STATUS_COMPLETED,
+        'esrs_topic_ids' => [$this->e1Topic->id, $this->e2Topic->id],
+        'result_data' => [
+            'status' => 'completed',
+            'candidate_topics' => [
+                ['ar16_topic_id' => $this->e1Topic->id, 'suggested' => true],
+            ],
+            'raw_prediction' => [],
+        ],
+        'form_data' => [
+            'materiality_proposal_review' => [
+                'revision' => 1,
+                'topic_actions' => [
+                    (string) $this->e1Topic->id => 'accepted',
+                    (string) $this->e2Topic->id => 'accepted',
+                ],
+                'added_topic_ids' => [$this->e2Topic->id],
+                'reviewed_at' => now()->toJSON(),
+            ],
+        ],
+        'submitted_at' => now()->subMinute(),
+        'completed_at' => now()->subSecond(),
+    ]);
+
+    $this->actingAs($this->user)
+        ->getJson('/api/materiality-proposal')
+        ->assertOk()
+        ->assertJsonPath('data.source', 'ai_prediction')
+        ->assertJsonPath('data.ai_topic_ids', [$this->e1Topic->id])
+        ->assertJsonPath('data.review.added_topic_ids', [$this->e2Topic->id]);
+
+    $this->actingAs($this->user)
+        ->putJson('/api/materiality-proposal', [
+            'expected_revision' => 1,
+            'topic_actions' => [
+                (string) $this->e1Topic->id => 'accepted',
+            ],
+            'added_topic_ids' => [],
+        ])
+        ->assertOk()
+        ->assertJsonPath('data.proposal_topic_ids', [$this->e1Topic->id])
+        ->assertJsonPath('data.review.added_topic_ids', [])
+        ->assertJsonMissingPath('data.review.topic_actions.'.$this->e2Topic->id);
+
+    $characterization->refresh();
+
+    expect($characterization->esrs_topic_ids)->toBe([$this->e1Topic->id]);
+});
+
+it('rejects added topics that do not exist in the ESRS catalogue', function () {
+    Characterization::factory()->create([
+        'user_id' => $this->user->id,
+        'status' => Characterization::STATUS_COMPLETED,
+        'esrs_topic_ids' => [$this->e1Topic->id],
+        'submitted_at' => now()->subMinute(),
+    ]);
+
+    $this->actingAs($this->user)
+        ->putJson('/api/materiality-proposal', [
+            'expected_revision' => 0,
+            'topic_actions' => [
+                (string) $this->e1Topic->id => 'accepted',
+            ],
+            'added_topic_ids' => [999999],
+        ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['added_topic_ids.0']);
+});

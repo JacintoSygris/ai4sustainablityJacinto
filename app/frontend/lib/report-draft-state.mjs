@@ -16,7 +16,7 @@ const SECTION_LABELS = {
   materiality_confirmation: "Confirmación de materialidad final",
   esrs_datapoints: "Lista de información NEIS",
   datapoint_responses: "Respuestas registradas",
-  report_content: "Contenido factual revisado",
+  report_content: "Contenido del informe (respuestas del paso 5)",
   final_report_generation: "Resumen de resultados",
 }
 
@@ -134,7 +134,6 @@ export function endpointHref(endpoint, apiUrl) {
 
 export function actionTarget(endpoint) {
   if (
-    endpoint === "/api/report/facts" ||
     endpoint === "/api/report/draft" ||
     endpoint.includes("report/draft") ||
     endpoint.includes("report/package")
@@ -180,10 +179,6 @@ export function actionLabel(endpoint) {
 
   if (endpoint === "/api/report/draft") {
     return "Revisar el resumen (paso 6)"
-  }
-
-  if (endpoint === "/api/report/facts") {
-    return "Completar y revisar los hechos del informe (paso 6)"
   }
 
   if (endpoint === "/api/report/package") {
@@ -287,7 +282,7 @@ export function latestReportSnapshot(snapshots) {
 
 export function snapshotDownloadBlockers(snapshot) {
   if (!snapshot) {
-    return ["Prepara una versión factual."]
+    return ["Prepara una versión del informe."]
   }
 
   if (!snapshotApprovalAllowed(snapshot)) {
@@ -295,7 +290,7 @@ export function snapshotDownloadBlockers(snapshot) {
   }
 
   if (!snapshot.is_approved) {
-    return ["Aprueba la versión factual."]
+    return ["Aprueba la versión del informe."]
   }
 
   return []

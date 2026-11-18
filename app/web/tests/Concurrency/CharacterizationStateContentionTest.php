@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Api\CharacterizationDocumentController;
-use App\Http\Controllers\Api\ReportFactController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Characterization;
@@ -12,7 +11,6 @@ use App\Models\ReportingFact;
 use App\Models\User;
 use App\Services\CharacterizationStateTransaction;
 use App\Services\EsrsDatapointCorpusBuilder;
-use App\Services\Report\ReportingFactProjector;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -87,87 +85,6 @@ it('serializes sibling form data writers and preserves both committed subtrees',
     expect(data_get($fresh->form_data, 'double_materiality_process.updated_at'))->toBe('2026-09-24T10:00:00Z')
         ->and(data_get($fresh->form_data, 'materiality_confirmation.revision'))->toBe(4)
         ->and(data_get($fresh->form_data, 'esrs_datapoint_responses.revision'))->toBe(8);
-
-    removeContentionBarrier($barrier);
-});
-
-it('revalidates fact membership after a concurrent scope shrink commits', function () {
-    $user = User::factory()->create();
-    $topic = EsrsTopic::query()->where('esrs_code', 'E2')->firstOrFail();
-    $characterization = Characterization::factory()->create([
-        'user_id' => $user->id,
-        'status' => Characterization::STATUS_COMPLETED,
-        'esrs_topic_ids' => [$topic->id],
-        'form_data' => [
-            'operations' => ['employee_count_range' => '50_249'],
-            'materiality_confirmation' => ['confirmed_topic_ids' => [$topic->id]],
-            'esrs_datapoint_responses' => ['schema_version' => 'v0', 'responses' => []],
-        ],
-    ]);
-    $corpus = app(EsrsDatapointCorpusBuilder::class)->build($characterization);
-    $datapointId = data_get($corpus, 'blocks.topical.datapoints.0.id');
-    expect($datapointId)->toBeString()->not->toBe('');
-    $barrier = contentionBarrier('fact-membership');
-
-    DB::disconnect();
-    $scopePid = forkContentionChild($barrier, function () use ($characterization, $barrier): void {
-        app(CharacterizationStateTransaction::class)->run(
-            $characterization->id,
-            function (Characterization $locked) use ($barrier): void {
-                file_put_contents($barrier['locked'], 'locked');
-                $formData = $locked->form_data ?? [];
-                Arr::set($formData, 'materiality_confirmation.confirmed_topic_ids', []);
-                $locked->forceFill(['esrs_topic_ids' => [], 'form_data' => $formData]);
-                waitForContentionPath($barrier['release'], 5000);
-                $locked->save();
-            },
-        );
-    });
-
-    waitForContentionPath($barrier['locked'], 5000);
-    DB::disconnect();
-    $factPid = forkContentionChild($barrier, function () use ($user, $datapointId, $barrier): void {
-        $request = Request::create('/api/report/facts', 'PUT', [
-            'facts' => [[
-                'datapoint_id' => $datapointId,
-                'applicability' => 'applicable',
-                'value_type' => 'text',
-                'value' => ['text' => 'Must not survive a concurrent scope shrink.'],
-                'unit' => null,
-                'decimals' => null,
-                'dimensions' => [],
-                'language' => 'en',
-                'nil' => false,
-                'nil_reason' => null,
-                'evidence_refs' => [['type' => 'note', 'value' => 'Concurrency regression.']],
-                'provenance' => 'api',
-                'approval_status' => 'review_required',
-                'blocking_reasons' => [],
-            ]],
-        ]);
-        $request->setUserResolver(fn (): User => User::query()->findOrFail($user->id));
-        $response = app(ReportFactController::class)->update(
-            $request,
-            app(ReportingFactProjector::class),
-            app(EsrsDatapointCorpusBuilder::class),
-        );
-        file_put_contents($barrier['result'], json_encode([
-            'status' => $response->getStatusCode(),
-            'body' => $response->getData(true),
-        ], JSON_THROW_ON_ERROR));
-    });
-
-    usleep(250000);
-    expect(file_exists($barrier['result']))->toBeFalse();
-    file_put_contents($barrier['release'], 'release');
-    waitForContentionChildren([$scopePid, $factPid], $barrier);
-
-    $result = json_decode(file_get_contents($barrier['result']), true, 512, JSON_THROW_ON_ERROR);
-    DB::reconnect();
-    expect($result['status'])->toBe(422)
-        ->and(data_get($result, 'body.code'))->toBe('reporting_fact_invalid')
-        ->and(ReportingFact::query()->where('characterization_id', $characterization->id)->count())->toBe(0)
-        ->and(ReportAuditEvent::query()->where('characterization_id', $characterization->id)->count())->toBe(0);
 
     removeContentionBarrier($barrier);
 });

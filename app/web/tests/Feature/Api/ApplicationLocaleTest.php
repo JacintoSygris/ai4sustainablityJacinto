@@ -279,7 +279,7 @@ it('returns locale-native multi-field route errors with stable technical keys an
         expect($response->json('errors.expected_revision.0'))->toBe($locale === 'es' ? 'El campo revisión esperada es obligatorio.' : 'The expected revision field is required.');
         expect($response->json('errors')['responses.0.status'][0])->toBe($locale === 'es' ? 'El valor seleccionado para estado de la respuesta no es válido.' : 'The selected response status is invalid.');
         expect($response->json('message'))->toContain($locale === 'es' ? '(y 1 error más)' : '(and 1 more error)');
-        foreach (['/api/report/facts' => ['facts' => [['datapoint_id' => 'BP-1_01']]], '/api/double-materiality-guide/state' => ['checklist' => ['assessed_impacts' => 'wrong'], 'acta' => ['completed_on' => 'wrong']]] as $path => $payload) {
+        foreach (['/api/double-materiality-guide/state' => ['checklist' => ['assessed_impacts' => 'wrong'], 'acta' => ['completed_on' => 'wrong']]] as $path => $payload) {
             $errors = $this->putJson($path, $payload)->assertUnprocessable()->json('errors');
             expect($errors)->not->toBeEmpty();
             if ($locale === 'es') foreach ($errors as $messages) foreach ($messages as $message) {

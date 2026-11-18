@@ -11,13 +11,36 @@ import { useSystemMessage, systemCopy } from "@/lib/i18n/use-system-message"
 import { ui, formatUi } from "@/lib/i18n/messages.mjs"
 
 import { useLocale } from "@/components/locale-provider"
-import { topicTitle, topicSubtitle, topicMatches } from "@/lib/materiality-confirmation-state.mjs"
+import { topicTitle, topicMatches } from "@/lib/materiality-confirmation-state.mjs"
+import {
+  allTreeKeys,
+  buildTopicTree,
+  countTopics,
+  defaultExpandedKeys,
+  filterTopicTree,
+  mergeTopicCatalog,
+  topicExamples,
+} from "@/lib/materiality-topic-catalog.mjs"
+import { PRODUCT_NAME } from "@/lib/brand.mjs"
 
 import type React from "react"
 
-import { Fragment, useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
-import { AlertCircle, AlertTriangle, CheckCircle2, ChevronDown, HelpCircle, Loader2, Info, RefreshCw, Search, XCircle } from "lucide-react"
+import {
+  AlertCircle,
+  AlertTriangle,
+  CheckCircle2,
+  ChevronDown,
+  HelpCircle,
+  Loader2,
+  Info,
+  RefreshCw,
+  Search,
+  Sparkles,
+  UserPlus,
+  XCircle,
+} from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -28,6 +51,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { DocumentEvidencePanel } from "@/components/wizard/document-evidence-panel"
 import { Term } from "@/components/wizard/term"
+import { cn } from "@/lib/utils"
 import {
   DOCUMENT_EVIDENCE_LOW_CONFIDENCE_THRESHOLD,
   documentEvidenceFromProposal,
@@ -39,6 +63,9 @@ import {
 import {
   REVIEW_REASON_KEYS,
   actionsFromProposal,
+  addedTopicIdsFromProposal,
+  aiTopicIdsFromProposal,
+  baseProposalTopicIds,
   buildDraftReviewPayload,
   buildReviewPayload,
   missingReviewTopicIds,
@@ -49,12 +76,14 @@ import {
 import {
   LaravelApiError,
   getLaravelCharacterization,
+  getLaravelEsrsTopics,
   getLaravelMaterialityProposal,
   getLaravelSession,
   submitLaravelCharacterization,
   updateLaravelMaterialityProposalReview,
   type LaravelCharacterization,
   type LaravelDocumentEvidence,
+  type LaravelEsrsTopic,
   type LaravelMaterialityProposal,
   type LaravelMaterialityProposalReviewPayload,
   type LaravelMaterialityTopic,
@@ -64,6 +93,11 @@ import {
 type TopicActions = Record<string, LaravelTopicAction>
 type ActionReasons = Record<string, string[]>
 type ActionNotes = Record<string, string>
+type CatalogTopic = LaravelMaterialityTopic & Partial<LaravelEsrsTopic>
+
+type TopicGroupNode = { key: string; label: string | null; topics: CatalogTopic[] }
+type StandardNode = { key: string; code: string; label: string; groups: TopicGroupNode[]; topics: CatalogTopic[] }
+type CategoryNode = { key: string; categoryKey: string; label: string; standards: StandardNode[]; topics: CatalogTopic[] }
 
 const actionLabels: Record<LaravelTopicAction, string> = {
   accepted: "Aceptar",
@@ -102,6 +136,10 @@ function p6StatusLabel(status: string, locale: "es" | "en" = "es"): string {
       completed: tr("Propuesta completada"),
     }[status] ?? tr("Estado pendiente de revisión")
   )
+}
+
+function selectedCountLabel(count: number, locale: "es" | "en"): string {
+  return count === 1 ? ui(locale, "1 seleccionado") : formatUi(locale, "{0} seleccionados", [count])
 }
 
 function p5IsComplete(characterization: LaravelCharacterization | null): boolean {
@@ -151,9 +189,9 @@ function buildSubmitPayload(characterization: LaravelCharacterization) {
 }
 
 export function MaterialTopicsForm() {
+  const { locale } = useLocale()
   const tr = (message: string) => ui(locale, message)
 
-  const { locale } = useLocale()
   const router = useRouter()
   const [reloadCounter, setReloadCounter] = useState(0)
   const [loadingInitial, setLoadingInitial] = useState(true)
@@ -163,14 +201,19 @@ export function MaterialTopicsForm() {
   const [isEditMode, setIsEditMode] = useState(false)
   const [showEditConfirmDialog, setShowEditConfirmDialog] = useState(false)
   const [expandedTopics, setExpandedTopics] = useState<number[]>([])
+  const [expandedKeys, setExpandedKeys] = useState<Set<string>>(() => new Set())
+  const [showOnlySelected, setShowOnlySelected] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [csrfToken, setCsrfToken] = useState<string>()
   const [characterization, setCharacterization] = useState<LaravelCharacterization | null>(null)
   const [proposal, setProposal] = useState<LaravelMaterialityProposal | null>(null)
+  const [catalog, setCatalog] = useState<LaravelEsrsTopic[]>([])
+  const [catalogUnavailable, setCatalogUnavailable] = useState(false)
   const sectorComparison = useSectorComparison(proposal)
   const [topicActions, setTopicActions] = useState<TopicActions>({})
   const [actionReasons, setActionReasons] = useState<ActionReasons>({})
   const [actionNotes, setActionNotes] = useState<ActionNotes>({})
+  const [addedTopicIds, setAddedTopicIds] = useState<number[]>([])
   const [errorMessage, setErrorMessage] = useSystemMessage(null)
   useStudyError(2, errorMessage)
   const [saveMessage, setSaveMessage] = useSystemMessage(null)
@@ -184,10 +227,18 @@ export function MaterialTopicsForm() {
       setErrorMessage(null)
 
       try {
-        const [sessionResponse, characterizationResponse, proposalResponse] = await Promise.all([
+        const [sessionResponse, characterizationResponse, proposalResponse, catalogResponse] = await Promise.all([
           getLaravelSession(),
           getLaravelCharacterization(),
           getLaravelMaterialityProposal(),
+          // The full catalogue lets the user add topics the AI did not propose.
+          // It is optional context: without it the page still reviews the proposal.
+          Promise.resolve()
+            .then(() => getLaravelEsrsTopics({ per_page: 200 }))
+            .catch((error) => {
+              if (error instanceof LaravelApiError && error.status === 401) throw error
+              return null
+            }),
         ])
 
         if (!mounted) {
@@ -197,11 +248,14 @@ export function MaterialTopicsForm() {
         setCsrfToken(sessionResponse.data.csrf_token)
         setCharacterization(characterizationResponse.data)
         setProposal(proposalResponse.data)
+        setCatalog(catalogResponse?.data ?? [])
+        setCatalogUnavailable(catalogResponse == null)
 
         if (proposalResponse.data) {
           setTopicActions(actionsFromProposal(proposalResponse.data))
           setActionReasons(reasonsFromProposal(proposalResponse.data))
           setActionNotes(notesFromProposal(proposalResponse.data))
+          setAddedTopicIds(addedTopicIdsFromProposal(proposalResponse.data))
           setIsEditMode(proposalResponse.data.review.status !== "reviewed")
         }
       } catch (error) {
@@ -226,13 +280,68 @@ export function MaterialTopicsForm() {
     }
   }, [reloadCounter, router])
 
-  const filteredTopics = proposal?.proposal_topics.filter((topic) => topicMatches(topic, searchQuery, locale)) ?? []
+  // Base proposal (AI candidates or stored ids) vs. topics the user added on top of it.
+  const baseTopicIds = useMemo(() => (proposal ? baseProposalTopicIds(proposal) : []), [proposal])
+  const baseTopicIdSet = useMemo(() => new Set(baseTopicIds), [baseTopicIds])
+  const aiTopicIdSet = useMemo(() => new Set(proposal ? aiTopicIdsFromProposal(proposal) : []), [proposal])
+  const addedTopicIdSet = useMemo(() => new Set(addedTopicIds), [addedTopicIds])
 
-  const missingTopicIds = proposal ? missingReviewTopicIds(proposal.proposal_topic_ids, topicActions) : []
-  const reviewedCount = Math.max((proposal?.proposal_topic_ids.length ?? 0) - missingTopicIds.length, 0)
-  const totalTopics = proposal?.proposal_topic_ids.length ?? 0
+  const allTopics = useMemo<CatalogTopic[]>(
+    () => mergeTopicCatalog(catalog, proposal?.proposal_topics ?? []) as CatalogTopic[],
+    [catalog, proposal],
+  )
+  const topicTree = useMemo(() => buildTopicTree(allTopics, locale) as CategoryNode[], [allTopics, locale])
+
+  const isSelected = (topic: CatalogTopic) =>
+    baseTopicIdSet.has(topic.id) ? topicActions[String(topic.id)] === "accepted" : addedTopicIdSet.has(topic.id)
+
+  const visibleTree = useMemo(() => {
+    const query = searchQuery.trim()
+
+    return filterTopicTree(topicTree, (topic: CatalogTopic) => {
+      if (query && !topicMatches(topic, query, locale)) return false
+      if (showOnlySelected && !isSelected(topic)) return false
+
+      return true
+    }) as CategoryNode[]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [topicTree, searchQuery, showOnlySelected, locale, topicActions, addedTopicIdSet, baseTopicIdSet])
+
+  // Open the branches holding proposed topics once the tree is known.
+  const initializedTreeFor = useRef<string | null>(null)
+  useEffect(() => {
+    const signature = `${proposal?.characterization_id ?? "none"}:${allTopics.length}:${locale}`
+    if (topicTree.length === 0 || initializedTreeFor.current === signature) return
+    initializedTreeFor.current = signature
+    setExpandedKeys(new Set(defaultExpandedKeys(topicTree, (topic: CatalogTopic) => baseTopicIdSet.has(topic.id) || addedTopicIdSet.has(topic.id))))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [topicTree, proposal?.characterization_id, allTopics.length, locale])
+
+  const expandAll = () => {
+    setExpandedKeys(new Set(allTreeKeys(topicTree)))
+    setExpandedTopics([...baseTopicIds, ...addedTopicIds])
+  }
+  const collapseAll = () => {
+    setExpandedKeys(new Set())
+    setExpandedTopics([])
+  }
+
+  const filtering = searchQuery.trim() !== "" || showOnlySelected
+  const isExpanded = (key: string) => filtering || expandedKeys.has(key)
+  const setExpanded = (key: string, open: boolean) =>
+    setExpandedKeys((current) => {
+      const next = new Set(current)
+      if (open) next.add(key)
+      else next.delete(key)
+      return next
+    })
+
+  const missingTopicIds = proposal ? missingReviewTopicIds(baseTopicIds, topicActions) : []
+  const reviewedCount = Math.max(baseTopicIds.length - missingTopicIds.length, 0)
+  const totalTopics = baseTopicIds.length
   const readOnlyMode = proposal?.review.status === "reviewed" && !isEditMode
-  const reviewReady = totalTopics > 0 && missingTopicIds.length === 0
+  const reviewReady = totalTopics + addedTopicIds.length > 0 && missingTopicIds.length === 0
+  const selectedTotal = countTopics(allTopics, isSelected)
   const p5Complete = p5IsComplete(characterization)
   // Feature detection: the platform only sends the document_evidence block when
   // document extraction is enabled. When absent, render nothing document-related.
@@ -249,22 +358,24 @@ export function MaterialTopicsForm() {
 
   const reload = () => setReloadCounter((current) => current + 1)
 
-  const setTopicAction = (topicId: number, action: LaravelTopicAction) => {
+  const touch = () => {
     reviewEditVersion.current += 1
-    setTopicActions((current) => ({ ...current, [String(topicId)]: action }))
     setErrorMessage(null)
     setSaveMessage(null)
+  }
+
+  const setTopicAction = (topicId: number, action: LaravelTopicAction) => {
+    touch()
+    setTopicActions((current) => ({ ...current, [String(topicId)]: action }))
   }
 
   const setTopicNote = (topicId: number, note: string) => {
-    reviewEditVersion.current += 1
+    touch()
     setActionNotes((current) => ({ ...current, [String(topicId)]: note }))
-    setErrorMessage(null)
-    setSaveMessage(null)
   }
 
   const setTopicReason = (topicId: number, reasonKey: string, checked: boolean) => {
-    reviewEditVersion.current += 1
+    touch()
     setActionReasons((current) => {
       const topicKey = String(topicId)
       const selectedReasons = new Set(current[topicKey] ?? [])
@@ -286,8 +397,37 @@ export function MaterialTopicsForm() {
 
       return next
     })
-    setErrorMessage(null)
-    setSaveMessage(null)
+  }
+
+  // Ticking a topic outside the proposal adds it as accepted; unticking removes it and its notes.
+  const setTopicAdded = (topicId: number, added: boolean) => {
+    touch()
+    const topicKey = String(topicId)
+
+    if (added) {
+      setAddedTopicIds((current) => (current.includes(topicId) ? current : [...current, topicId]))
+      setTopicActions((current) => ({ ...current, [topicKey]: "accepted" }))
+
+      return
+    }
+
+    setAddedTopicIds((current) => current.filter((id) => id !== topicId))
+    setTopicActions((current) => {
+      const next = { ...current }
+      delete next[topicKey]
+      return next
+    })
+    setActionReasons((current) => {
+      const next = { ...current }
+      delete next[topicKey]
+      return next
+    })
+    setActionNotes((current) => {
+      const next = { ...current }
+      delete next[topicKey]
+      return next
+    })
+    setExpandedTopics((current) => current.filter((id) => id !== topicId))
   }
 
   const handleSubmitPrediction = async () => {
@@ -317,14 +457,15 @@ export function MaterialTopicsForm() {
   }
 
   const handleSaveReview = async (continueAfterSave: boolean) => {
-    if (!proposal || totalTopics === 0) {
+    if (!proposal || totalTopics + addedTopicIds.length === 0) {
       return
     }
 
     let reviewPayloadData
     if (continueAfterSave) {
       const reviewPayload = buildReviewPayload({
-        proposalTopicIds: proposal.proposal_topic_ids,
+        proposalTopicIds: baseTopicIds,
+        addedTopicIds,
         topicActions,
         actionReasons,
         actionNotes,
@@ -338,7 +479,8 @@ export function MaterialTopicsForm() {
       reviewPayloadData = reviewPayload.payload
     } else {
       reviewPayloadData = buildDraftReviewPayload({
-        proposalTopicIds: proposal.proposal_topic_ids,
+        proposalTopicIds: baseTopicIds,
+        addedTopicIds,
         topicActions,
         actionReasons,
         actionNotes,
@@ -470,7 +612,7 @@ export function MaterialTopicsForm() {
               </div>
             }
           />
-        ) : !proposal || proposal.proposal_topics.length === 0 ? (
+        ) : !proposal || (proposal.proposal_topics.length === 0 && allTopics.length === 0) ? (
           <StatePanel
             icon={<AlertCircle className="h-5 w-5 text-amber-600" />}
             title={tr("Propuesta del paso 2 vacía")}
@@ -506,8 +648,14 @@ export function MaterialTopicsForm() {
               </div>
             ) : null}
 
-            <div className="mb-5 flex flex-col gap-3 rounded-lg border border-border p-4 sm:flex-row sm:items-center sm:justify-between">
-              <div className="space-y-1">
+            {catalogUnavailable ? (
+              <div role="status" className="mb-4 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+                {tr("No se ha podido cargar el catálogo completo de temas; se muestran solo los propuestos.")}
+              </div>
+            ) : null}
+
+            <div className="mb-5 flex flex-col gap-3 rounded-lg border border-border p-4 sm:flex-row sm:items-start sm:justify-between">
+              <div className="space-y-2">
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge variant={proposal.source === "ai_prediction" ? "default" : "secondary"}>
                     {proposal.source === "ai_prediction" ? tr("IA") : tr("Temas guardados")}
@@ -515,8 +663,30 @@ export function MaterialTopicsForm() {
                   <Badge variant="outline">{p6StatusLabel(proposal.status, locale)}</Badge>
                   <span className="text-sm text-muted-foreground">
                     {reviewedCount}/{totalTopics} {" "}{tr("temas con acción")}{" "}</span>
+                  <span className="text-sm font-medium text-foreground">{formatUi(locale, "{0} seleccionados en total", [selectedTotal])}</span>
                 </div>
-                <p className="text-sm text-muted-foreground">{proposal.source === "ai_prediction" ? formatUi(locale, "La IA ha propuesto {0} temas NEIS candidatos.", [totalTopics]) : formatUi(locale, "{0} temas NEIS para revisar.", [totalTopics])}</p>
+                <p className="text-sm text-muted-foreground">
+                  {proposal.source === "ai_prediction"
+                    ? formatUi(locale, "La IA ha recomendado {0} temas. Marca o desmarca los que consideres y añade cualquier otro tema del catálogo.", [totalTopics])
+                    : formatUi(locale, "{0} temas para revisar. Marca o desmarca los que consideres y añade cualquier otro tema del catálogo.", [totalTopics])}
+                  {addedTopicIds.length > 0 ? (
+                    <>
+                      {" "}
+                      {addedTopicIds.length === 1
+                        ? tr("Has añadido 1 tema que la IA no proponía.")
+                        : formatUi(locale, "Has añadido {0} temas que la IA no proponía.", [addedTopicIds.length])}
+                    </>
+                  ) : null}
+                </p>
+                <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                  <span className="inline-flex items-center gap-1.5">
+                    <RecommendedBadge locale={locale} />
+                    {tr("Recomendado por la IA")}
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <AddedBadge locale={locale} />
+                  </span>
+                </div>
               </div>
               <Button type="button" variant="outline" onClick={reload}>
                 <RefreshCw className="h-4 w-4" />
@@ -534,32 +704,66 @@ export function MaterialTopicsForm() {
                   className="pl-9"
                 />
               </div>
+              <label className="flex items-center gap-2 text-sm text-foreground">
+                <Checkbox checked={showOnlySelected} onCheckedChange={(checked) => setShowOnlySelected(checked === true)} />
+                <span>{tr("Mostrar solo temas seleccionados")}</span>
+              </label>
               <div className="flex gap-2">
-                <Button type="button" variant="outline" size="sm" onClick={() => setExpandedTopics(proposal.proposal_topics.map((topic) => topic.id))}>{tr("Expandir todo")}</Button>
-                <Button type="button" variant="ghost" size="sm" onClick={() => setExpandedTopics([])}>{tr("Colapsar todo")}</Button>
+                <Button type="button" variant="outline" size="sm" onClick={expandAll}>{tr("Expandir todo")}</Button>
+                <Button type="button" variant="ghost" size="sm" onClick={collapseAll}>{tr("Colapsar todo")}</Button>
               </div>
             </div>
 
-            <div className="space-y-3">
-              {filteredTopics.map((topic) => (
-                <Fragment key={topic.id}>
-                <TopicReviewCard
-                  locale={locale}
-                  key={topic.id}
-                  topic={topic}
-                  expanded={expandedTopics.includes(topic.id)}
-                  onExpandedChange={(open) => setExpandedTopics((current) => open ? [...current, topic.id] : current.filter((id) => id !== topic.id))}
-                  documentEvidence={documentEvidence}
-                  action={topicActions[String(topic.id)]}
-                  reasons={actionReasons[String(topic.id)] ?? []}
-                  note={actionNotes[String(topic.id)] ?? ""}
-                  disabled={readOnlyMode || savingReview}
-                  onActionChange={(action) => setTopicAction(topic.id, action)}
-                  onReasonChange={(reasonKey, checked) => setTopicReason(topic.id, reasonKey, checked)}
-                  onNoteChange={(note) => setTopicNote(topic.id, note)}
-                />
-                <SectorComparison {...sectorComparison} topicId={topic.id} locale={locale} />
-                </Fragment>
+            {visibleTree.length === 0 ? (
+              <p className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">{tr("Ningún tema coincide con el filtro.")}</p>
+            ) : null}
+
+            <div className="@container space-y-4">
+              {visibleTree.map((category) => (
+                <Collapsible key={category.key} open={isExpanded(category.key)} onOpenChange={(open) => setExpanded(category.key, open)} className="rounded-lg border border-border bg-card">
+                  <CollapsibleTrigger className="group flex w-full items-center justify-between gap-3 px-4 py-3 text-left">
+                    <span className="flex items-center gap-3">
+                      <CategoryIcon categoryKey={category.categoryKey} />
+                      <span className="text-base font-semibold text-foreground">{tr(category.label)}</span>
+                      <span className="text-sm text-muted-foreground">({selectedCountLabel(countTopics(category.topics, isSelected), locale)})</span>
+                    </span>
+                    <ChevronDown className="h-5 w-5 shrink-0 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" aria-hidden="true" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="space-y-2 border-t border-border px-3 py-3">
+                    {category.standards.map((standard) => (
+                      <Collapsible key={standard.key} open={isExpanded(standard.key)} onOpenChange={(open) => setExpanded(standard.key, open)} className="rounded-md border border-border/70">
+                        <CollapsibleTrigger className="group flex w-full items-center justify-between gap-3 px-3 py-2 text-left">
+                          <span className="flex min-w-0 items-center gap-2">
+                            <ChevronDown className="h-4 w-4 shrink-0 -rotate-90 text-muted-foreground transition-transform group-data-[state=open]:rotate-0" aria-hidden="true" />
+                            <Badge variant="outline" className="shrink-0 bg-background">{standard.code}</Badge>
+                            <span className="truncate text-sm font-semibold text-foreground">{standard.label}</span>
+                            <span className="shrink-0 text-xs text-muted-foreground">({selectedCountLabel(countTopics(standard.topics, isSelected), locale)})</span>
+                          </span>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="space-y-2 px-3 pb-3">
+                          {standard.groups.map((group) =>
+                            group.label ? (
+                              <Collapsible key={group.key} open={isExpanded(group.key)} onOpenChange={(open) => setExpanded(group.key, open)} className="rounded-md bg-muted/30">
+                                <CollapsibleTrigger className="group flex w-full items-center gap-2 px-3 py-2 text-left">
+                                  <ChevronDown className="h-4 w-4 shrink-0 -rotate-90 text-muted-foreground transition-transform group-data-[state=open]:rotate-0" aria-hidden="true" />
+                                  <span className="text-sm font-medium text-foreground">{group.label}</span>
+                                  <span className="text-xs text-muted-foreground">({selectedCountLabel(countTopics(group.topics, isSelected), locale)})</span>
+                                </CollapsibleTrigger>
+                                <CollapsibleContent className="space-y-2 px-3 pb-3">
+                                  {group.topics.map((topic) => renderTopic(topic))}
+                                </CollapsibleContent>
+                              </Collapsible>
+                            ) : (
+                              <div key={group.key} className="space-y-2">
+                                {group.topics.map((topic) => renderTopic(topic))}
+                              </div>
+                            ),
+                          )}
+                        </CollapsibleContent>
+                      </Collapsible>
+                    ))}
+                  </CollapsibleContent>
+                </Collapsible>
               ))}
             </div>
 
@@ -575,14 +779,14 @@ export function MaterialTopicsForm() {
               ) : (
                 <div className="flex flex-col items-end gap-2">
                   {!reviewReady ? (
-                    <p className="text-sm text-muted-foreground">{tr("Marca una acción explícita en todos los temas.")}</p>
+                    <p className="text-sm text-muted-foreground">{tr("Decide sobre cada tema recomendado antes de continuar.")}</p>
                   ) : null}
                   <div className="flex flex-wrap justify-end gap-2">
                     <Button
                       type="button"
                       variant="outline"
                       onClick={() => handleSaveReview(false)}
-                      disabled={savingReview || reviewedCount === 0}
+                      disabled={savingReview || (reviewedCount === 0 && addedTopicIds.length === 0)}
                     >
                       {" "}{tr("Guardar borrador")}{" "}</Button>
                     <Button type="button" onClick={() => handleSaveReview(true)} disabled={savingReview || !reviewReady}>
@@ -605,6 +809,8 @@ export function MaterialTopicsForm() {
                 {" "}{tr("Revisión de temas materiales")}{" "}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 text-sm text-muted-foreground">
+              <p>
+                {" "}{tr("Estos son los temas materiales que hemos identificado para tu empresa. Marca o desmarca los temas si lo consideras necesario y añade cualquier otro del catálogo completo.")}{" "}</p>
               <p>
                 {" "}{tr("La propuesta del paso 2 procede del estado de la encuesta inicial en la plataforma. Si está completada, puedes confirmar tema por tema antes de pasar a la doble importancia relativa.")}{" "}</p>
               <div className="rounded-lg bg-muted/50 p-3">
@@ -640,6 +846,78 @@ export function MaterialTopicsForm() {
         </Dialog>
       </div>
     </TooltipProvider>
+  )
+
+  function renderTopic(topic: CatalogTopic) {
+    const isBase = baseTopicIdSet.has(topic.id)
+    const isAdded = addedTopicIdSet.has(topic.id)
+
+    return (
+      <TopicReviewCard
+        key={topic.id}
+        locale={locale}
+        topic={topic}
+        isBase={isBase}
+        isRecommended={aiTopicIdSet.has(topic.id)}
+        isAdded={isAdded}
+        expanded={expandedTopics.includes(topic.id)}
+        onExpandedChange={(open) => setExpandedTopics((current) => (open ? [...current, topic.id] : current.filter((id) => id !== topic.id)))}
+        documentEvidence={documentEvidence}
+        action={topicActions[String(topic.id)]}
+        reasons={actionReasons[String(topic.id)] ?? []}
+        note={actionNotes[String(topic.id)] ?? ""}
+        disabled={readOnlyMode || savingReview}
+        onActionChange={(action) => setTopicAction(topic.id, action)}
+        onAddedChange={(added) => setTopicAdded(topic.id, added)}
+        onReasonChange={(reasonKey, checked) => setTopicReason(topic.id, reasonKey, checked)}
+        onNoteChange={(note) => setTopicNote(topic.id, note)}
+        sectorComparison={isBase ? <SectorComparison {...sectorComparison} topicId={topic.id} locale={locale} /> : null}
+      />
+    )
+  }
+}
+
+function CategoryIcon({ categoryKey }: { categoryKey: string }) {
+  const palette: Record<string, string> = {
+    E: "bg-emerald-100 text-emerald-800",
+    S: "bg-sky-100 text-sky-800",
+    G: "bg-violet-100 text-violet-800",
+    O: "bg-muted text-muted-foreground",
+  }
+
+  return (
+    <span aria-hidden="true" className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold", palette[categoryKey] ?? palette.O)}>
+      {categoryKey === "O" ? "•" : categoryKey}
+    </span>
+  )
+}
+
+function RecommendedBadge({ locale }: { locale: "es" | "en" }) {
+  const tr = (message: string) => ui(locale, message)
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Badge className="gap-1 border-primary/30 bg-primary/10 text-primary hover:bg-primary/15" variant="outline">
+          <Sparkles className="h-3 w-3" aria-hidden="true" />
+          {PRODUCT_NAME}
+        </Badge>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>{tr("Tema recomendado por la aplicación")}</p>
+      </TooltipContent>
+    </Tooltip>
+  )
+}
+
+function AddedBadge({ locale }: { locale: "es" | "en" }) {
+  const tr = (message: string) => ui(locale, message)
+
+  return (
+    <Badge variant="secondary" className="gap-1">
+      <UserPlus className="h-3 w-3" aria-hidden="true" />
+      {tr("Añadido por ti")}
+    </Badge>
   )
 }
 
@@ -701,6 +979,9 @@ type TopicDocumentEvidenceItem = {
 function TopicReviewCard({
   locale = "es",
   topic,
+  isBase,
+  isRecommended,
+  isAdded,
   expanded,
   onExpandedChange,
   documentEvidence,
@@ -709,11 +990,16 @@ function TopicReviewCard({
   note,
   disabled,
   onActionChange,
+  onAddedChange,
   onReasonChange,
   onNoteChange,
+  sectorComparison,
 }: {
   locale?: "es" | "en"
-  topic: LaravelMaterialityTopic
+  topic: CatalogTopic
+  isBase: boolean
+  isRecommended: boolean
+  isAdded: boolean
   expanded: boolean
   onExpandedChange: (open: boolean) => void
   documentEvidence: LaravelDocumentEvidence | null
@@ -722,14 +1008,20 @@ function TopicReviewCard({
   note: string
   disabled: boolean
   onActionChange: (action: LaravelTopicAction) => void
+  onAddedChange: (added: boolean) => void
   onReasonChange: (reasonKey: string, checked: boolean) => void
   onNoteChange: (note: string) => void
+  sectorComparison?: React.ReactNode
 }) {
   const tr = (message: string) => ui(locale, message)
+  const title = topicTitle(topic, locale)
+  const examples = topicExamples(topic, locale)
+  const selected = isBase ? action === "accepted" : isAdded
+  const canExpand = isBase || isAdded
 
   // Document evidence is reviewer context only: it never drives, suggests, or
   // disables the accept/reject/unsure controls below (ADD-only invariant).
-  const provenance = documentEvidence ? topicDocumentProvenance(topic.esrs_code, documentEvidence) : null
+  const provenance = isBase && documentEvidence ? topicDocumentProvenance(topic.esrs_code, documentEvidence) : null
   const evidenceItems: TopicDocumentEvidenceItem[] = provenance?.document
     ? flattenTopicEvidence(provenance.entries, documentEvidence)
     : []
@@ -738,105 +1030,169 @@ function TopicReviewCard({
     evidenceNeedsDocumentReview(provenance.entries, DOCUMENT_EVIDENCE_LOW_CONFIDENCE_THRESHOLD)
   const hasNegativeEvidence = provenance != null && topicHasNegativeDocumentEvidence(provenance.entries)
 
+  const detailsTrigger = (
+    <CollapsibleTrigger className="group flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground">
+      <ChevronDown className="h-4 w-4 transition-transform group-data-[state=open]:rotate-180" aria-hidden="true" />
+      <span className="sr-only">{expanded ? tr("Colapsar") : tr("Expandir")} {" "}{tr("detalles del tema")}</span>
+    </CollapsibleTrigger>
+  )
+
+  const handleChecked = (checked: boolean) => {
+    if (isBase) {
+      onActionChange(checked ? "accepted" : "rejected")
+    } else {
+      onAddedChange(checked)
+    }
+  }
+
   return (
-    <Collapsible open={expanded} onOpenChange={onExpandedChange} className="overflow-hidden rounded-lg border border-border bg-card">
-      <div className="flex min-w-0 flex-col gap-3 border-l-4 border-primary bg-primary/5 p-3 xl:flex-row xl:items-center xl:justify-between">
-        <CollapsibleTrigger className="group flex min-w-0 flex-1 items-start gap-3 text-left">
-          <Badge variant="outline" className="mt-0.5 shrink-0 bg-background">{topic.esrs_code}</Badge>
+    <Collapsible
+      open={expanded && canExpand}
+      onOpenChange={onExpandedChange}
+      className={cn(
+        "rounded-md border bg-card transition-colors",
+        selected ? "border-primary/50 bg-primary/5" : "border-border",
+        isRecommended && !selected ? "border-dashed border-primary/40" : null,
+      )}
+    >
+      <div className="flex min-w-0 flex-col gap-2 p-3 @3xl:flex-row @3xl:items-center @3xl:justify-between">
+        <div className="flex min-w-0 flex-1 items-start gap-3">
+          <Checkbox
+            className="mt-0.5"
+            aria-label={formatUi(locale, "Seleccionar {0}", [title])}
+            checked={selected}
+            disabled={disabled}
+            onCheckedChange={(checked) => handleChecked(checked === true)}
+          />
           <div className="min-w-0 flex-1">
-            <h3 className="text-base font-semibold text-primary [overflow-wrap:anywhere]">{topicTitle(topic, locale)}</h3>
-            <p className="mt-1 text-sm text-muted-foreground [overflow-wrap:anywhere]">{topicSubtitle(topic, locale)}</p>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className={cn("text-sm font-medium [overflow-wrap:anywhere]", selected ? "text-primary" : "text-foreground")}>{title}</span>
+              {isRecommended ? <RecommendedBadge locale={locale} /> : null}
+              {isBase && !isRecommended ? <Badge variant="outline">{tr("Propuesto")}</Badge> : null}
+              {isAdded ? <AddedBadge locale={locale} /> : null}
+              {isBase && action === "unsure" ? <Badge variant="outline" className="border-amber-400 text-amber-900">{tr("Duda")}</Badge> : null}
+              {isBase && action === "rejected" ? <Badge variant="outline" className="text-muted-foreground">{tr("Rechazado")}</Badge> : null}
+              {examples.length > 0 ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button type="button" aria-label={formatUi(locale, "Ver ejemplos de {0}", [title])} className="text-muted-foreground hover:text-foreground">
+                      <Info className="h-4 w-4" aria-hidden="true" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-sm">
+                    <p className="font-medium">{tr("Ejemplos:")}</p>
+                    <ul className="mt-1 list-disc space-y-0.5 pl-4">
+                      {examples.map((example) => (
+                        <li key={example}>{example}</li>
+                      ))}
+                    </ul>
+                  </TooltipContent>
+                </Tooltip>
+              ) : null}
+              {!isBase && canExpand ? detailsTrigger : null}
+            </div>
           </div>
-          <ChevronDown className="mt-1 h-4 w-4 shrink-0 text-primary transition-transform group-data-[state=open]:rotate-180" aria-hidden="true" />
-          <span className="sr-only">{expanded ? tr("Colapsar") : tr("Expandir")} {" "}{tr("detalles del tema")}</span>
-        </CollapsibleTrigger>
-        <div role="group" aria-label={formatUi(locale, "Revisar {0}", [topicTitle(topic, locale)])} className="flex shrink-0 flex-nowrap items-center gap-1 self-start">
-          {(["accepted", "unsure", "rejected"] as LaravelTopicAction[]).map((candidateAction) => (
-            <Tooltip key={candidateAction}>
-              <TooltipTrigger asChild>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant={action === candidateAction ? "default" : "outline"}
-                  className="shrink-0 whitespace-nowrap px-2 sm:px-3"
-                  aria-pressed={action === candidateAction}
-                  disabled={disabled}
-                  onClick={() => onActionChange(candidateAction)}
-                >
-                  {candidateAction === "accepted" ? (
-                    <CheckCircle2 className="hidden h-4 w-4 sm:block" />
-                  ) : candidateAction === "unsure" ? (
-                    <HelpCircle className="hidden h-4 w-4 sm:block" />
-                  ) : (
-                    <XCircle className="hidden h-4 w-4 sm:block" />
-                  )}
-                  {tr(actionLabels[candidateAction])}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{tr(actionDescriptions[candidateAction])}</p>
-              </TooltipContent>
-            </Tooltip>
-          ))}
         </div>
+        {isBase ? (
+        <div className="flex shrink-0 items-center gap-1 self-start pl-7 @3xl:pl-0">
+          {isBase ? (
+            <div role="group" aria-label={formatUi(locale, "Revisar {0}", [title])} className="flex shrink-0 flex-nowrap items-center gap-1">
+              {(["accepted", "unsure", "rejected"] as LaravelTopicAction[]).map((candidateAction) => (
+                <Tooltip key={candidateAction}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant={action === candidateAction ? "default" : "outline"}
+                      className="h-8 shrink-0 whitespace-nowrap px-2 sm:px-3"
+                      aria-pressed={action === candidateAction}
+                      disabled={disabled}
+                      onClick={() => onActionChange(candidateAction)}
+                    >
+                      {candidateAction === "accepted" ? (
+                        <CheckCircle2 className="hidden h-4 w-4 sm:block" />
+                      ) : candidateAction === "unsure" ? (
+                        <HelpCircle className="hidden h-4 w-4 sm:block" />
+                      ) : (
+                        <XCircle className="hidden h-4 w-4 sm:block" />
+                      )}
+                      {tr(actionLabels[candidateAction])}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{tr(actionDescriptions[candidateAction])}</p>
+                  </TooltipContent>
+                </Tooltip>
+              ))}
+            </div>
+          ) : null}
+          {detailsTrigger}
+        </div>
+        ) : null}
       </div>
 
-      <CollapsibleContent className="p-4">
-        <div className="mb-3 flex flex-wrap gap-2">
-          {!action ? <Badge variant="secondary">{tr("Sin revisar")}</Badge> : null}
-          {provenance ? <Badge variant="secondary">{tr("Perfil de empresa")}</Badge> : null}
-          {provenance?.document ? <Badge variant="secondary">{tr("Documento subido")}</Badge> : null}
-          {needsDocumentReview ? <Badge variant="outline" className="border-amber-400 text-amber-900">{tr("Revisar en el documento")}</Badge> : null}
-        </div>
-        {hasNegativeEvidence ? (
-          <p className="text-sm text-muted-foreground">
-            {" "}{tr("El documento indica que podría no ser material. Tenlo en cuenta al revisar; la decisión sigue siendo tuya.")}{" "}</p>
-        ) : null}
-        {evidenceItems.length > 0 ? (
-          <details className="rounded-md border border-border px-3 py-2">
-            <summary className="cursor-pointer text-sm font-medium text-foreground">
-              {" "}{tr("Evidencias del documento (")}{evidenceItems.length})
-            </summary>
-            <ul className="mt-2 space-y-2">
-              {evidenceItems.map((item, index) => (
-                <li key={index} className="text-sm text-muted-foreground">
-                  {item.documentDeleted ? (
-                    <span className="text-amber-700">{tr("Documento eliminado — revisar")}</span>
-                  ) : (
-                    <>
-                      {" "}{tr("«")}{item.snippet}{tr("»")}{" "}{item.page != null ? formatUi(locale, " (página {0})", [item.page]) : ""}
-                      {item.confidence != null ? formatUi(locale, " · confianza {0} %", [Math.round(item.confidence * 100)]) : ""}
-                    </>
-                  )}
-                </li>
+      <CollapsibleContent className="border-t border-border/60 px-4 pb-4 pt-3">
+        {isBase ? (
+          <>
+            <div className="mb-3 flex flex-wrap gap-2">
+              {!action ? <Badge variant="secondary">{tr("Sin revisar")}</Badge> : null}
+              {provenance ? <Badge variant="secondary">{tr("Perfil de empresa")}</Badge> : null}
+              {provenance?.document ? <Badge variant="secondary">{tr("Documento subido")}</Badge> : null}
+              {needsDocumentReview ? <Badge variant="outline" className="border-amber-400 text-amber-900">{tr("Revisar en el documento")}</Badge> : null}
+            </div>
+            {hasNegativeEvidence ? (
+              <p className="text-sm text-muted-foreground">
+                {" "}{tr("El documento indica que podría no ser material. Tenlo en cuenta al revisar; la decisión sigue siendo tuya.")}{" "}</p>
+            ) : null}
+            {evidenceItems.length > 0 ? (
+              <details className="rounded-md border border-border px-3 py-2">
+                <summary className="cursor-pointer text-sm font-medium text-foreground">
+                  {" "}{tr("Evidencias del documento (")}{evidenceItems.length})
+                </summary>
+                <ul className="mt-2 space-y-2">
+                  {evidenceItems.map((item, index) => (
+                    <li key={index} className="text-sm text-muted-foreground">
+                      {item.documentDeleted ? (
+                        <span className="text-amber-700">{tr("Documento eliminado — revisar")}</span>
+                      ) : (
+                        <>
+                          {" "}{tr("«")}{item.snippet}{tr("»")}{" "}{item.page != null ? formatUi(locale, " (página {0})", [item.page]) : ""}
+                          {item.confidence != null ? formatUi(locale, " · confianza {0} %", [Math.round(item.confidence * 100)]) : ""}
+                        </>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            ) : null}
+            <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {REVIEW_REASON_KEYS.map((reasonKey: string) => (
+                <label
+                  key={reasonKey}
+                  className="flex min-h-9 items-center gap-2 rounded-md border border-border px-3 py-2 text-sm"
+                >
+                  <Checkbox
+                    checked={reasons.includes(reasonKey)}
+                    disabled={disabled}
+                    onCheckedChange={(checked) => onReasonChange(reasonKey, checked === true)}
+                  />
+                  <span>{tr(reasonLabels[reasonKey] ?? "Otro")}</span>
+                </label>
               ))}
-            </ul>
-          </details>
+            </div>
+          </>
         ) : null}
-        <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-          {REVIEW_REASON_KEYS.map((reasonKey: string) => (
-            <label
-              key={reasonKey}
-              className="flex min-h-9 items-center gap-2 rounded-md border border-border px-3 py-2 text-sm"
-            >
-              <Checkbox
-                checked={reasons.includes(reasonKey)}
-                disabled={disabled}
-                onCheckedChange={(checked) => onReasonChange(reasonKey, checked === true)}
-              />
-              <span>{tr(reasonLabels[reasonKey] ?? "Otro")}</span>
-            </label>
-          ))}
-        </div>
 
-        <div className="mt-4">
+        <div className={cn(isBase ? "mt-4" : null)}>
           <Textarea
-            placeholder={tr("Nota de revisión opcional")}
+            placeholder={isBase ? tr("Nota de revisión opcional") : tr("Nota opcional sobre este tema")}
             value={note}
             disabled={disabled}
             onChange={(event) => onNoteChange(event.target.value)}
           />
         </div>
+
+        {sectorComparison ? <div className="mt-4">{sectorComparison}</div> : null}
       </CollapsibleContent>
     </Collapsible>
   )

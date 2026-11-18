@@ -212,7 +212,7 @@ test("el asistente se completa de principio a fin con datos de una PYME industri
     await expect(page).toHaveURL(/\/wizard\/step-5/, { timeout: 30_000 })
   })
 
-  // Datos decididos en el paso 5, reutilizados en el paso 6 para crear sus datos factuales.
+  // Datos decididos en el paso 5; el paso 6 los comprueba como contenido del informe.
   const completedDatapoints = new Map<string, [string, string]>()
   let notApplicableCount = 0
   // Tamaño del inventario tras el paso 5: el informe cuenta también lo decidido en ejecuciones anteriores.
@@ -253,8 +253,8 @@ test("el asistente se completa de principio a fin con datos de una PYME industri
     // Los primeros datos llevan cifras concretas de la empresa; uno de cada cuatro de ellos
     // se marca como «No aplica» con su justificación. Después se completan unos pocos más
     // remitiendo a la memoria de sostenibilidad y el resto queda como «No aplica» justificado,
-    // para que todo el inventario quede decidido. Cada dato completado exige en el paso 6 un
-    // dato factual revisado uno a uno, y la revisión está limitada a 20 por minuto.
+    // para que todo el inventario quede decidido. Cada respuesta completada con valor es ya el
+    // contenido del informe: el paso 6 no vuelve a pedirla.
     const completedTarget = 11
     const answers = [
       ["Consejo de administración de 5 miembros, 2 independientes; comité de sostenibilidad desde 2024", "Acta del consejo, 12/02/2025"],
@@ -303,7 +303,16 @@ test("el asistente se completa de principio a fin con datos de una PYME industri
           ? answers[index]
           : [`Información recogida en la memoria de sostenibilidad 2025 (dato ${datapointId}).`, "Memoria de sostenibilidad 2025 y registros internos"]
       await statusSelect.selectOption("completed")
-      await page.locator(`[id="${datapointId}-value"]`).fill(value)
+      if (numeric) {
+        // Cifras: tipo, valor exacto y unidad quedan en la respuesta; son los hechos del informe y del XBRL.
+        await page.locator(`[id="${datapointId}-value-type"]`).selectOption(numeric.valueType)
+        await page.locator(`[id="${datapointId}-value"]`).fill(numeric.value)
+        await page.locator(`[id="${datapointId}-unit"]`).fill(numeric.unit)
+        await page.locator(`[id="${datapointId}-decimals"]`).fill("0")
+      } else {
+        await page.locator(`[id="${datapointId}-value-type"]`).selectOption("text")
+        await page.locator(`[id="${datapointId}-value"]`).fill(value)
+      }
       await page.locator(`[id="${datapointId}-evidence"]`).fill(evidence)
       completedDatapoints.set(datapointId, [value, evidence])
     }
@@ -322,14 +331,14 @@ test("el asistente se completa de principio a fin con datos de una PYME industri
     const corpus = workspace.data
     const corpusIds: string[] = Object.values(corpus.blocks as Record<string, { datapoints?: Array<{ id: string }> }>).flatMap((block) => (block.datapoints ?? []).map((datapoint) => datapoint.id))
     inventorySize = corpusIds.length
-    const storedState = (await (await page.request.get("/api/esrs-datapoints/responses", { headers })).json()).data as { revision?: number; responses?: Record<string, { status: string; value?: string | null; evidence_reference?: string | null; note?: string | null; triage?: string | null }> } | null
+    const storedState = (await (await page.request.get("/api/esrs-datapoints/responses", { headers })).json()).data as { revision?: number; responses?: Record<string, { status: string; value?: string; value_type?: string; unit?: string; decimals?: number | null; evidence_reference?: string | null; note?: string | null; triage?: string | null }> } | null
     const stored = storedState?.responses ?? {}
     const topicalNote = "No aplica en el ejercicio 2025: dato temático sin hecho desencadenante en la empresa; se revisará cada ejercicio."
     let bulkDecided = 0
     const responses = corpusIds.map((datapointId) => {
       const current = stored[datapointId]
       if (current && current.status !== "draft") {
-        return { datapoint_id: datapointId, status: current.status, value: current.value ?? null, evidence_reference: current.evidence_reference ?? null, note: current.note ?? null, ...(current.triage ? { triage: current.triage } : {}) }
+        return { datapoint_id: datapointId, status: current.status, value: current.value ?? null, evidence_reference: current.evidence_reference ?? null, note: current.note ?? null, ...(current.value_type ? { value_type: current.value_type, unit: current.unit ?? null, decimals: current.decimals ?? null } : {}), ...(current.triage ? { triage: current.triage } : {}) }
       }
       bulkDecided += 1
       return { datapoint_id: datapointId, status: "not_applicable", value: null, evidence_reference: null, note: topicalNote, triage: "not_applicable_candidate" }
@@ -348,87 +357,33 @@ test("el asistente se completa de principio a fin con datos de una PYME industri
     await expect(page).toHaveURL(/\/wizard\/step-6/, { timeout: 60_000 })
   })
 
-  await test.step("paso 6: datos factuales revisados", async () => {
+  await test.step("paso 6: contenido del informe derivado del paso 5", async () => {
     await expect(page.getByRole("heading", { name: "Informe NEIS" })).toBeVisible({ timeout: 30_000 })
     const decided = inventorySize || completedDatapoints.size + notApplicableCount
     await expect(page.getByText(`${decided} de ${decided} datos ya decididos`)).toBeVisible()
 
-    // El primer dato factual se crea y se revisa desde la interfaz.
-    const [firstId, [firstValue, firstEvidence]] = [...completedDatapoints.entries()][0]
-    await page.locator("#fact-datapoint-id").fill(firstId)
-    await page.locator("#fact-applicability").selectOption("applicable")
-    await page.locator("#fact-value-type").selectOption("text")
-    await page.locator("#fact-value").fill(firstValue)
-    await page.locator("#fact-language").fill("es")
-    await page.locator("#fact-evidence").fill(firstEvidence)
-    await page.getByRole("button", { name: "Guardar dato factual" }).click()
-    const factList = page.locator('[data-slot="card"]', { has: page.getByRole("heading", { name: "Datos factuales guardados" }) }).first()
-    await expect(factList.getByText(firstId, { exact: false }).first()).toBeVisible({ timeout: 30_000 })
-    await factList.getByRole("button", { name: "Marcar como revisado" }).first().click()
-    const reviewDialog = page.getByRole("dialog")
-    await reviewDialog.locator("#fact-review-declaration").fill("He contrastado el valor con el acta del consejo y la evidencia indicada.")
-    await reviewDialog.getByRole("button", { name: "Marcar como revisado" }).click()
-    await expect(reviewDialog).toBeHidden({ timeout: 30_000 })
+    // Las respuestas completadas son los hechos del informe: no hay formulario ni revisión uno a uno.
+    await expect(page.getByText("Datos factuales y revisión")).toHaveCount(0)
+    const facts = (await (await page.request.get("/api/report/facts", { headers: { Accept: "application/json" } })).json()).data as { persisted_facts: Array<{ datapoint_id: string; approval_status: string; value_type: string }>; claimable_fact_count: number }
+    const reviewed = facts.persisted_facts.filter((fact) => fact.approval_status === "reviewed")
+    expect(facts.claimable_fact_count).toBe(completedDatapoints.size)
+    for (const [id, numeric] of numericAnswers) expect(reviewed.find((fact) => fact.datapoint_id === id)?.value_type, `${id} sin tipo numérico`).toBe(numeric.valueType)
+    test.info().annotations.push({ type: "hechos del informe", description: `${facts.claimable_fact_count} con valor, ${reviewed.length} revisados` })
 
-    // El resto se carga en bloque por la API con la misma sesión del navegador, como haría
-    // una integración, y se revisa uno a uno.
-    const session = await page.request.get("/api/auth/session", { headers: { Accept: "application/json" } })
-    expect(session.ok()).toBeTruthy()
-    const csrfToken = (await session.json()).data.csrf_token as string
-    const headers = { Accept: "application/json", "X-CSRF-TOKEN": csrfToken, "X-Requested-With": "XMLHttpRequest" }
-    const facts = [...completedDatapoints.entries()].filter(([id]) => id !== firstId).map(([datapointId, [value, evidence]]) => {
-      const numeric = numericAnswers.get(datapointId)
-      return {
-        datapoint_id: datapointId,
-        applicability: "applicable",
-        value_type: numeric ? numeric.valueType : "text",
-        value: numeric ? numeric.value : value,
-        unit: numeric ? numeric.unit : null,
-        decimals: numeric ? 0 : null,
-        dimensions: [],
-        language: numeric ? null : "es",
-        nil: false,
-        nil_reason: null,
-        evidence_refs: [{ type: "document", value: evidence }],
-        provenance: "api",
-        approval_status: "review_required",
-        blocking_reasons: [],
-      }
-    })
-    const upsert = await page.request.put("/api/report/facts", { headers, data: { facts } })
-    expect(upsert.ok(), await upsert.text()).toBeTruthy()
-
-    const listed = await page.request.get("/api/report/facts", { headers })
-    expect(listed.ok()).toBeTruthy()
-    const persisted = (await listed.json()).data.persisted_facts as Array<{ id: number; datapoint_id: string; approval_status: string }>
-    expect(persisted.length).toBe(completedDatapoints.size)
-    for (const fact of persisted) {
-      if (fact.approval_status === "reviewed") continue
-      const review = await page.request.post(`/api/report/facts/${fact.id}/review`, {
-        headers,
-        data: { review_declaration: `Revisado con la evidencia registrada para ${fact.datapoint_id}.` },
-      })
-      expect(review.ok(), await review.text()).toBeTruthy()
-    }
-    const reviewed = (await (await page.request.get("/api/report/facts", { headers })).json()).data.persisted_facts as Array<{ approval_status: string }>
-    expect(reviewed.every((fact) => fact.approval_status === "reviewed")).toBeTruthy()
-    test.info().annotations.push({ type: "datos factuales", description: String(reviewed.length) })
-
-    await page.getByRole("button", { name: "Recargar" }).click()
     await expect(page.getByText("Siguientes acciones")).toHaveCount(0, { timeout: 30_000 })
     await expect(page.getByText("¿Y ahora qué?")).toBeVisible()
   })
 
-  await test.step("paso 6: versión factual aprobada y descargas", async () => {
-    await page.getByRole("button", { name: "Preparar versión factual" }).click()
-    const approve = page.getByRole("button", { name: "Aprobar versión factual" })
+  await test.step("paso 6: versión del informe aprobada y descargas", async () => {
+    await page.getByRole("button", { name: "Preparar versión del informe" }).click()
+    const approve = page.getByRole("button", { name: "Aprobar versión del informe" })
     await expect(approve).toBeEnabled({ timeout: 30_000 })
     await approve.click()
     const approveDialog = page.getByRole("dialog")
     await approveDialog.locator("#snapshot-approval-declaration").fill("Yo, como persona responsable, asumo la preparación, revisión y aprobación de esta versión.")
-    await approveDialog.getByRole("button", { name: "Aprobar versión factual" }).click()
+    await approveDialog.getByRole("button", { name: "Aprobar versión del informe" }).click()
     await expect(approveDialog).toBeHidden({ timeout: 30_000 })
-    await expect(page.getByText("HTML factual")).toBeVisible({ timeout: 30_000 })
+    await expect(page.getByText("Descargar informe XBRL")).toBeVisible({ timeout: 30_000 })
 
     // Taxonomía externa: verificada cuando el manifiesto, el paquete EFRAG y Arelle están aprovisionados;
     // si no, el candidato iXBRL queda bloqueado y la prueba lo deja constar sin fallar.

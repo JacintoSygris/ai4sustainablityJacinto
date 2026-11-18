@@ -14,6 +14,7 @@ use App\Services\Report\ReportScopeException;
 use App\Support\DoubleMaterialityProcessState;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use App\Services\PlatformAdmin;
 
 class ReportController extends Controller
 {
@@ -29,6 +30,7 @@ class ReportController extends Controller
 
     public function show(Request $request, EsrsDatapointCorpusBuilder $datapoints)
     {
+        $this->syncFacts($request);
         $context = $this->reportContext($request, $datapoints);
 
         if (! $context) {
@@ -57,6 +59,7 @@ class ReportController extends Controller
 
     public function draft(Request $request, EsrsDatapointCorpusBuilder $datapoints)
     {
+        $this->syncFacts($request);
         $context = $this->reportContext($request, $datapoints);
 
         if (! $context) {
@@ -313,7 +316,19 @@ class ReportController extends Controller
 
     private function currentCharacterization(Request $request): ?Characterization
     {
-        return Characterization::forUser($request->user()->id)->first();
+        return Characterization::forUser(PlatformAdmin::viewedUserId($request))->first();
+    }
+
+    /**
+     * Report facts are a projection of the step 5 answers; refresh them before
+     * any readiness read so accounts saved before this rule see the same state.
+     */
+    private function syncFacts(Request $request): void
+    {
+        $characterization = $this->currentCharacterization($request);
+        if ($characterization) {
+            app(\App\Services\Report\ReportingFactSync::class)->sync($characterization);
+        }
     }
 
     /**
@@ -381,7 +396,8 @@ class ReportController extends Controller
         $contentAssessment = $this->contentReadiness->assess($facts, $expectedDatapointIds);
         $sections['report_content'] = [
             'status' => $contentAssessment['ready'] ? 'ready' : 'incomplete',
-            'endpoint' => '/api/report/facts',
+            // The content comes from the step 5 answers; that is where a gap is fixed.
+            'endpoint' => '/api/esrs-datapoints/responses',
             'claimable_count' => $contentAssessment['claimable_count'],
             'required_count' => $contentAssessment['required_count'],
             'resolved_required_count' => $contentAssessment['resolved_required_count'],

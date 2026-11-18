@@ -7,6 +7,9 @@ import test from "node:test"
 const root = dirname(dirname(fileURLToPath(import.meta.url)))
 const {
   actionsFromProposal,
+  addedTopicIdsFromProposal,
+  aiTopicIdsFromProposal,
+  baseProposalTopicIds,
   buildDraftReviewPayload,
   buildReviewPayload,
   saveCompletionMatchesEditVersion,
@@ -116,6 +119,7 @@ test("P6 review helpers persist only explicit actions, selected reason chips, an
       action_notes: {
         "101": "Keep in P6.",
       },
+      added_topic_ids: [],
     },
   })
 })
@@ -147,6 +151,7 @@ test("P6 review helpers persist a partial review as a draft without inventing ac
     action_notes: {
       "101": "Keep this answer.",
     },
+    added_topic_ids: [],
   })
 })
 
@@ -185,4 +190,69 @@ test("P6 save completion cannot advance after a later edit", () => {
   assert.match(source, /reviewEditVersion/)
   assert.match(source, /saveCompletionMatchesEditVersion/)
   assert.match(source, /disabled=\{readOnlyMode \|\| savingReview\}/)
+})
+
+test("P6 review helpers separate the AI proposal from the topics the user added", () => {
+  const proposal = {
+    proposal_topic_ids: [101, 102, 103],
+    ai_topic_ids: [101, 102, 999],
+    review: {
+      topic_actions: { "101": "accepted", "103": "accepted" },
+      action_reasons: {},
+      action_notes: {},
+      added_topic_ids: [103, 999, "x"],
+    },
+  }
+
+  assert.deepEqual(addedTopicIdsFromProposal(proposal), [103], "only current proposal topics count as additions")
+  assert.deepEqual(baseProposalTopicIds(proposal), [101, 102], "the base proposal excludes user additions")
+  assert.deepEqual(aiTopicIdsFromProposal(proposal), [101, 102], "AI flags outside the proposal are ignored")
+  assert.deepEqual(aiTopicIdsFromProposal({ proposal_topic_ids: [101] }), [], "a platform without the field flags nothing")
+})
+
+test("P6 review payload carries user-added topics as the full list and keeps their actions", () => {
+  const draft = buildDraftReviewPayload({
+    proposalTopicIds: [101, 102],
+    addedTopicIds: [103, 101, 104],
+    topicActions: { "101": "accepted", "103": "accepted", "104": "accepted", "105": "accepted" },
+    actionReasons: {},
+    actionNotes: { "103": " Added by hand. " },
+  })
+
+  assert.deepEqual(draft, {
+    topic_actions: { "101": "accepted", "103": "accepted", "104": "accepted" },
+    action_reasons: {},
+    action_notes: { "103": "Added by hand." },
+    added_topic_ids: [103, 104],
+  })
+
+  const incomplete = buildReviewPayload({
+    proposalTopicIds: [101, 102],
+    addedTopicIds: [103],
+    topicActions: { "101": "accepted", "102": "rejected" },
+  })
+  assert.equal(incomplete.ok, false)
+  assert.deepEqual(incomplete.missingTopicIds, ["103"], "an added topic without an action blocks the explicit review")
+
+  const complete = buildReviewPayload({
+    proposalTopicIds: [101, 102],
+    addedTopicIds: [103],
+    topicActions: { "101": "accepted", "102": "rejected", "103": "accepted" },
+  })
+  assert.equal(complete.ok, true)
+  assert.deepEqual(complete.payload.added_topic_ids, [103])
+})
+
+test("P6 form renders the full ESRS catalogue as an accordion with AI recommendations and user additions", () => {
+  const source = read("components/wizard/material-topics-form.tsx")
+
+  assert.match(source, /getLaravelEsrsTopics\(\{ per_page: 200 \}\)/, "the form must load the whole catalogue")
+  assert.match(source, /buildTopicTree/, "the catalogue must be grouped by category, standard and sub-theme")
+  assert.match(source, /aiTopicIdsFromProposal/, "AI recommendations must be told apart from the rest")
+  assert.match(source, /addedTopicIdsFromProposal/, "user additions must be restored from the stored review")
+  assert.match(source, /added_topic_ids|addedTopicIds,/, "user additions must be part of the saved review")
+  assert.match(source, /Mostrar solo temas seleccionados/)
+  assert.match(source, /seleccionados/)
+  assert.match(source, /Añadido por ti/)
+  assert.match(source, /Tema recomendado por la aplicación/)
 })

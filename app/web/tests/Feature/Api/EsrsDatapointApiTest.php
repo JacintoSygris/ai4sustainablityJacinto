@@ -1530,3 +1530,68 @@ function csvRows(string $csv): array
 
     return $rows;
 }
+
+it('stores typed answers, derives the report facts and rejects values that contradict their type', function () {
+    $characterization = Characterization::factory()->create([
+        'user_id' => $this->user->id,
+        'status' => Characterization::STATUS_COMPLETED,
+        'esrs_topic_ids' => [],
+        'form_data' => ['operations' => ['employee_count_range' => '50_249']],
+    ]);
+
+    $this->actingAs($this->user)
+        ->putJson('/api/esrs-datapoints/responses', [
+            'expected_revision' => 0,
+            'responses' => [[
+                'datapoint_id' => 'BP-1_01',
+                'status' => 'completed',
+                'value' => '138',
+                'value_type' => 'integer',
+                'unit' => 'pure',
+                'decimals' => 0,
+                'evidence_reference' => 'Payroll summary 2025',
+            ]],
+        ])
+        ->assertOk()
+        ->assertJsonPath('data.responses.BP-1_01.value_type', 'integer')
+        ->assertJsonPath('data.responses.BP-1_01.unit', 'pure')
+        ->assertJsonPath('data.responses.BP-1_01.decimals', 0);
+
+    $fact = \App\Models\ReportingFact::where('characterization_id', $characterization->id)->where('datapoint_id', 'BP-1_01')->sole();
+    expect($fact->approval_status)->toBe('reviewed')
+        ->and($fact->value)->toBe(['value' => '138'])
+        ->and($fact->unit)->toBe('pure')
+        ->and($fact->reviewed_by_user_id)->toBe($this->user->id);
+
+    $this->actingAs($this->user)
+        ->putJson('/api/esrs-datapoints/responses', [
+            'expected_revision' => 1,
+            'responses' => [[
+                'datapoint_id' => 'BP-1_01',
+                'status' => 'completed',
+                'value' => 'ciento treinta y ocho',
+                'value_type' => 'integer',
+            ]],
+        ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['responses.0.value']);
+
+    $this->actingAs($this->user)
+        ->putJson('/api/esrs-datapoints/responses', [
+            'expected_revision' => 1,
+            'responses' => [[
+                'datapoint_id' => 'BP-1_01',
+                'status' => 'completed',
+                'value' => '138',
+                'value_type' => 'pictures',
+            ]],
+        ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['responses.0.value_type']);
+
+    // Removing the answer removes its derived fact.
+    $this->actingAs($this->user)
+        ->putJson('/api/esrs-datapoints/responses', ['expected_revision' => 1, 'responses' => []])
+        ->assertOk();
+    expect(\App\Models\ReportingFact::where('characterization_id', $characterization->id)->count())->toBe(0);
+});

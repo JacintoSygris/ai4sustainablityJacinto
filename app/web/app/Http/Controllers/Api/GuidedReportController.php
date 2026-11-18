@@ -29,6 +29,7 @@ use App\Services\Report\XhtmlIxbrlCandidateRenderer;
 use DomainException;
 use Illuminate\Http\Request;
 use RuntimeException;
+use App\Services\PlatformAdmin;
 
 class GuidedReportController extends Controller
 {
@@ -388,10 +389,13 @@ class GuidedReportController extends Controller
                 ->header('X-Taxonomy-Assertions', $assertionSummary)
                 ->header('X-Taxonomy-Profile', $taxonomyId);
         }
+        // `inline=1` lets the browser show the report; the default stays a download.
+        $disposition = $request->boolean('inline') ? 'inline' : 'attachment';
+
         return response($xhtml, 200)
             ->header('X-Taxonomy-Assertions', $assertionSummary)
             ->header('Content-Type', 'application/xhtml+xml; charset=UTF-8')
-            ->header('Content-Disposition', 'attachment; filename="'.(app()->getLocale() === 'en' ? 'esrs-candidate-report.xhtml' : 'informe-neis-candidato.xhtml').'"')
+            ->header('Content-Disposition', $disposition.'; filename="'.(app()->getLocale() === 'en' ? 'esrs-candidate-report.xhtml' : 'informe-neis-candidato.xhtml').'"')
             ->header('X-Report-Publication-State', 'validated_candidate');
     }
 
@@ -407,7 +411,7 @@ class GuidedReportController extends Controller
         // after disabling the feature, while legacy OFF-mode readiness is kept.
         $scopeRequired = (bool) config('report_scope.enabled', false)
             || ReportSnapshot::query()
-                ->where('user_id', $request->user()->id)
+                ->where('user_id', PlatformAdmin::viewedUserId($request))
                 ->whereHas('approval')
                 ->where('snapshot_json->schema_version', 'report_snapshot_v2')
                 ->exists();
@@ -426,14 +430,14 @@ class GuidedReportController extends Controller
             ], 409)];
         }
 
-        return [Characterization::forUser($request->user()->id)->first(), null];
+        return [Characterization::forUser(PlatformAdmin::viewedUserId($request))->first(), null];
     }
 
     /** @return array{0: ?ReportSnapshot, 1: mixed} */
     private function approvedFreshSnapshotOrBlock(Request $request, string $blockedType = 'guided_report_blocked'): array
     {
         $snapshots = ReportSnapshot::query()
-            ->where('user_id', $request->user()->id)
+            ->where('user_id', PlatformAdmin::viewedUserId($request))
             ->whereHas('approval')
             ->with('approval')
             ->orderByDesc('created_at')

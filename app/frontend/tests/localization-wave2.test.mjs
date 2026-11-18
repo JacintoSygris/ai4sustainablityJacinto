@@ -70,21 +70,6 @@ test('active JSX cannot silently reintroduce uncatalogued literal copy or human 
   assert.deepEqual(offenders, [])
 })
 
-test('learning panel status and stored system notices have both catalogue projections', () => {
-  const panel = read('../components/wizard/learning-case-panel.tsx')
-  const statuses = panel.match(/const statusCopy = \{([^\n]+)\}/)[1]
-  const notices = [...panel.matchAll(/setMessage\(([^\n]*)/g)].map(match => match[1]).join('\n')
-  const keys = [...(statuses + '\n' + notices).matchAll(/"([^"]*)"/g)].map(match => match[1]).filter(key => key && key !== 'withdraw')
-  assert.ok(keys.includes('Deshabilitado'))
-  assert.ok(keys.includes('Retirada registrada.'))
-  assert.ok(keys.includes('Conflicto: lectura pendiente. Sus entradas se conservan.'))
-  for (const key of keys) {
-    assert.ok(hasEnglishCopy(key), key)
-    assert.equal(formatUi('es', key), key)
-    assert.notEqual(formatUi('en', key), key)
-  }
-})
-
 test('report display copy and controlled country/dimension labels have explicit English entries', () => {
   const english = JSON.parse(read('../../web/lang/en.json'))
   const files = ['HtmlReportRenderer', 'DocxRenderer', 'XhtmlIxbrlCandidateRenderer', 'ReportDisplayProjection']

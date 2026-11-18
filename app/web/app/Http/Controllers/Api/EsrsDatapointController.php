@@ -158,6 +158,10 @@ class EsrsDatapointController extends Controller
             'responses.*.value' => ['nullable', 'string', 'max:5000'],
             'responses.*.evidence_reference' => ['nullable', 'string', 'max:1000'],
             'responses.*.note' => ['nullable', 'string', 'max:2000'],
+            // Typed answers feed the report facts and the iXBRL tagging directly.
+            'responses.*.value_type' => ['sometimes', 'nullable', 'string', Rule::in(\App\Services\Report\ReportingFactProjector::VALUE_TYPES)],
+            'responses.*.unit' => ['sometimes', 'nullable', 'string', 'max:64'],
+            'responses.*.decimals' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:12'],
             'responses.*.triage' => ['sometimes', 'nullable', Rule::in([
                 'have_it',
                 'need_to_find',
@@ -169,6 +173,8 @@ class EsrsDatapointController extends Controller
             ->pluck('datapoint_id')
             ->map(fn (string $id) => trim($id))
             ->all();
+
+        $this->validateTypedValues($validated['responses']);
 
         if (count($submittedDatapointIds) !== count(array_unique($submittedDatapointIds))) {
             throw ValidationException::withMessages([
@@ -253,6 +259,8 @@ class EsrsDatapointController extends Controller
             ]);
             $formData = app(\App\Services\LearningFeedbackDataset::class)->seal($lockedCharacterization, $formData, 'esrs_datapoint_responses');
             $lockedCharacterization->forceFill(['form_data' => $formData])->save();
+            // The decided answers are the report facts: keep them in step with every save.
+            app(\App\Services\Report\ReportingFactSync::class)->sync($lockedCharacterization->fresh(), $corpus);
 
             ReportAuditEvent::create([
                 'user_id' => $request->user()->id,
@@ -377,7 +385,7 @@ class EsrsDatapointController extends Controller
                     'updated_at' => $updatedAt,
                 ];
 
-                foreach (['value', 'evidence_reference', 'note', 'triage'] as $field) {
+                foreach (['value', 'evidence_reference', 'note', 'triage', 'value_type', 'unit', 'decimals'] as $field) {
                     if (array_key_exists($field, $response) && filled($response[$field])) {
                         $normalized[$field] = $response[$field];
                     }
@@ -386,6 +394,39 @@ class EsrsDatapointController extends Controller
                 return [$datapointId => $normalized];
             })
             ->all();
+    }
+
+    /**
+     * Numeric and date answers must match their declared type so the report and
+     * the iXBRL tagging never have to guess.
+     *
+     * @param  array<int, array<string, mixed>>  $responses
+     */
+    private function validateTypedValues(array $responses): void
+    {
+        $messages = [];
+
+        foreach ($responses as $index => $response) {
+            $valueType = $response['value_type'] ?? null;
+            $value = is_string($response['value'] ?? null) ? trim($response['value']) : '';
+            if (! is_string($valueType) || $valueType === 'text' || $value === '') {
+                continue;
+            }
+            $valid = match ($valueType) {
+                'number', 'monetary' => preg_match('/\A[+-]?(?:\d+(?:\.\d*)?|\.\d+)\z/', $value) === 1,
+                'integer' => preg_match('/\A[+-]?\d+\z/', $value) === 1,
+                'boolean' => in_array(strtolower($value), ['true', 'false', '1', '0', 'sí', 'si', 'no', 'yes'], true),
+                'date' => preg_match('/\A\d{4}(?:-\d{2}(?:-\d{2})?)?\z/', $value) === 1,
+                default => true,
+            };
+            if (! $valid) {
+                $messages["responses.$index.value"] = __('The value does not match the selected data type.');
+            }
+        }
+
+        if ($messages !== []) {
+            throw ValidationException::withMessages($messages);
+        }
     }
 
     /**

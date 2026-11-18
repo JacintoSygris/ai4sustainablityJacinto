@@ -15,7 +15,7 @@ it('rate limits synchronous XHTML and iXBRL candidate validation separately', fu
     $middleware = \Illuminate\Support\Facades\Route::getRoutes()
         ->getByName('api.report.xhtml-ixbrl-candidate')?->gatherMiddleware() ?? [];
 
-    expect($middleware)->toContain('throttle:2,1,report-xhtml-ixbrl');
+    expect($middleware)->toContain('throttle:6,1,report-xhtml-ixbrl');
 });
 
 beforeEach(function () {
@@ -63,31 +63,36 @@ it('requires authentication for the factual html report', function () {
     $this->getJson('/api/report/html')->assertUnauthorized();
 });
 
-it('preserves an exact integer through fact submission review snapshot claims and localized report downloads', function () {
+it('preserves an exact integer from a typed step 5 answer through snapshot claims and localized report downloads', function () {
     $characterization = fullyReadyReportCharacterization($this->user, $this->e2);
     $value = '9007199254740993';
-    $this->actingAs($this->user)->putJson('/api/report/facts', ['facts' => [[
-        'datapoint_id' => 'BP-1_01', 'applicability' => 'applicable',
-        'value_type' => 'integer', 'value' => $value, 'unit' => 'pure', 'decimals' => 0,
-        'dimensions' => [], 'language' => null, 'nil' => false, 'nil_reason' => null,
-        'evidence_refs' => [['type' => 'note', 'value' => 'Exact integer regression evidence.']],
-        'provenance' => 'api', 'approval_status' => 'review_required', 'blocking_reasons' => [],
-    ]]])->assertOk()->assertJsonPath('data.persisted_facts.0.value', $value);
+    // The typed answer saved in step 5 is the reviewed report fact: no re-entry in step 6.
+    $this->actingAs($this->user)->putJson('/api/esrs-datapoints/responses', [
+        'expected_revision' => 0,
+        'responses' => [[
+            'datapoint_id' => 'BP-1_01', 'status' => 'completed',
+            'value' => $value, 'value_type' => 'integer', 'unit' => 'pure', 'decimals' => 0,
+            'evidence_reference' => 'Exact integer regression evidence.',
+        ]],
+    ])->assertOk();
+    $this->getJson('/api/report/facts')->assertOk()
+        ->assertJsonPath('data.persisted_facts.0.value.value', $value)
+        ->assertJsonPath('data.persisted_facts.0.approval_status', 'reviewed');
     $fact = ReportingFact::where('characterization_id', $characterization->id)->sole();
-    expect($fact->value)->toBe($value);
-    $this->postJson('/api/report/facts/'.$fact->id.'/review', ['review_declaration' => 'Reviewed exact integer evidence.'])
-        ->assertOk()->assertJsonPath('data.approval_status', 'reviewed');
+    expect($fact->value)->toBe(['value' => $value]);
+    $this->postJson('/api/report/facts/'.$fact->id.'/review', ['review_declaration' => 'No manual review exists any more.'])
+        ->assertNotFound();
     $snapshot = guidedReportApiApproveSnapshot($this->user, $characterization);
     $frozen = $snapshot->fresh()->snapshot_json;
-    expect($frozen['facts'][0]['value'])->toBe($value);
+    expect($frozen['facts'][0]['value'])->toBe(['value' => $value]);
     foreach (['es' => '9.007.199.254.740.993', 'en' => '9,007,199,254,740,993'] as $locale => $display) {
         $this->putJson('/api/locale', ['locale' => $locale])->assertOk();
         $this->get('/api/report/html')->assertOk()->assertHeader('Content-Language', $locale)->assertSee($display);
         $docx = $this->get('/api/guided-report/docx')->assertOk()->assertHeader('Content-Language', $locale);
         expect(docxVisibleText($docx->getContent()))->toContain($display);
-        $this->getJson('/api/guided-report/evidence-bundle')->assertOk()->assertJsonPath('data.claims.0.value', $value);
+        $this->getJson('/api/guided-report/evidence-bundle')->assertOk()->assertJsonPath('data.claims.0.value.value', $value);
     }
-    expect($fact->fresh()->value)->toBe($value);
+    expect($fact->fresh()->value)->toBe(['value' => $value]);
     expect($snapshot->fresh()->snapshot_json)->toBe($frozen);
 });
 
@@ -211,7 +216,7 @@ it('returns a validated xhtml ixbrl candidate attachment from a fresh approved s
         ->toBe('attachment; filename="informe-neis-candidato.xhtml"');
     expect($response->headers->get('X-Report-Publication-State'))->toBe('validated_candidate');
     expect($response->getContent())->toContain('<ix:nonFraction')
-        ->and($response->getContent())->toContain('123.45')
+        ->and($response->getContent())->toContain('123,45')
         ->and($response->getContent())->not->toContain('rf_guided_numeric');
 
     $doc = new DOMDocument();
@@ -619,8 +624,8 @@ it('uses only snapshot claims for xhtml ixbrl output even when live facts are la
 
     $response = $this->actingAs($this->user)->get('/api/report/xhtml-ixbrl-candidate')->assertOk();
 
-    expect($response->getContent())->toContain('123.45')
-        ->not->toContain('999.99');
+    expect($response->getContent())->toContain('123,45')
+        ->not->toContain('999.99')->not->toContain('999,99');
 });
 
 function guidedReportApiFact($characterization, array $overrides = []): ReportingFact
@@ -766,7 +771,7 @@ it('requires auth and a default off flag for the report package route', function
     $this->getJson('/api/report/ixbrl-package')->assertUnauthorized();
     $this->actingAs($this->user)->getJson('/api/report/ixbrl-package')->assertNotFound();
     $middleware = \Illuminate\Support\Facades\Route::getRoutes()->getByName('api.report.ixbrl-package')->gatherMiddleware();
-    expect($middleware)->toContain('throttle:2,1,report-xhtml-ixbrl');
+    expect($middleware)->toContain('throttle:6,1,report-xhtml-ixbrl');
 });
 
 it('keeps readiness and snapshot ownership gates on the enabled package route', function () {
