@@ -25,11 +25,11 @@ final class ReportXhtmlDocument
     /** @var array<int, array{span: DOMElement, claim_id: string}> */
     private array $numericSpans = [];
 
-    /** @var array<int, array{node: DOMElement, claim_id: string}> */
+    /** @var array<int, array{node: DOMElement, claim_id: string, value_type: string}> */
     private array $textNodes = [];
 
     /**
-     * @return array{doc: DOMDocument, numeric: array<int, array{span: DOMElement, claim_id: string}>, text: array<int, array{node: DOMElement, claim_id: string}>}
+     * @return array{doc: DOMDocument, numeric: array<int, array{span: DOMElement, claim_id: string}>, text: array<int, array{node: DOMElement, claim_id: string, value_type: string}>}
      */
     public function build(array $ir, string $locale = 'es', string $title = 'Informe de sostenibilidad NEIS'): array
     {
@@ -164,8 +164,8 @@ final class ReportXhtmlDocument
                 }
             }
             $p->appendChild($this->doc->createTextNode($value));
-            if (($claim['value_type'] ?? null) === 'text') {
-                $this->textNodes[] = ['node' => $p, 'claim_id' => $claimId];
+            if (in_array($claim['value_type'] ?? null, ['text', 'boolean', 'date'], true)) {
+                $this->textNodes[] = ['node' => $p, 'claim_id' => $claimId, 'value_type' => (string) $claim['value_type']];
             }
         }
         if ($answers === 0) {

@@ -14,6 +14,7 @@ import { useStudyError } from "@/lib/use-study-error"
 import { useSystemMessage, systemCopy } from "@/lib/i18n/use-system-message"
 
 import { ui, formatUi } from "@/lib/i18n/messages.mjs"
+import { buildTopicTree } from "@/lib/materiality-topic-catalog.mjs"
 
 import { useLocale } from "@/components/locale-provider"
 import { LocalizedDownload } from "@/components/localized-download"
@@ -87,6 +88,9 @@ type Dimensions = Record<string, "impact" | "financial" | "both">
 type GuidedAnswers = Record<string, any> // validated via build
 
 type Mode = "direct" | "guided"
+
+type ProposedStandardNode = { key: string; code: string; label: string; topics: LaravelEsrsTopic[] }
+type ProposedCategoryNode = { key: string; label: string; standards: ProposedStandardNode[] }
 
 export function FinalTopicsSelection({ learningInvitationEnabled = false }: { learningInvitationEnabled?: boolean }) {
   const { locale } = useLocale()
@@ -936,93 +940,132 @@ export function FinalTopicsSelection({ learningInvitationEnabled = false }: { le
           {/* 3. DIRECT mode — delta-first list */}
           {mode === "direct" && (
             <>
-              <div className="space-y-4">
-                {/* Propuestos */}
-                <div>
-                  <div className="text-sm font-semibold mb-2">{tr("Propuestos (paso 2)")}</div>
-                  {confirmation.p6_topic_ids.map((pid) => {
-                    const topic = catalogTopics.find((t) => t.id === pid)
-                    if (!topic) return null
-                    const selected = selectedTopics.has(pid)
-                    const hist = p6History[String(pid)]
-                    return (
-                      <div key={pid} className="rounded border p-3 mb-2 flex gap-3 items-start">
-                        <Checkbox aria-label={`${selected ? tr("Retirar") : tr("Añadir")} ${topicTitle(topic, locale)}`} checked={selected} onCheckedChange={() => toggleTopic(pid)} className="mt-1" />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <Badge variant="outline">{topic.esrs_code}</Badge>
-                            <span className="font-medium">{topicTitle(topic, locale)}</span>
-                            {hist ? <span className="text-xs text-muted-foreground">{tr("En el paso 2 lo marcaste '")}{({ accepted: tr("Aceptar"), unsure: tr("Duda"), rejected: tr("Rechazar") } as Record<string, string>)[hist.decision] ?? tr("Sin revisar")}'{hist.note ? ` — ${hist.note}` : ""}</span> : null}
-                          </div>
-                          <ConceptRelations kind="topics" items={confirmation.topics?.find((item) => item.id === pid)?.often_reported_with} locale={locale} />
-                          <SectorComparison {...sectorComparison} topicId={pid} locale={locale} />
-                          <div className="mt-2">
-                            <Button size="sm" variant="outline" onClick={() => openAssistantFor(pid)}>{tr("Ayúdame a decidir")}</Button>
-                          </div>
-                          {inlineAssistantFor === pid && (
-                            <div className="mt-2"><TopicSignalAssistant topic={topic} exposicionDefault={(exposicionDefaults[String(pid)] as any) || "normal"} initialAnswer={guidedDrafts[String(pid)]} onResult={(ans) => applyAssistantResult(pid, ans)} /></div>
-                          )}
-                          {changedTopicIdSet.has(pid) && (
-                            <div className="mt-2 space-y-2">
-                              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                                {CHANGE_REASON_OPTIONS.map((r) => (
-                                  <label key={r.key} className="flex items-center gap-2 text-xs border rounded px-2 py-1">
-                                    <Checkbox aria-label={formatUi(locale, "Motivo: {0}", [tr(r.label)])} checked={(changeReasons[String(pid)] || []).includes(r.key)} onCheckedChange={(c) => toggleReason(pid, r.key, !!c)} />
-                                    {tr(r.label)}
-                                  </label>
-                                ))}
-                              </div>
-                              <Textarea placeholder={tr("Nota opcional")} value={changeNotes[String(pid)] || ""} onChange={(e) => updateNote(pid, e.target.value)} />
+              <div className="space-y-10">
+                {/* Propuestos, agrupados por categoría y estándar para que la lista respire */}
+                <section className="space-y-6" aria-labelledby="p8-proposed-heading">
+                  <div>
+                    <h3 id="p8-proposed-heading" className="text-base font-semibold text-foreground">{tr("Propuestos (paso 2)")}</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">{tr("Marca los temas que confirmas como materiales. Si retiras uno, indica el motivo.")}</p>
+                  </div>
+                  {(buildTopicTree(confirmation.p6_topic_ids.map((pid) => catalogTopics.find((t) => t.id === pid)).filter((t): t is LaravelEsrsTopic => Boolean(t)), locale) as ProposedCategoryNode[]).map((category) => (
+                    <div key={category.key} className="space-y-5">
+                      <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{tr(category.label)}</h4>
+                      {category.standards.map((standard) => {
+                        const selectedCount = standard.topics.filter((t) => selectedTopics.has(t.id)).length
+                        return (
+                          <div key={standard.key} className="space-y-3">
+                            <div className="flex flex-wrap items-center gap-2 border-b border-border pb-2">
+                              <Badge variant="secondary">{standard.code}</Badge>
+                              <span className="text-sm font-medium text-foreground">{standard.label}</span>
+                              <span className="ml-auto text-xs text-muted-foreground">{formatUi(locale, "{0} de {1} seleccionados", [String(selectedCount), String(standard.topics.length)])}</span>
                             </div>
-                          )}
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
+                            {standard.topics.map((topic) => {
+                              const pid = topic.id
+                              const selected = selectedTopics.has(pid)
+                              const hist = p6History[String(pid)]
+                              const relations = confirmation.topics?.find((item) => item.id === pid)?.often_reported_with
+                              return (
+                                <div key={pid} className={`rounded-lg border bg-card p-4 ${selected ? "border-border" : "border-dashed border-border/70 bg-muted/30"}`}>
+                                  <div className="flex items-start gap-3">
+                                    <Checkbox aria-label={`${selected ? tr("Retirar") : tr("Añadir")} ${topicTitle(topic, locale)}`} checked={selected} onCheckedChange={() => toggleTopic(pid)} className="mt-1" />
+                                    <div className="min-w-0 flex-1 space-y-1">
+                                      <div className="font-medium leading-snug text-foreground">{topicTitle(topic, locale)}</div>
+                                      {hist ? <div className="text-xs text-muted-foreground">{tr("En el paso 2 lo marcaste '")}{({ accepted: tr("Aceptar"), unsure: tr("Duda"), rejected: tr("Rechazar") } as Record<string, string>)[hist.decision] ?? hist.decision}{"'"}</div> : null}
+                                    </div>
+                                    <Button size="sm" variant="ghost" className="shrink-0" onClick={() => openAssistantFor(pid)}>{tr("Ayúdame a decidir")}</Button>
+                                  </div>
+                                  {relations?.length ? (
+                                    <details className="mt-3 rounded-md bg-muted/40 px-3 py-2 text-sm">
+                                      <summary className="cursor-pointer text-sm text-muted-foreground">{formatUi(locale, "Temas relacionados ({0})", [String(relations.length)])}</summary>
+                                      <ConceptRelations kind="topics" items={relations} locale={locale} />
+                                    </details>
+                                  ) : null}
+                                  <SectorComparison {...sectorComparison} topicId={pid} locale={locale} />
+                                  {inlineAssistantFor === pid && (
+                                    <div className="mt-3"><TopicSignalAssistant topic={topic} exposicionDefault={(exposicionDefaults[String(pid)] as any) || "normal"} initialAnswer={guidedDrafts[String(pid)]} onResult={(ans) => applyAssistantResult(pid, ans)} /></div>
+                                  )}
+                                  {changedTopicIdSet.has(pid) && (
+                                    <div className="mt-3 space-y-2 rounded-md border border-amber-200 bg-amber-50/60 p-3">
+                                      <div className="text-xs font-medium text-amber-900">{tr("Motivo del cambio")}</div>
+                                      <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
+                                        {CHANGE_REASON_OPTIONS.map((r) => (
+                                          <label key={r.key} className="flex items-center gap-2 rounded border bg-background px-2 py-1 text-xs">
+                                            <Checkbox aria-label={formatUi(locale, "Motivo: {0}", [tr(r.label)])} checked={(changeReasons[String(pid)] || []).includes(r.key)} onCheckedChange={(c) => toggleReason(pid, r.key, !!c)} />
+                                            {tr(r.label)}
+                                          </label>
+                                        ))}
+                                      </div>
+                                      <Textarea placeholder={tr("Nota opcional")} value={changeNotes[String(pid)] || ""} onChange={(e) => updateNote(pid, e.target.value)} />
+                                    </div>
+                                  )}
+                                </div>
+                              )
+                            })}
+                          </div>
+                        )
+                      })}
+                    </div>
+                  ))}
+                </section>
 
                 {/* Retirados */}
-                <div>
-                  <div className="text-sm font-semibold mb-2">{tr("Retirados (seleccionar de nuevo para recuperar)")}</div>
+                <section className="space-y-4" aria-labelledby="p8-removed-heading">
+                  <div>
+                    <h3 id="p8-removed-heading" className="text-base font-semibold text-foreground">{tr("Retirados (seleccionar de nuevo para recuperar)")}</h3>
+                  </div>
                   {Array.from(p6TopicIds).filter((id) => !selectedTopics.has(id)).map((pid) => {
                     const topic = catalogTopics.find((t) => t.id === pid)
                     if (!topic) return null
                     return (
-                      <div key={pid} className="rounded border p-3 mb-2 flex gap-3">
-                        <Checkbox aria-label={formatUi(locale, "Añadir {0}", [topicTitle(topic, locale)])} checked={false} onCheckedChange={() => toggleTopic(pid)} />
-                        <div>
-                          <Badge variant="destructive">{tr("Retirado")}</Badge> {topicTitle(topic, locale)}
+                      <div key={pid} className="flex items-start gap-3 rounded-lg border border-dashed p-4">
+                        <Checkbox aria-label={formatUi(locale, "Añadir {0}", [topicTitle(topic, locale)])} checked={false} onCheckedChange={() => toggleTopic(pid)} className="mt-1" />
+                        <div className="min-w-0 flex-1 space-y-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <Badge variant="destructive">{tr("Retirado")}</Badge>
+                            <Badge variant="outline">{topic.esrs_code}</Badge>
+                            <span className="font-medium">{topicTitle(topic, locale)}</span>
+                          </div>
                           <SectorComparison {...sectorComparison} topicId={pid} locale={locale} />
-                          <div className="mt-1"><Button size="sm" variant="outline" onClick={() => openAssistantFor(pid)}>{tr("Ayúdame a decidir")}</Button></div>
                           {inlineAssistantFor === pid && <div className="mt-2"><TopicSignalAssistant topic={topic} exposicionDefault={(exposicionDefaults[String(pid)] as any) || "normal"} onResult={(a) => applyAssistantResult(pid, a)} /></div>}
                         </div>
+                        <Button size="sm" variant="ghost" className="shrink-0" onClick={() => openAssistantFor(pid)}>{tr("Ayúdame a decidir")}</Button>
                       </div>
                     )
                   })}
-                  {Array.from(p6TopicIds).filter((id) => !selectedTopics.has(id)).length === 0 && <div className="text-xs text-muted-foreground">{tr("Nada retirado.")}</div>}
-                </div>
+                  {Array.from(p6TopicIds).filter((id) => !selectedTopics.has(id)).length === 0 && <div className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">{tr("Nada retirado.")}</div>}
+                </section>
 
                 {/* Nuevos + Añadir */}
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="text-sm font-semibold">{tr("Nuevos (añadidos por ti)")}</div>
+                <section className="space-y-4" aria-labelledby="p8-added-heading">
+                  <div className="flex items-center justify-between gap-3">
+                    <h3 id="p8-added-heading" className="text-base font-semibold text-foreground">{tr("Nuevos (añadidos por ti)")}</h3>
                     <Button size="sm" variant="outline" onClick={() => { setSearchQuery(""); /* reuse dialog */ setShowInfoModal(false); /* simple: reuse search area */ }}>{tr("Añadir tema")}</Button>
                   </div>
                   {Array.from(selectedTopics).filter((id) => !p6TopicIds.has(id)).map((id) => {
                     const t = catalogTopics.find((x) => x.id === id)
                     if (!t) return null
+                    const relations = confirmation.topics?.find((item) => item.id === id)?.often_reported_with
                     return (
-                      <div key={id} className="text-sm border rounded p-2 mb-1 flex justify-between gap-3">
-                        <div>
-                          <span>{t.esrs_code} {topicTitle(t, locale)}</span>
-                          <ConceptRelations kind="topics" items={confirmation.topics?.find((item) => item.id === id)?.often_reported_with} locale={locale} />
-                          <SectorComparison {...sectorComparison} topicId={id} locale={locale} />
+                      <div key={id} className="rounded-lg border bg-card p-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex min-w-0 flex-wrap items-center gap-2">
+                            <Badge variant="outline">{t.esrs_code}</Badge>
+                            <span className="font-medium">{topicTitle(t, locale)}</span>
+                          </div>
+                          <Button size="sm" variant="ghost" className="shrink-0" onClick={() => toggleTopic(id)}>{tr("Quitar")}</Button>
                         </div>
-                        <Button size="sm" variant="ghost" onClick={() => toggleTopic(id)}>{tr("Quitar")}</Button>
+                        {relations?.length ? (
+                          <details className="mt-3 rounded-md bg-muted/40 px-3 py-2 text-sm">
+                            <summary className="cursor-pointer text-sm text-muted-foreground">{formatUi(locale, "Temas relacionados ({0})", [String(relations.length)])}</summary>
+                            <ConceptRelations kind="topics" items={relations} locale={locale} />
+                          </details>
+                        ) : null}
+                        <SectorComparison {...sectorComparison} topicId={id} locale={locale} />
                       </div>
                     )
                   })}
-                </div>
+                  {Array.from(selectedTopics).filter((id) => !p6TopicIds.has(id)).length === 0 && <div className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">{tr("Todavía no has añadido temas fuera de la propuesta.")}</div>}
+                </section>
               </div>
 
               {confirmation.sector_comparison_enabled && filteredTopics.filter((topic) => !p6TopicIds.has(topic.id) && !selectedTopics.has(topic.id)).map((topic) => (
@@ -1095,41 +1138,65 @@ export function FinalTopicsSelection({ learningInvitationEnabled = false }: { le
           )}
 
           {/* 6. Shared review surface (always visible for both modes once edits started) */}
-          <div className="space-y-3">
-            <div>
-              <div className="font-semibold text-emerald-700 mb-1">{tr("Material")}</div>
-              {materialIds.length === 0 && <div className="text-xs text-muted-foreground">—</div>}
-              {materialIds.map((id) => {
-                const t = catalogTopics.find((x) => x.id === id)
-                const g = guidedDrafts[String(id)]
-                return <div key={id} className="text-sm border rounded px-3 py-1 mb-1 flex justify-between"><span>{t ? `${t.esrs_code} ${topicTitle(t, locale)}` : id} {g?.revisar ? <Badge variant="outline">{tr("revisar")}</Badge> : null}</span><Button size="sm" variant="ghost" onClick={() => toggleTopic(id)}>{tr("Quitar")}</Button></div>
-              })}
-            </div>
-            <div>
-              <div className="font-semibold text-rose-700 mb-1">{tr("No material")}</div>
-              {noMaterialIds.length === 0 && <div className="text-xs text-muted-foreground">—</div>}
-              {noMaterialIds.map((id) => {
-                const t = catalogTopics.find((x) => x.id === id)
-                return <div key={id} className="text-sm border rounded px-3 py-1 mb-1 flex justify-between"><span>{t ? `${t.esrs_code} ${topicTitle(t, locale)}` : id}</span><Button size="sm" variant="ghost" onClick={() => toggleTopic(id)}>{tr("Marcar como material")}</Button></div>
-              })}
-            </div>
-            <div>
-              <div className="font-semibold text-amber-700 mb-1">{tr("En observación")}{" "}<Badge variant="outline">{tr("revisar el próximo ciclo")}</Badge></div>
-              {obsIds.length === 0 && <div className="text-xs text-muted-foreground">—</div>}
-              {obsIds.map((id) => {
-                const t = catalogTopics.find((x) => x.id === id)
-                return (
-                  <div key={id} className="text-sm border rounded px-3 py-1 mb-1 flex justify-between items-center">
-                    <span>{t ? `${t.esrs_code} ${topicTitle(t, locale)}` : id} <span className="text-amber-600">{tr("(incluido por precaución)")}</span></span>
-                    <div className="flex gap-2">
-                      <Button size="sm" variant="outline" onClick={() => toggleObsToNo(id)}>{tr("Pasar a No material (mantener revisar)")}</Button>
-                      <Button size="sm" variant="ghost" onClick={() => toggleTopic(id)}>{tr("Quitar")}</Button>
-                    </div>
+          <Card className="mt-6">
+            <CardContent className="space-y-5 pt-6">
+              <div>
+                <h3 className="text-base font-semibold text-foreground">{tr("Resumen de la selección")}</h3>
+                <p className="mt-1 text-sm text-muted-foreground">{tr("Así quedará guardada tu decisión. Puedes seguir ajustándola arriba.")}</p>
+              </div>
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 font-semibold text-emerald-700"><span>{tr("Material")}</span><Badge variant="secondary">{materialIds.length}</Badge></div>
+                  {materialIds.length === 0 && <div className="text-xs text-muted-foreground">—</div>}
+                  <div className="grid gap-2 sm:grid-cols-2">
+                  {materialIds.map((id) => {
+                    const t = catalogTopics.find((x) => x.id === id)
+                    const g = guidedDrafts[String(id)]
+                    return (
+                      <div key={id} className="flex items-start justify-between gap-2 rounded-md border px-3 py-2 text-sm">
+                        <span><span className="mr-1 text-xs text-muted-foreground">{t?.esrs_code}</span>{t ? topicTitle(t, locale) : id} {g?.revisar ? <Badge variant="outline">{tr("revisar")}</Badge> : null}</span>
+                        <Button size="sm" variant="ghost" className="h-7 shrink-0 px-2" onClick={() => toggleTopic(id)}>{tr("Quitar")}</Button>
+                      </div>
+                    )
+                  })}
                   </div>
-                )
-              })}
-            </div>
-          </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 font-semibold text-rose-700"><span>{tr("No material")}</span><Badge variant="secondary">{noMaterialIds.length}</Badge></div>
+                  {noMaterialIds.length === 0 && <div className="text-xs text-muted-foreground">—</div>}
+                  <div className="grid gap-2 sm:grid-cols-2">
+                  {noMaterialIds.map((id) => {
+                    const t = catalogTopics.find((x) => x.id === id)
+                    return (
+                      <div key={id} className="flex items-start justify-between gap-2 rounded-md border px-3 py-2 text-sm">
+                        <span><span className="mr-1 text-xs text-muted-foreground">{t?.esrs_code}</span>{t ? topicTitle(t, locale) : id}</span>
+                        <Button size="sm" variant="ghost" className="h-7 shrink-0 px-2" onClick={() => toggleTopic(id)}>{tr("Marcar como material")}</Button>
+                      </div>
+                    )
+                  })}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex flex-wrap items-center gap-2 font-semibold text-amber-700"><span>{tr("En observación")}</span><Badge variant="secondary">{obsIds.length}</Badge><Badge variant="outline">{tr("revisar el próximo ciclo")}</Badge></div>
+                  {obsIds.length === 0 && <div className="text-xs text-muted-foreground">—</div>}
+                  <div className="grid gap-2 sm:grid-cols-2">
+                  {obsIds.map((id) => {
+                    const t = catalogTopics.find((x) => x.id === id)
+                    return (
+                      <div key={id} className="space-y-2 rounded-md border px-3 py-2 text-sm">
+                        <div><span className="mr-1 text-xs text-muted-foreground">{t?.esrs_code}</span>{t ? topicTitle(t, locale) : id} <span className="text-amber-600">{tr("(incluido por precaución)")}</span></div>
+                        <div className="flex flex-wrap gap-2">
+                          <Button size="sm" variant="outline" onClick={() => toggleObsToNo(id)}>{tr("Pasar a No material (mantener revisar)")}</Button>
+                          <Button size="sm" variant="ghost" onClick={() => toggleTopic(id)}>{tr("Quitar")}</Button>
+                        </div>
+                      </div>
+                    )
+                  })}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* E1 speed bump (2000) + textarea */}
           {removesE1 ? (

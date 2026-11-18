@@ -128,7 +128,7 @@ class XhtmlIxbrlCandidateRenderer
         }
         if ($tagged === 0) throw new XhtmlIxbrlCandidateException('xhtml_ixbrl_render_failed');
 
-        // Narratives: tag text answers whose concept is a string or text block.
+        // Narratives, booleans, dates and years: tag the visible answer in place as ix:nonNumeric.
         $textSeen = [];
         foreach ($built['text'] as $entry) {
             $fact = $textFacts[$entry['claim_id']] ?? null;
@@ -138,6 +138,7 @@ class XhtmlIxbrlCandidateRenderer
             $node = $doc->createElementNS(self::IX_NS, 'ix:nonNumeric');
             $node->setAttribute('name', $fact['concept']);
             $node->setAttribute('contextRef', 'c_'.$fact['period_type']);
+            if ($fact['format'] !== null) $node->setAttribute('format', $fact['format']);
             $node->setAttribute('id', 'f'.(++$tagged));
             while ($paragraph->firstChild) $node->appendChild($paragraph->firstChild);
             $paragraph->appendChild($node);
@@ -150,16 +151,18 @@ class XhtmlIxbrlCandidateRenderer
     }
 
     /**
-     * Text claims whose mapped concept accepts free text, keyed by claim id.
+     * Non-numeric claims that can be tagged in place, keyed by claim id: free text on
+     * string/text-block concepts, booleans (ixt:fixed-true/false), ISO dates and years.
      *
-     * @return array<string, array{concept: string, period_type: string}>
+     * @return array<string, array{concept: string, period_type: string, format: ?string}>
      */
     private function textFacts(array $ir, array $concepts, XbrlConceptMap $mapping): array
     {
         $facts = [];
         foreach ($ir['claims'] ?? [] as $claim) {
-            if (! is_array($claim) || ($claim['value_type'] ?? null) !== 'text' || ($claim['nil'] ?? false) === true) continue;
-            if (($claim['dimensions'] ?? []) !== []) continue;
+            if (! is_array($claim) || ($claim['nil'] ?? false) === true || ($claim['dimensions'] ?? []) !== []) continue;
+            $valueType = $claim['value_type'] ?? null;
+            if (! in_array($valueType, ['text', 'boolean', 'date'], true)) continue;
             $mapped = $mapping->conceptFor((string) ($claim['datapoint_id'] ?? ''));
             $concept = $mapped['concept_id'] ?? '';
             if (! is_array($mapped) || ($mapped['taggable_state'] ?? null) !== 'mapped' || ($mapped['required_context'] ?? []) !== []
@@ -167,8 +170,20 @@ class XhtmlIxbrlCandidateRenderer
             $metadata = $concepts[$concept] ?? null;
             if (! is_array($metadata) || ($metadata['abstract'] ?? false) || ! in_array($metadata['period_type'] ?? null, ['duration', 'instant'], true)) continue;
             $type = substr((string) $metadata['type'], (int) strrpos((string) $metadata['type'], '}') + 1);
-            if (! in_array($type, self::TEXT_ITEM_TYPES, true)) continue;
-            $facts[(string) $claim['claim_id']] = ['concept' => $concept, 'period_type' => $metadata['period_type']];
+            try {
+                $value = ReportFactValue::scalar($claim);
+            } catch (\RuntimeException) {
+                continue;
+            }
+            $format = match (true) {
+                $valueType === 'text' && in_array($type, self::TEXT_ITEM_TYPES, true) => null,
+                $valueType === 'boolean' && $type === 'booleanItemType' && is_bool($value) => $value ? 'ixt:fixed-true' : 'ixt:fixed-false',
+                $valueType === 'date' && $type === 'dateItemType' && $this->validDate($value) => null,
+                $valueType === 'date' && $type === 'gYearItemType' && is_string($value) && preg_match('/\A\d{4}\z/', $value) === 1 => null,
+                default => false,
+            };
+            if ($format === false) continue;
+            $facts[(string) $claim['claim_id']] = ['concept' => $concept, 'period_type' => $metadata['period_type'], 'format' => $format];
         }
 
         return $facts;

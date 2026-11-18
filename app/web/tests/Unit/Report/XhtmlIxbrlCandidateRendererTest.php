@@ -14,6 +14,9 @@ beforeEach(function () {
             'esrs:Revenue' => ['type' => '{http://www.xbrl.org/2003/instance}monetaryItemType', 'period_type' => 'duration', 'abstract' => false],
             'esrs:NumberOfExecutiveMembers' => ['type' => '{http://www.xbrl.org/2003/instance}integerItemType', 'period_type' => 'instant', 'abstract' => false],
             'esrs:DisclosureOfTransitionPlanForClimateChangeMitigationExplanatory' => ['type' => '{http://www.xbrl.org/dtr/type/2024-01-31}textBlockItemType', 'period_type' => 'duration', 'abstract' => false],
+            'esrs:ScopeOfConsolidationOfConsolidatedSustainabilityStatementIsSameAsForFinancialStatements' => ['type' => '{http://www.xbrl.org/2003/instance}booleanItemType', 'period_type' => 'duration', 'abstract' => false],
+            'esrs:DateOfResilienceAnalysis' => ['type' => '{http://www.xbrl.org/2003/instance}dateItemType', 'period_type' => 'duration', 'abstract' => false],
+            'esrs:BaseYearFromWhichProgressIsMeasured' => ['type' => '{http://www.xbrl.org/2003/instance}gYearItemType', 'period_type' => 'duration', 'abstract' => false],
         ]);
 });
 
@@ -313,4 +316,35 @@ it('keeps the pure unit in the tag only and tags narrative answers as nonNumeric
         ->and($story->getAttribute('contextRef'))->toBe('c_duration')
         ->and($story->textContent)->toBe('Plan de transición <b>sintético</b> & ambicioso.');
     expect($xhtml)->toContain('class="code">E1-1_01</span>')->toContain('class="code">GOV-1_01</span>')->not->toContain('claim_')->not->toContain('rf_');
+});
+
+it('tags booleans with fixed transforms and dates and years as plain nonNumeric facts', function () {
+    $renderer = app(XhtmlIxbrlCandidateRenderer::class);
+    $profile = (new ReportingProfileRepository())->load('esrs-2023-preparatory-v1');
+    $ir = xhtmlIxbrlRendererIr([
+        'claims' => [
+            xhtmlIxbrlRendererClaim(),
+            xhtmlIxbrlRendererClaim(['claim_id' => 'claim_bool', 'fact_id' => 'rf_bool', 'datapoint_id' => 'BP-1_02', 'value_type' => 'boolean', 'value' => ['value' => false], 'unit' => null, 'decimals' => null]),
+            xhtmlIxbrlRendererClaim(['claim_id' => 'claim_date', 'fact_id' => 'rf_date', 'datapoint_id' => 'E1.SBM-3_04', 'value_type' => 'date', 'value' => ['value' => '2025-03-15'], 'unit' => null, 'decimals' => null]),
+            xhtmlIxbrlRendererClaim(['claim_id' => 'claim_year', 'fact_id' => 'rf_year', 'datapoint_id' => 'MDR-T_06', 'value_type' => 'date', 'value' => ['value' => '2021'], 'unit' => null, 'decimals' => null]),
+            xhtmlIxbrlRendererClaim(['claim_id' => 'claim_partial', 'fact_id' => 'rf_partial', 'datapoint_id' => 'E1-1_16', 'value_type' => 'date', 'value' => ['value' => '2025-03'], 'unit' => null, 'decimals' => null]),
+        ],
+    ]);
+
+    $xhtml = $renderer->render($ir, $profile, xhtmlIxbrlRendererManifest());
+    $doc = new DOMDocument();
+    expect($doc->loadXML($xhtml, LIBXML_NONET))->toBeTrue();
+    $xp = new DOMXPath($doc);
+    $xp->registerNamespace('ix', 'http://www.xbrl.org/2013/inlineXBRL');
+    $facts = [];
+    foreach ($xp->query('//ix:nonNumeric') as $node) {
+        $facts[$node->getAttribute('name')] = [$node->getAttribute('format'), $node->textContent, $node->getAttribute('contextRef')];
+    }
+    expect($facts)->toBe([
+        'esrs:ScopeOfConsolidationOfConsolidatedSustainabilityStatementIsSameAsForFinancialStatements' => ['ixt:fixed-false', 'No', 'c_duration'],
+        'esrs:DateOfResilienceAnalysis' => ['', '2025-03-15', 'c_duration'],
+        'esrs:BaseYearFromWhichProgressIsMeasured' => ['', '2021', 'c_duration'],
+    ]);
+    // A month-only date is still visible but has no valid xs:date lexical value, so it stays untagged.
+    expect($xhtml)->toContain('2025-03</p>');
 });

@@ -26,6 +26,10 @@ El comando crea la cuenta verificada (o reutiliza la existente), envía la encue
 
 Las cuentas no son administradoras (el dominio `airis.com` no está en `ADMIN_EMAIL_DOMAINS`), por lo que aparecen en `/admin` como clientes normales y cuentan en el informe de utilidad de la IA.
 
+## Tipos de dato según la taxonomía
+
+Para que el informe XBRL etiquete el máximo de datos, el generador responde cada dato del paso 5 con el tipo que exige su concepto ESRS (`data/esrs_concept_types_v1.json`, extraído del esquema del paquete EFRAG verificado): booleanos como Sí/No, porcentajes con `%`, importes en EUR, recuentos enteros, toneladas de CO2e, MWh, toneladas, m3, hectáreas, fechas y años. Los datos cuyo concepto es narrativo reciben un texto; los que no tienen concepto uno a uno, los de enumeración y los que exigen periodo futuro o dimensiones también quedan en texto y no se etiquetan. Cuando varios datos comparten un concepto (por ejemplo S1, S2 y S4, o SBM-1_03 y S1-6_02), solo uno puede llevar cifra: el candidato iXBRL rechaza dos datos distintos con hechos numéricos sobre el mismo concepto, así que los demás quedan en texto; los booleanos y narrativas compartidos reciben el mismo valor y se etiqueta el primero. Las cifras curadas de `figures`/`typed_figures` tienen prioridad.
+
 ## Vídeos del recorrido
 
 `app/frontend/tests/e2e/demo-walkthrough.spec.ts` graba, con un navegador real, un recorrido por los seis pasos de cada cuenta ya generada y deja el vídeo en `app/web/storage/app/private/demo-videos/<correo>.webm`:

@@ -1,0 +1,3967 @@
+{
+    "version": "esrs_concept_types_v1",
+    "taxonomy": "esrs_set1_2023-12-22",
+    "source": "core schema of the verified EFRAG package; one entry per concept referenced by data/atomizer_xbrl_concepts_v1.json",
+    "concepts": {
+        "esrs:AbsoluteOrRelativeTarget": {
+            "type": "enumerationItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AbsoluteValueOfLocationBasedScope2GreenhouseGasEmissionsReduction": {
+            "type": "ghgEmissionsItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AbsoluteValueOfMarketBasedScope2GreenhouseGasEmissionsReduction": {
+            "type": "ghgEmissionsItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AbsoluteValueOfScope1GreenhouseGasEmissionsReduction": {
+            "type": "ghgEmissionsItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AbsoluteValueOfScope3GreenhouseGasEmissionsReduction": {
+            "type": "ghgEmissionsItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AbsoluteValueOfTotalGreenhouseGasEmissionsReduction": {
+            "type": "ghgEmissionsItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AccessibilityOfThirdPartyMechanismsForAffectedCommunities": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AccessibilityOfThirdPartyMechanismsForConsumersAndEndusers": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AccessibilityOfThirdPartyMechanismsForOwnWorkforce": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AccessibilityOfThirdPartyMechanismsForValueChainWorkers": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AchievedGHGEmissionReductions": {
+            "type": "ghgEmissionsItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ActionPlanHasBeenImplementedAtSiteLevel": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ActionToProvideAndOrEnableRemedyInRelationToActualMaterialImpactOnOwnWorkforceValueChainWorkersAffectedCommunitiesConsumersAndEndUsersHasBeenTaken": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ActivitiesRelatedToSitesLocatedInOrNearBiodiversitysensitiveAreasNegativelyAffectTheseAreasByLeadingToDeteriorationOfNaturalHabitatsAndHabitatsOfSpeciesAndToDisturbanceOfSpeciesForWhichProtectedAreaHasBeenDesignated": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AdaptationSolutionTypes": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AdjustmentOfComparativeInformationForOneOrMorePriorPeriodsIsImpracticable": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AdjustmentsToPhysicalEnvironmentToEnsureHealthAndSafetyForWorkersCustomersAndOtherVisitorsWithDisabilitiesHaveBeenMade": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AdministrativeManagementAndOrSupervisoryBodiesHaveApprovedTransitionPlan": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AllEmployeesAndOrNonemployeesArePaidAdequateWageInLineWithApplicableBenchmarks": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AllEmployeesAreEntitledToFamilyrelatedLeaveThroughSocialPolicyAndOrCollectiveBargainingAgreements": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AllPeopleInOwnWorkforceValueChainWorkersAffectedCommunitiesConsumersAndEndusersWhoCouldBeMateriallyImpactedByUndertakingAreIncludedInScopeOfDisclosureUnderESRS2": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AllPeoplePerformingWorkForUndertakingAreEmployeesAndUndertakingDoesNotHaveAnyPeopleInItsWorkforceWhoAreNotEmployees": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AmendmentsToStrategyAndOrBusinessModelAreLikelyToModifyRelationshipWithAndViewsOfStakeholders": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AmountOfCarbonCreditsOutsideValueChainPlannedToBeCancelledInFuture": {
+            "type": "ghgEmissionsItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AmountOfCarbonCreditsOutsideValueChainThatAreVerifiedAgainstRecognisedQualityStandardsAndCancelled": {
+            "type": "ghgEmissionsItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AmountOfFinesForViolationOfAnticorruptionAndAntibriberyLaws": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AmountOfFinesPenaltiesAndCompensationForDamagesAsResultOfIncidentesAndComplaints": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AmountOfFinesPenaltiesAndCompensationForDamagesForSevereHumanRightsIncidentsConnectedToOwnWorkforce": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AmountOfInternalAndExternalLobbyingExpenses": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AmountOfSubstancesOfConcernThatAreGeneratedOrUsedDuringProductionOrThatAreProcured": {
+            "type": "massItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AmountOfSubstancesOfConcernThatLeaveFacilitiesAsEmissions": {
+            "type": "massItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AmountOfSubstancesOfConcernThatLeaveFacilitiesAsEmissionsAsProductsOrAsPartOfProductsOrServices": {
+            "type": "massItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AmountOfSubstancesOfConcernThatLeaveFacilitiesAsPartOfProducts": {
+            "type": "massItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AmountOfSubstancesOfConcernThatLeaveFacilitiesAsProducts": {
+            "type": "massItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AmountOfSubstancesOfConcernThatLeaveFacilitiesAsServices": {
+            "type": "massItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AmountOfSubstancesOfVeryHighConcernThatAreGeneratedOrUsedDuringProductionOrThatAreProcured": {
+            "type": "massItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AmountOfSubstancesOfVeryHighConcernThatLeaveFacilitiesAsEmissions": {
+            "type": "massItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AmountOfSubstancesOfVeryHighConcernThatLeaveFacilitiesAsEmissionsAsProductsOrAsPartOfProductsOrServices": {
+            "type": "massItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AmountOfSubstancesOfVeryHighConcernThatLeaveFacilitiesAsPartOfProducts": {
+            "type": "massItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AmountOfSubstancesOfVeryHighConcernThatLeaveFacilitiesAsProducts": {
+            "type": "massItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AmountOfSubstancesOfVeryHighConcernThatLeaveFacilitiesAsServices": {
+            "type": "massItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AmountPaidForMembershipToLobbyingAssociations": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AnnualRemunerationRatio": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AreaCoveredByInvasiveAlienSpecies": {
+            "type": "areaItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AreaOfSitesOwnedLeasedOrManagedInOrNearProtectedAreasOrKeyBiodiversityAreasThatUndertakingIsNegativelyAffecting": {
+            "type": "areaItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AssetsAndBusinessActivitiesThatAreIncompatibleWithOrNeedSignificantEffortsToBeCompatibleWithTransitionToClimateneutralEconomyHaveBeenIdentified": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AssetsAtAcuteMaterialPhysicalRiskBeforeConsideringClimateChangeAdaptationActions": {
+            "type": "monetaryItemType",
+            "period_type": "instant",
+            "abstract": false
+        },
+        "esrs:AssetsAtChronicMaterialPhysicalRiskBeforeConsideringClimateChangeAdaptationActions": {
+            "type": "monetaryItemType",
+            "period_type": "instant",
+            "abstract": false
+        },
+        "esrs:AssetsAtMaterialPhysicalRiskBeforeConsideringClimateChangeAdaptationActions": {
+            "type": "monetaryItemType",
+            "period_type": "instant",
+            "abstract": false
+        },
+        "esrs:AssetsAtMaterialTransitionRiskBeforeConsideringClimateMitigationActions": {
+            "type": "monetaryItemType",
+            "period_type": "instant",
+            "abstract": false
+        },
+        "esrs:AverageNumberOfDaysToPayInvoiceFromDateWhenContractualOrStatutoryTermOfPaymentStartsToBeCalculated": {
+            "type": "decimalItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:AverageNumberOfTrainingHoursPerEmployeeAndOrNonemployee": {
+            "type": "decimalItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:BaseYearFromWhichProgressIsMeasured": {
+            "type": "gYearItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:BasisForDeterminationOfWorkingConditionsAndTermsOfEmploymentForEmployeesNotCoveredByCollectiveBargainingAgreements": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:BasisForPreparationOfSustainabilityStatement": {
+            "type": "enumerationItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:BiodiversityAndEcosystemProtectionPolicyCoveringOperationalSitesOwnedLeasedOrManagedInOrNearBiodiversitysensitiveAreaHasBeenAdopted": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:BiodiversityAndEcosystemsrelatedPolicyAddressesEitherProductionSourcingOrConsumptionFromEcosystemsThatAreManagedToMaintainAndOrEnhanceConditionsForBiodiversity": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:BiodiversityAndEcosystemsrelatedPolicyAddressesSocialConsequencesOfBiodiversityAndOrEcosystemsrelatedImpacts": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:BiodiversityAndEcosystemsrelatedPolicyRelatesToEitherMaterialDependenciesOrMaterialPhysicalAndOrTransitionRisksAndOpportunities": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:BiodiversityAndEcosystemsrelatedPolicyRelatesToMaterialBiodiversityAndOrEcosystemsrelatedImpacts": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:BiodiversityAndEcosystemsrelatedPolicySupportsTraceabilityOfProductsComponentsAndRawMaterialsWithMaterialActualOrPotentialImpactsOnBiodiversityAndEcosystemsAlongValueChain": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:BiodiversityOffsetsWereUsedInActionPlan": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:BiodiversityOffsetsWereUsedInSettingTarget": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:BiogenicEmissionsOfCO2FromCombustionOrBiodegradationOfBiomassNotIncludedInScope1GHGEmissions": {
+            "type": "ghgEmissionsItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:BiogenicEmissionsOfCO2FromCombustionOrBiodegradationOfBiomassNotIncludedInScope2GHGEmissions": {
+            "type": "ghgEmissionsItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:BiogenicEmissionsOfCO2FromCombustionOrBiodegradationOfBiomassThatOccurInUpstreamAndDownstreamValueChainNotIncludedInScope3GHGEmissions": {
+            "type": "ghgEmissionsItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:BoardsGenderDiversityRatio": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:CapitalExpendituresCapExInConjunctionWithMajorIncidentsAndDeposits": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:CarbonPriceAppliedForEachMetricTonneOfGreenhouseGasEmission": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:CarryingAmountOfRealEstateAssets": {
+            "type": "monetaryItemType",
+            "period_type": "instant",
+            "abstract": false
+        },
+        "esrs:CarryingAmountOfRealEstateAssetsForWhichEnergyConsumptionIsBasedOnInternalEstimates": {
+            "type": "monetaryItemType",
+            "period_type": "instant",
+            "abstract": false
+        },
+        "esrs:ChannelsToRaiseConcernsOrNeedsAllowValueChainWorkersAffectedCommunitiesConsumersAndEndusersToUseThemAnonymously": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ClaimsOfGHGNeutralityAndOrRelianceOnCarbonCreditsNeitherImpedeNorReduceAchievementOfGHGEmissionReductionTargetsOrNetZeroTarget": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ClimaterelatedHazardsHaveBeenIdentifiedEitherOverShortMediumAndLongTermTimeHorizons": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ConsumptionOfPurchasedOrAcquiredElectricityHeatSteamAndCoolingFromRenewableSources": {
+            "type": "energyItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ConsumptionOfPurchasedOrAcquiredElectricityHeatSteamOrCoolingFromFossilSources": {
+            "type": "energyItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ConsumptionOfSelfgeneratedNonfuelRenewableEnergy": {
+            "type": "energyItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:CountriesWhereEmployeesAndOrNonemployeesDoNotHaveSocialProtectionWithRegardToOneOrMoreOfTypesOfMajorLifeEvents": {
+            "type": "enumerationItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:CountriesWhereEmployeesAndOrNonemployeesEarnBelowApplicableAdequateWageBenchmark": {
+            "type": "enumerationItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:CoverageRateOfEmployeesInCountryEeaThatAreCoveredAtEstablishmentLevelByWorkersRepresentatives": {
+            "type": "enumerationItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:CoverageRateOfEmployeesInCountryEeaThatAreCoveredByCollectiveBargainingAgreements": {
+            "type": "enumerationItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:CoverageRateOfEmployeesInRegionNoneeaThatAreCoveredByCollectiveBargainingAgreements": {
+            "type": "enumerationItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DateOfAdoptionOfTransitionPlanForUndertakingNotHavingAdoptedTransitionPlanYet": {
+            "type": "dateItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DateOfResilienceAnalysis": {
+            "type": "dateItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DateWhenCarbonCreditsOutsideValueChainArePlannedToBeCancelled": {
+            "type": "dateItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DecarbonisationLeverTypes": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfAbilityToAdjustOrAdaptStrategyAndBusinessModelToClimateChangeExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfActionsTakenToIdentifyMonitorPreventMitigateRemediateOrBringToEndActualOrPotentialAdverseImpactsRelatedToSustainabilityMattersAssessedToBeMaterialPhaseinAndResultOfSuchActionsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfActivitiesThatResultInPositiveImpactsAndTypesOfEmployeesAndNonemployeesInOwnWorkforceValueChainWorkersAffectedCommunitiesConsumersAndEndusersThatArePositivelyAffectedOrCouldBePositivelyAffectedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfAdditionalActionsOrInitiativesWithPrimaryPurposeOfDeliveringPositiveImpactsForOwnWorkforceValueChainWorkersAffectedCommunitiesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfAdditionalActionsOrInitiativesWithPrimaryPurposeOfPositivelyContributingToImprovedSocialOutcomesForConsumersAndEndusersExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfAmendmentsToStrategyAndOrBusinessModelExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfAnyChangesInTargetAndCorrespondingMetricsOrUnderlyingMeasurementMethodologiesSignificantAssumptionsLimitationsSourcesAndAdoptedProcessesToCollectDataExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfAnyFurtherStepsThatAreBeingPlannedAndInWhatTimelineExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfAnyTimeboundTargetsSetRelatedToSustainabilityMattersAssessedToBeMaterialPhaseinAndProgressMadeTowardsAchievingThoseTargetsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfApproachToTakingActionInRelationToSpecificMaterialNegativeImpactsOnValueChainWorkersAffectedCommunitiesConsumersAndEndusersExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfBasisForPreparationOfMetricsThatIncludeUpstreamAndOrDownstreamValueChainDataEstimatedUsingIndirectSourcesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfBasisOfPreparationOfNonemployeesEstimatedNumberExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfBiodiversityOffsetsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfBusinessModelAndValueChainExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfCategoryOfStakeholderForWhichEngagementOccursExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfChangesOverTimeForPollutionOfAirWaterAndSoilExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfConsiderationGivenToInterestsOfKeyStakeholdersInSettingPolicyExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfCriticalAssumptionsMadeToDetermineCarbonPriceAppliedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfDecisionmakingProcessAndRelatedInternalControlProceduresExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfDefinedLevelOfAmbitionToBeAchievedAndOfAnyQualitativeOrQuantitativeIndicatorsUsedToEvaluateProgressExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfEffectsConsideredRelatedImpactsAndDependenciesAndTimeHorizonsInWhichTheyAreLikelyToMaterialiseExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfExpectedDecarbonisationLeversAndTheirOverallQuantitativeContributionsToAchieveGHGEmissionReductionTargetExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfExtentToWhichAndHowProcessToIdentifyAssessAndManageImpactsAndRisksIsIntegratedIntoOverallRiskManagementProcessAndUsedToEvaluateOverallRiskProfileAndRiskManagementProcessesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfExtentToWhichAndHowProcessToIdentifyAssessAndManageOpportunitiesIsIntegratedIntoOverallManagementProcessExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfHowAdministrativeManagementAndSupervisoryBodiesAreInformedAboutViewsAndInterestsOfAffectedStakeholdersWithRegardToSustainabilityrelatedImpactsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfHowConnectionsOfImpactsAndDependenciesWithRisksAndOpportunitiesThatMayAriseFromThoseImpactsAndDependenciesHaveBeenConsideredExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfHowDoubleCountingWasAvoidedForReusedRecycledCategoriesAndChoicesMadeExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfHowEffectivenessOfActionsAndInitiativesInDeliveringOutcomesForOwnWorkforceNOValueChainWorkersNOAffectedCommunitiesNOConsumersAndEndusersIsTrackedAndAssessedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfHowFindingsOfRiskAssessmentAndInternalControlsAsRegardsSustainabilityReportingProcessHaveBeenIntegratedIntoRelevantInternalFunctionsAndProcessesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfHowImpactsWithWhichUndertakingIsInvolvedThroughOwnOperationsOrAsResultOfBusinessRelationshipsAreConsideredExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfHowItHasBeenEnsuredThatBaselineValueIsRepresentativeInTermsOfActivitiesCoveredAndInfluencesFromExternalFactorsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfHowItIsEnsuredThatProcessesToProvideOrEnableRemedyInEventOfMaterialNegativeImpactsOnValueChainWorkersNOAffectedCommunitiesNOConsumersAndEndusersAreAvailableAndEffectiveInTheirImplementationAndOutcomesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfHowKeyActionContributesToSystemwideChangeExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfHowLikelihoodMagnitudeAndNatureOfEffectsOfIdentifiedRisksAndOpportunitiesHaveBeenAssessedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfHowNewBaselineValueAffectsNewTargetItsAchievementAndPresentationOfProgressOverTimeExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfHowOutcomeOfStakeholderEngagementIsTakenIntoAccountExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfHowOversightIsExercisedOverManagementlevelPositionOrCommitteeToWhichManagementsRoleInGovernanceProcessesControlsAndProceduresUsedToMonitorManageAndOverseeImpactsRisksAndOpportunitiesIsDelegatedToExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfHowPoliciesAreAlignedWithRelevantInternationallyRecognisedInstrumentsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfHowProcessFocusesOnSpecificActivitiesBusinessRelationshipsGeographiesOrOtherFactorsThatGiveRiseToHeightenedRiskOfAdverseImpactsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfHowProcessIncludesConsultationWithAffectedStakeholdersToUnderstandHowTheyMayBeImpactedAndWithExternalExpertsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfHowProcessToIdentifyAssessAndManageImpactsRisksAndOpportunitiesHasChangedComparedToPriorReportingPeriodExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfHowStakeholderEngagementIsOrganisedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfHowStrategyAndOrBusinessModelHaveBeenAmendedOrAreExpectedToBeAmendedToAddressInterestsAndViewsOfStakeholdersExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfHowSustainabilityrelatedRisksRelativeToOtherTypesOfRisksHaveBeenPrioritisedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfInputParametersUsedInProcessToIdentifyAssessAndManageMaterialImpactsRisksAndOpportunitiesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfInputsAndApproachToGatheringDevelopingAndSecuringInputsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfInternalFunctionsThatAreInvolvedInManagingImpactsAndTypesOfActionTakenByInternalFunctionsToAddressNegativeAndAdvancePositiveImpactsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfKeyCharacteristicsOfIncentiveSchemesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfKeyContentsOfPolicyExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfKeyProductsAndMaterialsThatComeOutOfProductionProcessAndThatAreDesignedAlongCircularPrinciplesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfKeyStakeholderExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfLevelInUndertakingAtWhichTermsOfIncentiveSchemesAreApprovedAndUpdatedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfMainFeaturesOfUpstreamAndDownstreamValueChainAndUndertakingsPositionInValueChainExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfMainRisksIdentifiedAndTheirMitigationStrategiesInRelationToSustainabilityReportingProcessExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfManagementSRoleInGovernanceProcessesControlsAndProceduresUsedToMonitorManageAndOverseeImpactsRisksAndOpportunitiesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfMaterialImpactsOnOwnWorkforceThatMayAriseFromTransitionPlansForReducingNegativeImpactsOnEnvironmentAndAchievingGreenerAndClimateneutralOperationsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfMaterialImpactsResultingFromMaterialityAssessmentExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfMaterialIncidentsAndDepositsWherebyPollutionHadNegativeImpactsOnEnvironmentAndOrIsExpectedToHaveNegativeEffectsOnFinancialCashFlowsFinancialPositionAndFinancialPerformanceExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfMaterialRisksAndOrOpportunitiesResultingFromMaterialityAssessmentExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfMaterialsThatAreSourcedFromByproductsOrWasteStreamExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfMeasurementMethodologiesForPollutionOfAirWaterAndSoilExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfMechanismsForIdentifyingReportingAndInvestigatingConcernsAboutUnlawfulBehaviourOrBehaviourInContradictionOfCodeOfConductOrSimilarInternalRulesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfMethodologiesAndAssumptionsAppliedInProcessToIdentifyImpactsRisksAndOpportunitiesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfMethodologiesAndAssumptionsUsedToCompileDataEmployeesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfMethodologiesAndAssumptionsUsedToCompileDataNonemployeesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfMethodologiesAndSignificantAssumptionsUsedToDefineTargetExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfMethodologiesUsedToCalculateDataAndKeyAssumptionsUsedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfMetricsUsedToEvaluatePerformanceAndEffectivenessInRelationToMaterialImpactRiskOrOpportunityExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfMostSeniorLevelInOrganisationThatIsAccountableForImplementationOfPolicyExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfNatureOfActivitiesOrBusinessRelationshipsThroughWhichUndertakingIsInvolvedWithMaterialImpactsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfOutputsAndOutcomesInTermsOfCurrentAndExpectedBenefitsForCustomersInvestorsAndOtherStakeholdersExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfPerformanceAgainstDisclosedTargetExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfPeriodicReportingOfFindingsOfRiskAssessmentAndInternalControlsToAdministrativeManagementAndSupervisoryBodiesInRelationToSustainabilityReportingProcessExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfPlannedActionsToImproveAccuracyInFutureOfMetricsThatIncludeUpstreamAndOrDownstreamValueChainDataEstimatedUsingIndirectSourcesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfPoliciesRelatedToSustainabilityMattersAssessedToBeMaterialPhaseinExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfPolicyToPreventLatePaymentsSpecificallyToSmesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfProceduresInPlaceToPreventDetectAndAddressAllegationsOrIncidentsOfCorruptionAndBriberyExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfProcessInRelationToClimaterelatedPhysicalRisksInOwnOperationsAndAlongUpstreamAndDownstreamValueChainExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfProcessInRelationToClimaterelatedTransitionRisksAndOpportunitiesInOwnOperationsAndAlongUpstreamAndDownstreamValueChainExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfProcessInRelationToImpactsOnClimateChangeExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfProcessToIdentifyAssessPrioritiseAndMonitorPotentialAndActualImpactsOnPeopleAndEnvironmentInformedByDueDiligenceProcessExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfProcessUsedToIdentifyAssessPrioritiseAndMonitorRisksAndOpportunitiesThatHaveOrMayHaveFinancialEffectsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfProcessesThroughWhichEffectivenessOfPoliciesAndOrActionsIsTrackedInRelationToMaterialSustainabilityrelatedImpactRiskAndOpportunityExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfProcessesThroughWhichUndertakingIdentifiesWhatActionIsNeededAndAppropriateInResponseToParticularActualOrPotentialNegativeImpactOnOwnWorkforceNOValueChainWorkersNOAffectedCommunitiesNOConsumersAndEndusersExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfProcessesToCollectDataForPollutionrelatedAccountingAndReportingExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfProductsAndServicesThatAreBannedInCertainMarketsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfPurposeOfStakeholderEngagementExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfReasonsWhyThereAreNoPlansToSetMeasurableOutcomeorientedTargetsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfRelationshipOfTargetToPolicyObjectivesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfResourceInflowsForProductsAndMaterialsWaterAndPropertyPlantAndEquipmentUsedInOwnOperationsAndAlongUpstreamValueChainExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfResultingLevelOfAccuracyOfMetricsThatIncludeUpstreamAndOrDownstreamValueChainDataEstimatedUsingIndirectSourcesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfResultsOfResilienceAnalysisExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfRiskAssessmentApproachFollowedInRelationToSustainabilityReportingProcessExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfScopeMainFeaturesAndComponentsOfRiskManagementAndInternalControlProcessesAndSystemsInRelationToSustainabilityReportingExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfScopeOfPolicyOrOfItsExclusionsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfScopeOfResilienceAnalysisExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfScopeOfTargetExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfSignificantGroupsOfProductsAndOrServicesOfferedIncludingChangesInReportingPeriodNewRemovedProductsAndOrServicesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfSignificantMarketsAndOrCustomerGroupsServedIncludingChangesInReportingPeriodNewRemovedMarketsAndOrCustomerGroupsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfSpecificScopeOfApplicationOfCarbonPricingSchemeExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfSpecificSustainabilityrelatedTargetsAndOrImpactsUsedToAssessPerformanceOfMembersOfAdministrativeManagementAndSupervisoryBodiesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfStakeholderEngagementExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfSustainabilityrelatedGoalsInTermsOfSignificantGroupsOfProductsAndServicesCustomerCategoriesGeographicalAreasAndRelationshipsWithStakeholdersExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfTypeOfCurrentAndFutureFinancialAndOtherResourcesAllocatedToActionPlanExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfTypesOfEmployeesAndNonemployeesInOwnWorkforceValueChainWorkersAffectedCommunitiesConsumersAndEndusersSubjectToMaterialImpactsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfUnderlyingStandardsForInternalAuditOrExternalCertificationOfHealthAndSafetyManagementSystemExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfUnderstandingOfInterestsAndViewsOfKeyStakeholdersAsTheyRelateToUndertakingsStrategyAndBusinessModelExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfUndertakingsStandardPaymentTermsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfWhatActionIsPlannedOrUnderwayToMitigateMaterialRisksArisingFromImpactsAndDependenciesOnOwnWorkforceValueChainWorkersAffectedCommunitiesConsumersAndEndusersAndHowEffectivenessIsTrackedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfWhatActionIsPlannedOrUnderwayToPursueMaterialOpportunitiesInRelationToOwnWorkforceValueChainWorkersAffectedCommunitiesConsumersAndEndusersExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DescriptionOfWhetherKeyActionMayInduceSignificantNegativeSustainabilityImpactsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfActivitiesNegativelyAffectingBiodiversitySensitiveAreasExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfActualPerformanceAgainstEnvironmentalPerformanceLevelsAssociatedWithBestAvailableTechniquesBataeplsApplicableToSectorAndInstallationExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfActualPerformanceAsSpecifiedInEUBATConclusionsForIndustrialInstallationsAndComparisonOfEnvironmentalPerformanceAgainstEmissionLevelsAssociatedWithBestAvailableTechniquesBATAELAsDescribedInEUBATConclusionsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfAdditionalWaterIntensityRatioExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfAimOfBiodiversityOffsetAndKeyPerformanceIndicatorsUsedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfAimsForContinuedImprovementExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfAnticipatedFinancialEffectsOfMaterialRisksAndOpportunitiesOnFinancialPerformanceAndCashFlowsOverShortMediumAndLongtermExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfAnticipatedFinancialEffectsRelatedToMarginErosionForBusinessActivitiesAtMaterialTransitionRiskExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfAnyActionsTakenToAddressBreachesInProceduresAndStandardsOfAnticorruptionAndAntibriberyExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfAnyConflictingInterestsThatHaveArisenAmongOwnWorkforceAndHowTheseConflictingInterestsHaveBeenResolvedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfAssessmentOfCurrentSignificantProductsAndOrServicesAndSignificantMarketsAndCustomerGroupsInRelationToSustainabilityrelatedGoalsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfAssumptionsApproximationsAndJudgementsMadeInMetricMeasurementExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfBiodiversitysensitiveAreasImpactedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfByWhomAndHowFrequentlyAdministrativeManagementAndSupervisoryBodiesAreInformedAboutMaterialImpactsRisksAndOpportunitiesImplementationOfDueDiligenceOrResultsAndEffectivenessOfPoliciesActionsMetricsAndTargetsAdoptedToAddressThemExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfCalculationAssumptionsMethodologiesAndFrameworksAppliedGHGRemovalsAndStorageExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfChangesToMaterialImpactsRisksAndOpportunitiesComparedToPreviousReportingPeriodExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfClimateChangeMitigationAndAdaptationActionsAndResourcesAllocatedForTheirImplementationExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfCommunicationToolsAndChannelsAimedAtEnsuringThatPolicyIsAccessibleAndThatDifferentAudiencesUnderstandItsImplicationsAsWellAsExplanationOfHowPotentialBarriersForDisseminationAreIdentifiedAndRemovedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfCompositionOfWasteExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfContextualInformationNecessaryToUnderstandDataAndHowDataHasBeenCompiledIncidentsComplaintsAndSevereHumanRightsImpactsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfContextualInformationNecessaryToUnderstandDataAndHowDataHasBeenCompiledPersonsWithDisabilitiesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfContextualInformationNecessaryToUnderstandDataEmployeesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfContextualInformationNecessaryToUnderstandDataHowDataHasBeenCompiledAndOtherChangesToUnderlyingDataThatAreToBeConsideredExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfContextualInformationNecessaryToUnderstandDataNonemployeesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfContextualInformationOnRelationsBetweenPoliciesImplementedAndHowPoliciesContributeToEuActionPlanTowardsZeroPollutionForAirWaterAndSoilExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfContextualInformationRegardingPaymentPracticesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfContextualInformationRelatedToWaterConsumptionWaterRecycledAndReusedWaterStoredAndChangesInWaterStorageAndHowDataHaveBeenCompiledExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfCriticalAssumptionsUsedToQuantifyAnticipatedFinancialEffectsSourcesAndLevelOfUncertaintyOfAssumptionsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfCurrentAndAnticipatedEffectsOfMaterialImpactsRisksAndOpportunitiesOnBusinessModelValueChainStrategyAndDecisionmakingAndHowUndertakingHasRespondedOrPlansToRespondToTheseEffectsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfCurrentFinancialEffectsOfMaterialRisksAndOpportunitiesOnFinancialPositionFinancialPerformanceAndCashFlowsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfDetailsOfPublicLegalCasesRegardingCorruptionOrBriberyBroughtAgainstUndertakingAndOwnWorkersAndOutcomesOfSuchCasesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfEcologicalThresholdsIdentifiedAndMethodologyUsedToIdentifyEcologicalThresholdsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfEffectsOfSignificantEventsAndChangesInCircumstancesRelevantToGHGEmissionsThatOccurBetweenReportingDatesOfEntitiesInValueChainAndDateOfUndertakingSGeneralPurposeFinancialStatementsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfElementsOfStrategyThatRelateToOrImpactSustainabilityMattersExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfEngagementInProductEndoflifeWasteManagementExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfExistenceOfAnyAgreementWithEmployeesForRepresentationByEuropeanWorksCouncilEwcSocietasEuropaeaSeWorksCouncilOrSocietasCooperativaEuropaeaSceWorksCouncilExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfExpectedDurabilityOfProductPlacedOnMarketInRelationToIndustryAverageExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfExpertiseOfAdministrativeManagementAndSupervisoryBodiesOnBusinessConductMattersExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfExplanationsForSignificantChangesToPoliciesAdoptedDuringReportingYearExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfExtentOfUseAndQualityCriteriaUsedForCarbonCreditsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfExtentToWhichDataAndProcessesThatAreUsedForSustainabilityReportingPurposesHaveBeenVerifiedByExternalAssuranceProviderAndFoundToConformToCorrespondingIsoNOIecOrCenNOCenelecStandardExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfExtentToWhichSustainabilityStatementCoversUpstreamAndDownstreamValueChainExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfExtentToWhichWorkingConditionsAndTermsOfEmploymentOfNonemployeesInOwnWorkforceAreDeterminedOrInfluencedByCollectiveBargainingAgreementsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfFunctionAndMostSeniorRoleWithinUndertakingThatHasOperationalResponsibilityForEnsuringThatEngagementHappensAndThatResultsInformUndertakingSApproachExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfFunctionsWithinUndertakingThatAreMostAtRiskInRespectOfCorruptionAndBriberyExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfGeneralAndSpecificApproachesToAddressingMaterialNegativeImpactsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfGeneralApproachToAndProcessesForProvidingOrContributingToRemedyWhereUndertakingHasCausedOrContributedToMaterialNegativeImpactOnPeopleInOwnWorkforceNOValueChainWorkersNOAffectedCommunitiesNOConsumersAndEndusersExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfGeographiesOrCommoditiesForWhichThereIsSignificantRiskOfChildLabourOrOfForcedLabourOrCompulsoryLabourAmongWorkersInUndertakingSValueChainExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfGlobalFrameworkAgreementOrOtherAgreementsWithWorkersRepresentativesRelatedToRespectOfHumanRightsOfOwnWorkforceExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfGlobalFrameworkAgreementsOrAgreementsWithGlobalUnionFederationsRelatedToRespectOfHumanRightsOfWorkersInValueChainExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowAdministrativeManagementAndSupervisoryBodiesAndSeniorExecutiveManagementOverseeSettingOfTargetsRelatedToMaterialImpactsRisksAndOpportunitiesAndHowProgressTowardsThemIsMonitoredExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowAdministrativeManagementAndSupervisoryBodiesConsiderImpactsRisksAndOpportunitiesWhenOverseeingStrategyDecisionsOnMajorTransactionsAndRiskManagementProcessExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowAdministrativeManagementAndSupervisoryBodiesDetermineWhetherAppropriateSkillsAndExpertiseAreAvailableOrWillBeDevelopedToOverseeSustainabilityMattersExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowAffectedCommunitiesWereInvolvedInMaterialityAssessmentExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowAndWhenResilienceAnalysisHasBeenConductedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowAnticipatedFinancialEffectsForAssetsAndOrBusinessActivitiesAtMaterialPhysicalRiskHaveBeenAssessedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowAssetsAndOrActivitiesHaveBeenScreenedInOrderToIdentifyActualAndPotentialImpactsRisksAndOpportunitiesInEitherOwnOperationsOrUpstreamAndDownstreamValueChainAndMethodologiesAssumptionsAndToolsUsedInScreeningExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowBodysOrIndividualSWithinBodyResponsibilitiesForImpactsRisksAndOpportunitiesAreReflectedInUndertakingsTermsOfReferenceBoardMandatesAndOtherRelatedPoliciesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowBusinessModelAndStrategyTakeAccountOfImpactsRelatedToSustainabilityMattersAssessedToBeMaterialPhaseinExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowCarbonPriceUsedInInternalCarbonPricingSchemeIsConsistentWithCarbonPriceUsedInFinancialStatementsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowClimaterelatedConsiderationsAreFactoredIntoRemunerationOfMembersOfAdministrativeManagementAndSupervisoryBodiesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowConsideredScenariosAreUpdatedAccordingToEvolvingConditionsAndEmergingTrendsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowConsultationsHaveBeenConductedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowConsultationsWithAffectedCommunitiesOnSustainabilityAssessmentsOfSharedBiologicalResourcesAndOrEcosystemsHaveBeenConductedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowDedicatedControlsAndProceduresAppliedToManagementOfImpactsRisksAndOpportunitiesAreIntegratedWithOtherInternalFunctionsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowEcologicalEntityspecificThresholdsWereDeterminedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowEffectivenessOfEngagementWithOwnWorkforceValueChainWorkersAffectedCommunitiesConsumersAndEndusersIsAssessedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowFarUndertakingHasProgressedInEffortsDuringReportingPeriodExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowGovernanceBodiesEnsureThatAppropriateMechanismForPerformanceMonitoringIsInPlaceExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowImpactsOriginateFromOrAreConnectedToStrategyAndBusinessModelExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowIssuesRaisedAndAddressedAreTrackedAndMonitoredAndHowEffectivenessOfChannelsIsEnsuredIncludingThroughInvolvementOfStakeholdersWhoAreIntendedUsersExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowMaterialNegativeAndPositiveImpactsAffectOrAreLikelyToAffectPeopleOrEnvironmentExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowMitigationHierarchyHasBeenAppliedWithRegardToActionsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowMonetaryValueOfInkindContributionsIsEstimatedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowNegativeImpactsOnEcosystemServicesOfRelevanceToAffectedCommunitiesMayBeAvoidedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowOwnWorkforceOrWorkersRepresentativesWereEngagedDirectlyInTrackingPerformanceAgainstTargetsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowParticipationInIndustryOrMultistakeholderInitiativeAndUndertakingsOwnInvolvementIsAimingToAddressMaterialNegativeImpactsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowPeopleInOwnWorkforceAreProvidedWithInformationThatIsUnderstandableAndAccessibleThroughAppropriateCommunicationChannelsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowPolicyAddressesRawMaterialsOriginatingFromEcosystemsThatHaveBeenManagedToMaintainOrEnhanceConditionsForBiodiversityExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowPolicyLimitsProcurementFromSuppliersThatCannotDemonstrateThatTheyAreNotContributingToSignificantDamageToProtectedAreasOrKeyBiodiversityAreasExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowPolicyRefersToRecognisedStandardsOrThirdpartyCertificationsOverseenByRegulatorsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowPotentialBarriersToEngagementWithPeopleInOwnWorkforceAreTakenIntoAccountExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowResponsibilityForRespectingIdentifiedEcologicalThresholdsIsAllocatedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowSocialAndOrEnvironmentalCriteriaAreTakenIntoAccountForSelectionOfSuppliersExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowStakeholdersHaveBeenInvolvedInTargetSettingForEachMaterialSustainabilityMatterExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowSustainabilityrelatedPerformanceMetricsAreConsideredAsPerformanceBenchmarksOrIncludedInRemunerationPoliciesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowSustainabilityrelatedSkillsAndExpertiseRelateToUndertakingsMaterialImpactsRisksAndOpportunitiesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowSystemicRisksHaveBeenConsideredExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowTargetRelatesToEitherPreventionOrControlOfSubstancesOfConcernAndOrSubstancesOfVeryHighConcernExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowTransitionAndOrPhysicalRisksAndOpportunitiesRelatedToBiodiversityAndEcosystemsHaveBeenIdentifiedAndAssessedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowUndertakingEngagesWithAtriskOrPersonsInVulnerableSituationssExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowUndertakingSeeksToRespectHumanRightsOfAllStakeholdersEngagedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfHowValueChainWorkersAffectedCommunitiesConsumersAndEndUsersAndOrLegitimateRepresentativesOrTheirCredibleProxiesPlayRoleInDecisionsRegardingDesignAndImplementationOfProgrammesOrProcessesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfInitiativesAimedAtContributingToAdditionalMaterialPositiveImpactsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfIntendedOrAchievedPositiveOutcomesOfProgrammesOrProcessesForPeopleInOwnWorkforceValueChainWorkersAffectedCommunitiesConsumersAndEndusersExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfIntendedOutcomesToBeAchievedInLivesOfPeopleInOwnWorkforceValueChainWorkersAffectedCommunitiesConsumersAndEndusersExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfInvolvementOfStakeholdersInResilienceAnalysisExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfKeyActionExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfKeyAssumptionsMadeInResilienceAnalysisExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfLanduseBasedOnLifeCycleAssessmentExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfListOfAnyComplianceSchedulesOrDerogationsGrantedByCompetentAuthoritiesAccordingToArticle154IedThatAreAssociatedWithImplementationOfBataelsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfListOfAnyNoncomplianceIncidentsOrEnforcementActionsNecessaryToEnsureComplianceInCaseOfBreachesOfPermitConditionsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfListOfDataPointsThatDeriveFromOtherEuLegislationAndInformationOnTheirLocationInSustainabilityStatementExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfListOfInstallationsOperatedThatFallUnderIedAndEuBatConclusionsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfListOfKeyStakeholdersInvolvedInKeyActionAndHowTheyAreInvolvedKeyStakeholdersNegativelyOrPositivelyImpactedByKeyActionAndHowTheyAreImpactedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfListOfMaterialImpactsRisksAndOpportunitiesAddressedByAdministrativeManagementAndSupervisoryBodiesOrTheirRelevantCommitteesDuringReportingPeriodExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfListOfMaterialSitesInOwnOperationsBasedOnResultsOfIdentificationAndAssessmentOfActualAndPotentialImpactsOnBiodiversityAndEcosystemsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfLocationOfSignificantAssetsAtMaterialPhysicalRiskExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMagnitudeOfAnticipatedFinancialEffectsInTermsOfMarginErosionForBusinessActivitiesAtMaterialPhysicalRiskExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMainTopicsCoveredByLobbyingActivitiesAndUndertakingsMainPositionsOnTheseTopicsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMappingOfInformationAboutDueDiligenceProcessOrCrossreferenceExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMattersThatAreMaterialInRelationToAsWellAsGeneralApproachToEngagementWithPeopleInOwnWorkforceNOValueChainWorkersNOAffectedCommunitiesNOConsumersAndEndusersExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMattersThatAreMaterialInRelationToAsWellAsGeneralApproachToMeasuresToProvideAndOrEnableRemedyForHumanRightsImpactsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMattersThatAreMaterialInRelationToAsWellAsGeneralApproachToRespectForHumanRightsIncludingLabourRightsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMattersThatAreMaterialInRelationToAsWellAsGeneralApproachToRespectForHumanRightsOfCommunitiesAndIndigenousPeoplesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMattersThatAreMaterialInRelationToAsWellAsGeneralApproachToRespectForHumanRightsOfConsumersAndEndusersExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMeasuresTakenToMitigateNegativeImpactsOnOwnWorkforceThatAriseFromTransitionToGreenerClimateneutralEconomyExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMethodologiesAndSignificantAssumptionsBehindMetricsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMethodologiesSignificantAssumptionsAndEmissionsFactorsUsedToCalculateOrMeasureGHGEmissionsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMethodologyUsedForCalculationOfRemunerationRatioAdjustedForPurchasingPowerDifferencesBetweenCountriesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMetricsConsideredRelevantForLanduseChangeFreshwateruseChangeAndOrSeauseChangeExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMetricsConsideredRelevantForStateOfSpeciesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMetricsOnSpeciesAtExtinctionRiskExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMetricsRelatedToSustainabilityMattersAssessedToBeMaterialPhaseinExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMetricsThatMeasureAreaCoverageOfEcosystemExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMetricsThatMeasureChangesInEcosystemStructuralConnectivityExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMetricsThatMeasureChangesInNumberOfIndividualsOfSpeciesWithinSpecificAreaExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMetricsThatMeasureChangesInRelevantHabitatForThreatenedSpeciesAsProxyForImpactOnLocalPopulationSExtinctionRiskExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMetricsThatMeasureChangesInSpatialConfigurationOfLandscapeExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMetricsThatMeasureChangesOverTimeInManagementOfEcosystemExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMetricsThatMeasureConversionOverTimeOfLandCoverExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMetricsThatMeasureFunctionalConnectivityExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMetricsThatMeasureMultipleSpeciesWithinEcosystemExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMetricsThatMeasureQualityOfEcosystemRelativeToPredeterminedReferenceStateExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMetricsThatMeasureStructuralComponentsOfEcosystemConditionExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMetricsThatMeasureThreatStatusOfSpeciesAndHowActivitiesOrPressuresMayAffectThreatStatusExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMetricsUsedToManagePathwaysOfIntroductionAndSpreadOfInvasiveAlienSpeciesAndRisksPosedByInvasiveAlienSpeciesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfMostCommonTypesOfNonemployeesTheirRelationshipWithUndertakingAndTypeOfWorkThatTheyPerformExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfNatureOfCasesOfNonrespectOfUnGuidingPrinciplesOnBusinessAndHumanRightsIloDeclarationOnFundamentalPrinciplesAndRightsAtWorkOrOecdGuidelinesForMultinationalEnterprisesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfNatureOfConfirmedIncidentsOfCorruptionOrBriberyExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfNatureOfPriorPeriodMaterialErrorsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfOtherLegislationOrGenerallyAcceptedSustainabilityReportingStandardsAndFrameworksBasedOnWhichInformationHasBeenIncludedInSustainabilityStatementExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfOwnDefinitionOfTopManagementUsedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfPastProgressMadeInMeetingTargetBeforeCurrentBaseYearExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfPlansToAdoptProceduresToPreventDetectAndAddressAllegationsOrIncidentsOfCorruptionAndBriberyExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfPlansToMinimiseUnavoidableNegativeImpactsAndImplementMitigationMeasuresThatAimToMaintainValueAndFunctionalityOfPriorityServicesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfPoliciesAdoptedToManageMaterialImpactsOnOwnWorkforceNOValueChainWorkersNOAffectedCommunitiesNOConsumersAndEndusersAsWellAsAssociatedMaterialRisksAndOpportunitiesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfPollutionrelatedActionsAndResourcesAllocatedToTheirImplementationExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfPopulationSizeRangeWithinSpecificEcosystemsAndExtinctionRiskExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfProcessesThroughWhichUndertakingSupportsAvailabilityOfChannelsByItsBusinessRelationshipsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfProcessesThroughWhichUndertakingSupportsAvailabilityOfChannelsInWorkplaceOfItsOwnWorkforceExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfProcessesThroughWhichUndertakingSupportsOrRequiresAvailabilityOfChannelsByItsBusinessRelationshipsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfProcessesThroughWhichUndertakingSupportsOrRequiresAvailabilityOfChannelsInWorkplaceOfValueChainWorkersExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfQualitativeInformationAboutAnticipatedFinancialEffectsOfMaterialRisksAndOpportunitiesArisingFromImpactsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfQuantitativeAndQualitativeInformationRegardingProgressOfActionsOrActionPlansDisclosedInPriorPeriodsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfQuantitativeInformationAboutAnticipatedFinancialEffectsOfMaterialRisksAndOpportunitiesArisingFromImpactsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfRatesOfRecyclableContentInProductAndItsPackagingExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfReasonsForApplyingDifferentDefinitionsOfTimeHorizonsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfReasonsForChoosingInferiorMethodologyToQuantifyEmissionsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfReasonsForNotHavingAdoptedActionsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfReasonsForNotHavingAdoptedPoliciesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfReasonsForNotHavingAdoptedPolicyInAreasOfHighwaterStressExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfReconciliationToFinancialStatementsOfNetRevenueUsedForCalculationOfGHGEmissionsIntensityExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfReconciliationToRelevantLineItemOrNotesInFinancialStatementsOfNetRevenueFromActivitiesInHighClimateImpactSectorsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfReconciliationsWithFinancialStatementsOfSignificantAmountsOfAssetsAndNetRevenueAtMaterialPhysicalRiskExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfReconciliationsWithFinancialStatementsOfSignificantAmountsOfAssetsLiabilitiesAndNetRevenueAtMaterialTransitionRiskExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfReferenceOfInformationReportedOnTotalNumberOfEmployeesToMostRepresentativeNumberInFinancialStatementsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfReparabilityOfProductExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfReportingBoundariesConsideredAndCalculationMethodsForEstimatingScope3GHGEmissionsCategoryAndIfRelevantCalculationToolsAppliedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfResilienceOfCurrentBusinessModelAndStrategyToBiodiversityAndEcosystemsrelatedPhysicalTransitionAndSystemicRisksExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfResourceUseAndCircularEconomyActionsAndResourcesAllocatedToTheirImplementationExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfResourcesAllocatedToManagementOfMaterialImpactsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfRiskFactorsForNetRevenueFromBusinessActivitiesAtMaterialPhysicalRiskExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfRiskFactorsForNetRevenueFromBusinessActivitiesAtMaterialTransitionRiskExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfRoleOfAdministrativeManagementAndSupervisoryBodiesRelatedToBusinessConductExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfSevereHumanRightsIssuesAndIncidentsConnectedToUpstreamAndDownstreamValueChainNOAffectedCommunitiesNOConsumersAndEndusersThatHaveBeenReportedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfSignificantChangesInDefinitionOfWhatConstitutesReportingUndertakingAndItsUpstreamAndDownstreamValueChainAndExplanationOfTheirEffectOnYeartoyearComparabilityOfReportedGHGEmissionsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfSpecificChannelsInPlaceForOwnWorkforceNOValueChainWorkersNOAffectedCommunitiesNOConsumersAndEndusersToRaiseConcernsOrNeedsDirectlyWithUndertakingAndHaveThemAddressedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfSpecificSitesRawMaterialsProductionOrSourcingWithNegativeOrPotentialNegativeImpactsOnAffectedCommunitiesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfStabilityOfTargetOverTimeInTermsOfDefinitionsAndMethodologiesToEnableComparabilityExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfStagesAtWhichEngagementOccursTypeOfEngagementAndFrequencyOfEngagementExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfStandardsOrCommitmentsOnWhichTargetIsBasedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfStatusOfIncidentsAndOrComplaintsAndActionsTakenIncidentsComplaintsAndSevereHumanRightsImpactsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfStepsTakenToGainInsightIntoPerspectivesOfAffectedCommunitiesThatMayBeParticularlyVulnerableToImpactsAndOrMarginalisedAndIntoPerspectiveOfSpecificGroupsWithinAffectedCommunitiesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfStepsTakenToGainInsightIntoPerspectivesOfPeopleInOwnWorkforceNOValueChainWorkersNOConsumersAndEndusersThatMayBeParticularlyVulnerableToImpactsAndOrMarginalisedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfSubsidiaryUndertakingsIncludedInConsolidationThatAreExemptedFromIndividualOrConsolidatedSustainabilityReportingExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfTimeframeForAdoptionOfActionsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfTimeframeForAdoptionOfGeneralProcessToEngageWithOwnWorkforceValueChainWorkersAffectedCommunitiesConsumersAndEndusersExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfTimeframeForAdoptionOfPoliciesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfTimeframeForAdoptionOfPolicyInAreasOfHighwaterStressExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfTimeframeForChannelForRaisingConcernsToBeInPlaceExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfTimeframeForSettingOfMeasurableOutcomeorientedTargetsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfTimetableForImplementationOfPoliciesOnAnticorruptionOrAntibriberyConsistentWithUnitedNationsConventionAgainstCorruptionExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfTimetableForImplementationOfPoliciesOnProtectionOfWhistleblowersExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfTransitionPlanForClimateChangeMitigationExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfTransitionPlanToImproveAndAchieveAlignmentOfBusinessModelAndStrategyWithVisionOfKunmingmontrealGlobalBiodiversityFrameworkAndRelevantGoalsAndTargetsEuBiodiversityStrategyFor2030AndWithRespectingPlanetaryBoundariesRelatedToBiosphereIntegrityAndLandsystemChangeExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfTypesOfContractualInstrumentsScope2GHGEmissionsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfTypesOfContractualInstrumentsUsedForSaleAndPurchaseOfEnergyBundledWithAttributesAboutEnergyGenerationOrForUnbundledEnergyAttributeClaimsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfTypesOfEmployeesAndOrNonemployeesWhoAreNotCoveredBySocialProtectionThroughPublicProgramsOrThroughBenefitsOfferedAgainstLossOfIncomeDueToEmploymentInjuryAndAcquiredDisabilityExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfTypesOfEmployeesAndOrNonemployeesWhoAreNotCoveredBySocialProtectionThroughPublicProgramsOrThroughBenefitsOfferedAgainstLossOfIncomeDueToParentalLeaveExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfTypesOfEmployeesAndOrNonemployeesWhoAreNotCoveredBySocialProtectionThroughPublicProgramsOrThroughBenefitsOfferedAgainstLossOfIncomeDueToRetirementExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfTypesOfEmployeesAndOrNonemployeesWhoAreNotCoveredBySocialProtectionThroughPublicProgramsOrThroughBenefitsOfferedAgainstLossOfIncomeDueToSicknessExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfTypesOfEmployeesAndOrNonemployeesWhoAreNotCoveredBySocialProtectionThroughPublicProgramsOrThroughBenefitsOfferedAgainstLossOfIncomeDueToUnemploymentStartingFromWhenOwnWorkerIsWorkingForUndertakingExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfWhyConsideredScenariosWereSelectedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfWhyCorrectionOfPriorPeriodErrorsIsNotPracticableExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:DisclosureOfWhyScope3GHGEmissionsCategoriesHaveBeenExcludedFromInventoryExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ESRSDisclosureRequirementsCoveringImpactsRisksAndOpportunities": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ESRSMetricsAndMonetaryAmountsDisclosedThatAreSubjectToHighLevelOfMeasurementUncertainty": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ESRSMetricsAndMonetaryAmountsForWhichUpstreamAndOrDownstreamValueChainEstimationHasBeenUsed": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:EcologicalThresholdsAndOrEntityspecificAllocationsWereTakenIntoConsiderationWhenSettingTarget": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:EffectivenessOfPoliciesAndOrActionsIsTrackedInRelationToMaterialSustainabilityrelatedImpactRiskAndOpportunity": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:EitherOptionToOmitSpecificPieceOfInformationCorrespondingToIntellectualPropertyKnowhowOrResultsOfInnovationHasBeenUsed": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:EitherShortMediumOrLongtermTimeHorizonsHaveBeenDefinedInProcessesToIdentifyAndAssessPhysicalRisks": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:EmissionsToAir": {
+            "type": "massItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:EmissionsToSoil": {
+            "type": "massItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:EmissionsToWater": {
+            "type": "massItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:EmployeesNumbersAreReportedUsingAnotherMethodology": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:EnergyConsumptionFromFossilSources": {
+            "type": "energyItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:EnergyConsumptionFromNuclearSources": {
+            "type": "energyItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:EnergyConsumptionFromRenewableSources": {
+            "type": "energyItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:EnergyConsumptionRelatedToOwnOperations": {
+            "type": "energyItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:EnergyIntensityFromActivitiesInHighClimateImpactSectorsTotalEnergyConsumptionPerNetRevenue": {
+            "type": "energyPerMonetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:EstimatedAmountOfPotentiallyStrandedAssets": {
+            "type": "monetaryItemType",
+            "period_type": "instant",
+            "abstract": false
+        },
+        "esrs:EuropeanStandardsApprovedByEuropeanStandardisationSystemIsoNOIecOrCenNOCenelecStandardsHaveBeenReliedOn": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExpectedCostSavingsFromClimateChangeAdaptationActions": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExpectedCostSavingsFromClimateChangeMitigationActions": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExpectedGHGEmissionReductions": {
+            "type": "ghgEmissionsItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfAnyObjectiveOrPlansCapExCapExPlansOpExForAligningEconomicActivitiesRevenuesCapExOpExWithCriteriaEstablishedInCommissionDelegatedRegulation2021NO2139Explanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfApproximateScopeOfAffectedCommunitiesCoveredBySocialInvestmentOrDevelopmentProgrammesAndRationaleForWhySelectedCommunitiesWereChosenForGivenSocialInvestmentOrDevelopmentProgrammesImplementationExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfChangesInPreparationAndPresentationOfSustainabilityInformationAndReasonsForThemExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfClimaterelatedConsiderationsThatAreFactoredIntoRemunerationOfMembersOfAdministrativeManagementAndSupervisoryBodiesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfCredibilityAndIntegrityOfCarbonCreditsUsedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfDecarbonisationLeversIdentifiedAndKeyActionsPlannedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfExtentToWhichAbilityToImplementActionDependsOnAvailabilityAndAllocationOfResourcesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfHowClimateScenariosUsedAreCompatibleWithCriticalClimaterelatedAssumptionsMadeInFinancialStatementsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfHowClimaterelatedScenarioAnalysisHasBeenUsedToInformIdentificationAndAssessmentOfPhysicalRisksOverShortMediumAndLongtermExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfHowClimaterelatedScenarioAnalysisHasBeenUsedToInformIdentificationAndAssessmentOfTransitionRisksAndOpportunitiesOverShortMediumAndLongtermExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfHowConsistencyOfGHGEmissionReductionTargetWithGHGInventoryBoundariesHasBeenEnsuredExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfHowCurrentFinancialResourcesRelateToMostRelevantAmountsPresentedInFinancialStatementsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfHowMaterialInformationToBeDisclosedInRelationToMaterialImpactsRisksAndOpportunitiesHasBeenDeterminedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfHowPolicyIsMadeAvailableToPotentiallyAffectedStakeholdersAndOrStakeholdersWhoNeedToHelpImplementItExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfHowPublicClaimsOfGHGNeutralityThatInvolveUseOfCarbonCreditsAreAccompaniedByGHGEmissionReductionTargetsAndHowClaimsOfGHGNeutralityAndOrRelianceOnCarbonCreditsNeitherImpedeNorReduceAchievementOfGHGEmissionReductionTargetsOrNetZeroTargetExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfHowTargetIsCompatibleWithLimitingOfGlobalWarmingToOneAndHalfDegreesCelsiusInLineWithParisAgreementExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfHowTransitionPlanIsEmbeddedInAndAlignedWithOverallBusinessStrategyAndFinancialPlanningExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfNeedForAppropriateConsultationsAndNeedToRespectDecisionsOfAffectedCommunitiesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfNegativeMaterialityAssessmentForESRSE1ClimateChangeExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfNegativeMaterialityAssessmentForESRSE2PollutionExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfNegativeMaterialityAssessmentForESRSE3WaterAndMarineResourcesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfNegativeMaterialityAssessmentForESRSE4BiodiversityAndEcosystemsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfNegativeMaterialityAssessmentForESRSE5CircularEconomyExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfNegativeMaterialityAssessmentForESRSG1BusinessConductExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfNegativeMaterialityAssessmentForESRSS1OwnWorkforceExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfNegativeMaterialityAssessmentForESRSS2WorkersInValueChainExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfNegativeMaterialityAssessmentForESRSS3AffectedCommunitiesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfNegativeMaterialityAssessmentForESRSS4ConsumersAndEndusersExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfPotentialLockedinGHGEmissionsFromKeyAssetsAndProductsAndOfHowLockedinGHGEmissionsMayJeopardiseAchievementOfGHGEmissionReductionTargetsAndDriveTransitionRiskExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfProgressInImplementingTransitionPlanExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfRelationshipOfSignificantCapExAndOpExRequiredToImplementActionsTakenOrPlannedToCapExPlanRequiredByCommissionDelegatedRegulationEU2021NO2178Explanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfRelationshipOfSignificantCapExAndOpExRequiredToImplementActionsTakenOrPlannedToKeyPerformanceIndicatorsRequiredUnderCommissionDelegatedRegulationEU2021NO2178Explanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfRelationshipOfSignificantCapExAndOpExRequiredToImplementActionsTakenOrPlannedToRelevantLineItemsOrNotesInFinancialStatementsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExplanationOfScopeMethodologiesAndFrameworksAppliedAndHowResidualGHGEmissionsAreIntendedToBeNeutralisedExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExtentToWhichAssetsAndBusinessActivitiesMayBeExposedAndAreSensitiveToIdentifiedTransitionEventsHasBeenAssessed": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ExtentToWhichEitherAssetsOrBusinessActivitiesMayBeExposedAndOrAreSensitiveToIdentifiedClimaterelatedHazardsHasBeenAssessed": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:FinancialAndInKindPoliticalContributionsMade": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:FinancialPoliticalContributionsMade": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:FinancialResourcesAllocatedToActionPlanCapEx": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:FinancialResourcesAllocatedToActionPlanOpEx": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:FinancingEffectsDirectAndIndirectCostsOfBiodiversityOffsets": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:FuelConsumptionFromCoalAndCoalProducts": {
+            "type": "energyItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:FuelConsumptionFromCrudeOilAndPetroleumProducts": {
+            "type": "energyItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:FuelConsumptionFromNaturalGas": {
+            "type": "energyItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:FuelConsumptionFromOtherFossilSources": {
+            "type": "energyItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:FuelConsumptionFromRenewableSources": {
+            "type": "energyItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:GHGEmissionReductionTargetIsScienceBasedAndCompatibleWithLimitingGlobalWarmingToOneAndHalfDegreesCelsius": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:GHGEmissionsAssociatedWithRemovalActivity": {
+            "type": "ghgEmissionsItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:GHGEmissionsIntensityLocationbasedTotalGHGEmissionsPerNetRevenue": {
+            "type": "ghgEmissionsPerMonetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:GHGEmissionsIntensityMarketbasedTotalGHGEmissionsPerNetRevenue": {
+            "type": "ghgEmissionsPerMonetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:GHGRemovalsAndStorage": {
+            "type": "ghgEmissionsItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:GenderPayGap": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:GrievanceOrComplaintsHandlingMechanismRelatedToEmployeeMattersIsInPlace": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:GrievancesAreTreatedConfidentiallyAndOrWithRespectToRightsOfPrivacyAndDataProtection": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:GrossLocationBasedScope2GreenhouseGasEmissions": {
+            "type": "ghgEmissionsItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:GrossMarketBasedScope2GreenhouseGasEmissions": {
+            "type": "ghgEmissionsItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:GrossScope1GreenhouseGasEmissions": {
+            "type": "ghgEmissionsItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:GrossScope3GreenhouseGasEmissions": {
+            "type": "ghgEmissionsItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:GroundsForDiscriminationSpecificallyCoveredByPolicy": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:GroupsForWhichEngagementOccursAffectedCommunities": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:GroupsForWhichEngagementOccursConsumersAndEndusers": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:GroupsForWhichEngagementOccursOwnWorkforce": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:GroupsForWhichEngagementOccursValueChainWorkers": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:HazardousWaste": {
+            "type": "massItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:HighClimateImpactSectorsUsedToDetermineEnergyIntensity": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:IdentificationOfClimaterelatedHazardsAndAssessmentOfExposureAndSensitivityAreInformedByHighEmissionsClimateScenarios": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:IdentificationOfTransitionEventsAndOrAssessmentOfExposureHasBeenInformedByClimaterelatedScenarioAnalysis": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:IncentiveSchemesAndRemunerationPoliciesLinkedToSustainabilityMattersForMembersOfAdministrativeManagementAndSupervisoryBodiesExist": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:IncreaseDecreaseInNetRevenueFromLowcarbonProductsAndServicesOrAdaptationSolutionsToWhichUndertakingHasOrMayHaveAccess": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:IncreaseDecreaseInWaterStorage": {
+            "type": "volumeItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:InformationAboutAppointmentOfAnyMembersOfAdministrativeManagementAndSupervisoryBodiesWhoHeldComparablePositionInPublicAdministrationInTwoYearsPrecedingSuchAppointmentExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:InformationAboutApproachToRelationshipsWithSuppliersExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:InformationAboutCountriesOrGeographicAreasWithOperationsConsideredAtSignificantRiskOfIncidentsOfChildLabourExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:InformationAboutCountriesOrGeographicAreasWithOperationsConsideredAtSignificantRiskOfIncidentsOfForcedLabourOrCompulsoryLabourExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:InformationAboutEffectivenessOfProcessesForEngagingWithOwnWorkforceFromPreviousReportingPeriodsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:InformationAboutExtentToWhichTrainingIsGivenToMembersOfAdministrativeManagementAndSupervisoryBodiesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:InformationAboutFinancialOrInkindPoliticalContributionsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:InformationAboutHowPoliciesAreCommunicatedToThoseForWhomTheyAreRelevantPreventionAndDetectionOfCorruptionAndBriberyExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:InformationAboutIdentityOfAdministrativeManagementAndSupervisoryBodiesOrIndividualsWithinBodyResponsibleForOversightOfImpactsRisksAndOpportunitiesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:InformationAboutMembersExperienceRelevantToSectorsProductsAndGeographicLocationsOfUndertakingExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:InformationAboutMethodologiesAssumptionsAndToolsUsedToScreenAssetsAndOrActivitiesInOrderToIdentifyActualAndPotentialImpactsRisksAndOpportunitiesInEitherOwnOperationsOrValueChainExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:InformationAboutNatureScopeAndDepthOfAnticorruptionAndAntibriberyTrainingProgrammesOfferedOrRequiredExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:InformationAboutPolicyForTrainingWithinOrganisationOnBusinessConductExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:InformationAboutProcessToReportOutcomesToAdministrativeManagementAndSupervisoryBodiesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:InformationAboutReconciliationOfAmountOfFinesPenaltiesAndCompensationForDamagesForSevereHumanRightsIncidentsConnectedToOwnWorkforceWithMostRelevantAmountPresentedInFinancialStatementsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:InformationAboutReconciliationOfFinesPenaltiesAndCompensationForDamagesAsResultOfIncidentsAndComplaintsWithMostRelevantAmountPresentedInFinancialStatementsExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:InformationAboutReportingLinesToAdministrativeManagementAndSupervisoryBodiesInGovernanceProcessesControlsAndProceduresUsedToMonitorManageAndOverseeImpactsRisksAndOpportunitiesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:InformationAboutRepresentationOfEmployeesAndOtherWorkersExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:InformationAboutRepresentativesResponsibleInAdministrativeManagementAndSupervisoryBodiesForOversightOfActivitiesRelatedToExertingPoliticalInfluenceAndLobbyingExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:InformationAboutResilienceOfStrategyAndBusinessModelRegardingCapacityToAddressMaterialImpactsAndRisksAndToTakeAdvantageOfMaterialOpportunitiesExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:InformationAboutSourcesOfMeasurementUncertaintyExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:InformationAboutSpecificCollectiveActionExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:InformationAboutSustainabilityrelatedExpertiseThatBodiesEitherDirectlyPossessOrCanLeverageExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:InformationAboutTypeOfOperationsAtSignificantRiskOfIncidentsOfChildLabourExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:InformationAboutTypeOfOperationsAtSignificantRiskOfIncidentsOfForcedLabourOrCompulsoryLabourExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:InkindPoliticalContributionsMade": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:IntensityValueOfLocationBasedScope2GreenhouseGasEmissionsReduction": {
+            "type": "decimalItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:IntensityValueOfMarketBasedScope2GreenhouseGasEmissionsReduction": {
+            "type": "decimalItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:IntensityValueOfScope1GreenhouseGasEmissionsReduction": {
+            "type": "decimalItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:IntensityValueOfScope3GreenhouseGasEmissionsReduction": {
+            "type": "decimalItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:IntensityValueOfTotalGreenhouseGasEmissionsReduction": {
+            "type": "decimalItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:InvestigatorsOrInvestigatingCommitteeAreSeparateFromChainOfManagementInvolvedInPreventionAndDetectionOfCorruptionAndBribery": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ItHasBeenConcludedThatItIsNecessaryToImplementBiodiversityMitigationMeasures": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:KeyActionCoverage": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:KeyActionIsTakenToEitherProvideForCooperateInOrInSupportProvisionOfRemedyForThoseHarmedByActualMaterialImpacts": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:KeyActionOccurrenceBiodiversityAndEcosystems": {
+            "type": "enumerationItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:KeyActionPlanIsCarriedOutOnlyByUndertakingUsingItsResources": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:KeyActionPlanIsPartOfWiderInitiativeToWhichUndertakingSignificantlyContributes": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:LayersInMitigationHierarchyToWhichActionCanBeAllocatedPollution": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:LayersInMitigationHierarchyToWhichActionCanBeAllocatedWaterAndMarineResources": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:LayersInMitigationHierarchyToWhichResourcesCanBeAllocatedPollution": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:LayersInMitigationHierarchyToWhichTargetCanBeAllocatedBiodiversityAndEcosystems": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:LayersInWasteHierarchyThatPolicyAddresses": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:LayersInWasteHierarchyToWhichTargetRelates": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:LiabilitiesFromMaterialTransitionRisksThatMayHaveToBeRecognisedInFinancialStatements": {
+            "type": "monetaryItemType",
+            "period_type": "instant",
+            "abstract": false
+        },
+        "esrs:ListOfAdditionalSignificantESRSSectorsInWhichSignificantActivitiesAreDevelopedOrInWhichUndertakingIsOrMayBeConnectedToMaterialImpactsOtherThanDisclosedUnderBreakdownOfRevenue": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ListOfESRSDisclosureRequirementsCompliedWithInPreparingSustainabilityStatementFollowingOutcomeOfMaterialityAssessment": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ListOfESRSSectorsThatAreSignificantForUndertakingWhenOmittingBreakdownOfRevenueBySignificantESRSSector": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ListOfScope3GHGEmissionsCategoriesIncludedInInventoryGHGProtocol": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ListOfSustainabilityMattersAssessedToBeMaterialPhasein": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:LocalAndIndigenousKnowledgeAndOrNaturebasedSolutionsHaveBeenIncorporatedIntoBiodiversityAndEcosystemsrelatedAction": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:LocationBasedGreenhouseGasEmissions": {
+            "type": "ghgEmissionsItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:MarketBasedGreenhouseGasEmissions": {
+            "type": "ghgEmissionsItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:MaterialNegativeImpactsOccurrenceOwnWorkforce": {
+            "type": "enumerationItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:MaterialNegativeImpactsOccurrenceWorkersInValueChainWorkersAffectedCommunitiesConsumersAndEndUsers": {
+            "type": "enumerationItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:MaterialNegativeImpactsWithRegardsToLandDegradationDesertificationOrSoilSealingHaveBeenIdentified": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:MaterialRisksAndOpportunitiesArisingFromImpactsAndOrDependenciesEitherOnPeopleInOwnWorkforceValueChainWorkersAffectedCommunitiesConsumersAndEndusersRelateToSpecificGroups": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:MeasurableTargetPercentage": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:MethodologyOfEmployeesMeasurement": {
+            "type": "enumerationItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:MethodologyOfNonemployeesMeasurement": {
+            "type": "enumerationItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:MicroplasticsGenerated": {
+            "type": "massItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:MicroplasticsGeneratedOrUsed": {
+            "type": "massItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:MicroplasticsUsed": {
+            "type": "massItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:MonetisedGrossScope1And2GHGEmissions": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:MonetisedTotalGHGEmissions": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NamesOfMetrics": {
+            "type": "stringItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NatureorientedAreaOffSite": {
+            "type": "areaItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NatureorientedAreaOnSite": {
+            "type": "areaItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NetRevenueOtherThanUsedToCalculateGHGIntensity": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NetRevenueUsedToCalculateGHGIntensity": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NoChannelForRaisingConcernsEitherForPeopleInOwnWorkforceValueChainWorkersAffectedCommunitiesConsumersAndEndusersHasBeenAdopted": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NoGeneralProcessToEngageWithOwnWorkforceValueChainWorkersAffectedCommunitiesConsumersAndEndusersHasBeenAdopted": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NoSevereHumanRightsIncidentsConnectedToOwnWorkforceHaveOccurred": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NonemployeesNumbersAreReportedUsingAnotherMethodology": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NonrecycledWaste": {
+            "type": "massItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NonrenewableEnergyProduction": {
+            "type": "energyItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfCasesOfRecordableWorkrelatedIllHealth": {
+            "type": "integerItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfComplaintsFiledThroughChannelsForPeopleInOwnWorkforceToRaiseConcerns": {
+            "type": "integerItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfComplaintsFiledToNationalContactPointsForOECDMultinationalEnterprises": {
+            "type": "integerItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfComplaintsReceivedFromConsumersAndEndusers": {
+            "type": "integerItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfConfirmedIncidentsInWhichOwnWorkersWereDismissedOrDisciplinedForCorruptionOrBriberyrelatedIncidents": {
+            "type": "integerItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfConfirmedIncidentsOfCorruptionOrBribery": {
+            "type": "integerItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfConfirmedIncidentsRelatingToContractsWithBusinessPartnersThatWereTerminatedOrNotRenewedDueToViolationsRelatedToCorruptionOrBribery": {
+            "type": "integerItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfConvictionsForViolationOfAnticorruptionAndAntibriberyLaws": {
+            "type": "integerItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfDaysLostToWorkrelatedInjuriesAndFatalitiesFromWorkrelatedAccidentsWorkrelatedIllHealthAndFatalitiesFromIllHealth": {
+            "type": "decimalItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfEmissionAllowancesStoredFromPreviousAllowancesAtBeginningOfReportingPeriod": {
+            "type": "integerItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfEmployeesHeadCountDuringPeriod": {
+            "type": "integerItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfEmployeesHeadCountOrFulltimeEquivalentAtEndOfPeriod": {
+            "type": "decimalItemType",
+            "period_type": "instant",
+            "abstract": false
+        },
+        "esrs:NumberOfEmployeesHeadCountOrFulltimeEquivalentDuringPeriod": {
+            "type": "decimalItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfEmployeesHeadCountOver50YearsOldDuringPeriod": {
+            "type": "integerItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfEmployeesHeadCountUnder30YearsOldDuringPeriod": {
+            "type": "integerItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfEmployeesHeadcountAtEndOfPeriod": {
+            "type": "integerItemType",
+            "period_type": "instant",
+            "abstract": false
+        },
+        "esrs:NumberOfEmployeesWhoHaveLeftUndertakingDuringPeriod": {
+            "type": "integerItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfExecutiveMembers": {
+            "type": "integerItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfFatalitiesAsResultOfWorkrelatedInjuriesAndWorkrelatedIllHealthOfOtherWorkersWorkingOnUndertakingsSites": {
+            "type": "integerItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfFatalitiesInOwnWorkforceAsResultOfWorkrelatedInjuriesAndWorkrelatedIllHealth": {
+            "type": "integerItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfIncidentsOfDiscrimination": {
+            "type": "integerItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfInvasiveAlienSpecies": {
+            "type": "integerItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfLegalProceedingsOutstandingForLatePayments": {
+            "type": "integerItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfNonemployeesInOwnWorkforceDuringPeriod": {
+            "type": "integerItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfNonemployeesInOwnWorkforceSelfemployedPeopleDuringPeriod": {
+            "type": "integerItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfNonexecutiveMembers": {
+            "type": "integerItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfRecordableWorkrelatedAccidents": {
+            "type": "integerItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfScope1GHGEmissionAllowancesWithinRegulatedEmissionTradingSchemes": {
+            "type": "integerItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfSevereHumanRightsIncidentsConnectedToOwnWorkforce": {
+            "type": "integerItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfSevereHumanRightsIncidentsConnectedToOwnWorkforceThatAreNonrespectOfUnGuidingPrinciplesOnBusinessAndHumanRightsIloDeclarationOnFundamentalPrinciplesAndRightsAtWorkOrOecdGuidelinesForMultinationalEnterprises": {
+            "type": "integerItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfSevereHumanRightsIncidentsWhereUndertakingPlayedRoleSecuringRemedyForThoseAffected": {
+            "type": "integerItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NumberOfSitesOwnedLeasedOrManagedInOrNearProtectedAreasOrKeyBiodiversityAreasThatUndertakingIsNegativelyAffecting": {
+            "type": "integerItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:NutsCodesForLocationOfSignificantAssetsAtMaterialPhysicalRisk": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:OperatingExpendituresOpExInConjunctionWithMajorIncidentsAndDeposits": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:OptionAllowedByMemberStateToOmitDisclosureOfImpendingDevelopmentsOrMattersInCourseOfNegotiationHasBeenUsed": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:OwnOperationsAffectThreatenedSpecies": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfApproximateGrossScope1GreenhouseGasEmissionsCoveredByInternalCarbonPricingScheme": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfApproximateGrossScope2GreenhouseGasEmissionsCoveredByInternalCarbonPricingScheme": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfApproximateGrossScope3GreenhouseGasEmissionsCoveredByInternalCarbonPricingScheme": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfAssetsAtMaterialPhysicalRiskAddressedByClimateChangeAdaptationActions": {
+            "type": "percentItemType",
+            "period_type": "instant",
+            "abstract": false
+        },
+        "esrs:PercentageOfAssetsAtMaterialPhysicalRiskBeforeConsideringClimateChangeAdaptationActions": {
+            "type": "percentItemType",
+            "period_type": "instant",
+            "abstract": false
+        },
+        "esrs:PercentageOfAssetsAtMaterialTransitionRiskAddressedByClimateChangeMitigationActions": {
+            "type": "percentItemType",
+            "period_type": "instant",
+            "abstract": false
+        },
+        "esrs:PercentageOfAssetsAtMaterialTransitionRiskBeforeConsideringClimateMitigationActions": {
+            "type": "percentItemType",
+            "period_type": "instant",
+            "abstract": false
+        },
+        "esrs:PercentageOfBiologicalMaterialsUsedToManufactureProductsAndServicesThatAreSustainablySourced": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfCarbonCreditsCancelledForRecognisedQualityStandard": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfCarbonCreditsCancelledFromProjectsInEuropeanUnion": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfCarbonCreditsCancelledFromReductionProjects": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfCarbonCreditsCancelledFromRemovalProjects": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfCarbonCreditsCancelledThatQualifiesAsCorrespondingAdjustment": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfContractualInstrumentsScope2GHGEmissions": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfContractualInstrumentsUsedForSaleAndPurchaseOfEnergyBundledWithAttributesAboutEnergyGenerationInRelationToScope2GHGEmissions": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfContractualInstrumentsUsedForSaleAndPurchaseOfUnbundledEnergyAttributeClaimsInRelationToScope2GHGEmissions": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfEmployeeTurnover": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfEmployeesAndOrNonemployeesPaidBelowApplicableAdequateWageBenchmark": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfEmployeesAndOrNonemployeesThatParticipatedInRegularPerformanceAndCareerDevelopmentReviews": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfEmployeesAtTopManagementLevel": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfEmployeesEntitledToTakeFamilyrelatedLeaves": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfEnergyConsumptionFromNuclearSourcesInTotalEnergyConsumption": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfEntitledEmployeesThatTookFamilyrelatedLeave": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfEstimatedShareOfPotentiallyStrandedAssetsOfTotalAssetsAtMaterialTransitionRisk": {
+            "type": "percentItemType",
+            "period_type": "instant",
+            "abstract": false
+        },
+        "esrs:PercentageOfFossilSourcesInTotalEnergyConsumption": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfFunctionsatriskCoveredByAnticorruptionAndAntibriberyTrainingProgrammes": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfGrossScope3GreenhouseGasEmissionsCalculatedUsingPrimaryDataObtainedFromSuppliersOrOtherValueChainPartners": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfIndependentBoardMembers": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfLocationBasedScope2GreenhouseGasEmissionsReductionAsOfEmissionsOfBaseYear": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfMarketBasedScope2GreenhouseGasEmissionsReductionAsOfEmissionsOfBaseYear": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfMarketbasedScope2GHGEmissionsLinkedToPurchasedElectricityBundledWithInstruments": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfMembersOfAdministrativeManagementAndSupervisoryBodies": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfNetRevenueFromBusinessActivitiesAtMaterialPhysicalRisk": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfNetRevenueFromBusinessActivitiesAtMaterialTransitionRisk": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfNetRevenueFromCustomersOperatingInCoalrelatedActivities": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfNetRevenueFromCustomersOperatingInGasrelatedActivities": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfNetRevenueFromCustomersOperatingInOilrelatedActivities": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfNetRevenueMadeWithProductsAndServicesThatAreOrThatContainSubstancesOfConcern": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfNetRevenueMadeWithProductsAndServicesThatAreOrThatContainSubstancesOfVeryHighConcern": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfNonrecycledWaste": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfOwnWorkersCoveredByHealthAndSafetyManagementSystemBasedOnLegalRequirementsAndOrRecognisedStandardsOrGuidelinesAndWhichHasBeenInternallyAuditedAndOrAuditedOrCertifiedByExternalParty": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfPaymentsAlignedWithStandardPaymentTerms": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfPeopleInOwnWorkforceWhoAreCoveredByHealthAndSafetyManagementSystemBasedOnLegalRequirementsAndOrRecognisedStandardsOrGuidelines": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfPersonsWithDisabilitiesAmongstEmployees": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfRemunerationRecognisedInCurrentPeriodThatIsLinkedToClimateRelatedConsiderations": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfRenewableSourcesInTotalEnergyConsumption": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfScope1GreenhouseGasEmissionsFromRegulatedEmissionTradingSchemes": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfScope1GreenhouseGasEmissionsReductionAsOfEmissionsOfBaseYear": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfScope3GreenhouseGasEmissionsReductionAsOfEmissionsOfBaseYear": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfSecondaryReusedOrRecycledComponentsSecondaryIntermediaryProductsAndSecondaryMaterialsUsedToManufactureProductsAndServices": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfTotalEmissionsOfPollutantsToSoilOccurringInAreasAtWaterRisk": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfTotalEmissionsOfPollutantsToSoilOccurringInAreasOfHighwaterStress": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfTotalEmissionsOfPollutantsToWaterOccurringInAreasAtWaterRisk": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfTotalEmissionsOfPollutantsToWaterOccurringInAreasOfHighwaterStress": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfTotalEmployeesCoveredByCollectiveBargainingAgreements": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfTotalGreenhouseGasEmissionsReductionAsOfEmissionsOfBaseYear": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PercentageOfVariableRemunerationDependentOnSustainabilityrelatedTargetsAndOrImpacts": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PoliciesAndProceduresWhichMakeEitherQualificationsSkillsOrExperienceBasisForRecruitmentPlacementTrainingAndOrAdvancementAtAllLevelsAreInPlace": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PoliciesExplicitlyAddressTraffickingOfHumanBeingsForcedLabourCompulsoryLabourAndOrChildLabour": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PoliciesOnAntibriberyConsistentWithUnitedNationsConventionAgainstCorruptionAreInPlace": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PoliciesOnProtectionOfWhistleblowersAreInPlace": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PoliciesOrPracticesRelatedToSustainableOceansAndSeasHaveBeenAdopted": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PoliciesRegardingProtectionAgainstRetaliationForIndividualsThatUseChannelsToRaiseConcernsOrNeedsAreInPlace": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PoliciesToAddressDeforestationHaveBeenAdopted": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PoliciesWithRespectToAnimalWelfareAreInPlace": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PolicyAddressesAvoidingIncidentsAndOrEmergencySituationsAndIfWhenTheyOccurItEitherControlsOrLimitsTheirImpactOnPeopleAndEnvironment": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PolicyAddressesCommitmentToReducingMaterialWaterConsumptionInAreasAtWaterRiskInOwnOperationsAndOrAlongUpstreamAndDownstreamValueChain": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PolicyAddressesEitherProductOrServiceDesignInViewOfAddressingWaterrelatedIssuesAndOrPreservingMarineResources": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PolicyAddressesEitherUseOrSourcingOfWaterAndOrMarineResourcesInOwnOperations": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PolicyAddressesMitigatingNegativeImpactsRelatedToPollutionOfAirWaterAndSoil": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PolicyAddressesPreventionAndOrAbatementOfWaterPollutionResultingFromActivities": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PolicyAddressesPrioritisationOfAvoidanceOrMinimisationWasteReuseRepairRefurbishRemanufactureAndRepurposeOverWasteTreatmentRecycling": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PolicyAddressesSustainableSourcingAndOrUseOfRenewableResources": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PolicyAddressesTransitioningAwayFromUseOfVirginResources": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PolicyAddressesWaterManagement": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PolicyAddressesWaterTreatmentAsStepTowardsMoreSustainableSourcingOfWater": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PolicyAvoidsImpactsOnAffectedCommunities": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PolicyContributesEitherToGoodEcologicalAndOrChemicalQualityOfSurfaceWaterBodiesOrToGoodChemicalQualityAndOrQuantityOfGroundwaterBodies": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PolicyEitherAddressesSubstitutingOrMinimisingUseOfSubstancesOfConcernAndOrPhasingOutSubstancesOfVeryHighConcern": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PolicyEitherMinimisesMaterialImpactsAndRisksOrImplementsMitigationMeasuresThatAimAtMaintainingValueAndFunctionalityOfPriorityServicesAndOrToIncreaseResourceEfficiencyInOwnOperations": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PotentialFutureLiabilitiesBasedOnExistingContractualAgreementsAssociatedWithCarbonCreditsPlannedToBeCancelledInNearFuture": {
+            "type": "monetaryItemType",
+            "period_type": "instant",
+            "abstract": false
+        },
+        "esrs:PotentialMarketSizeOfLowcarbonProductsAndServicesOrAdaptationSolutionsToWhichUndertakingHasOrMayHaveAccess": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ProceduresToInvestigateBusinessConductIncidentsPromptlyIndependentlyAndObjectivelyAreInPlace": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ProductsAndTechnicalAndBiologicalMaterialsUsed": {
+            "type": "massItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ProgramsToPromoteAccessToSkillsDevelopmentAreInPlace": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ProvisionsForEnvironmentalProtectionAndRemediationCosts": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PublicClaimsOfGHGNeutralityThatInvolveUseOfCarbonCreditsAreAccompaniedByGHGEmissionReductionTargets": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:PublicClaimsOfGHGNeutralityThatInvolveUseOfCarbonCreditsHaveBeenMade": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:RadioactiveWaste": {
+            "type": "massItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:RateOfRecordableWorkrelatedAccidents": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ReasonablyExpectedTimeHorizonsOfMaterialImpacts": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ReferenceToThirdpartyStandardsOrInitiativesThatAreRespectedThroughImplementationOfPolicy": {
+            "type": "stringItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:RemunerationRatioAdjustedForPurchasingPowerDifferencesBetweenCountries": {
+            "type": "percentItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:RenewableEnergyProduction": {
+            "type": "energyItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ResourcesCoverHigherLevelsOfResourceEfficiencyInUseOfTechnicalAndBiologicalMaterialsAndWater": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:Revenue": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:RevenueFromActivitiesInHighClimateImpactSectors": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:RevenueFromActivitiesOtherThanInHighClimateImpactSectors": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:RevenueFromBusinessActivitiesAtMaterialPhysicalRisk": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:RevenueFromBusinessActivitiesAtMaterialTransitionRisk": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:RevenueFromChemicalsProduction": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:RevenueFromCoal": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:RevenueFromControversialWeapons": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:RevenueFromCultivationAndOrProductionOfTobacco": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:RevenueFromCustomersOperatingInCoalRelatedActivities": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:RevenueFromCustomersOperatingInGasRelatedActivities": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:RevenueFromCustomersOperatingInOilRelatedActivities": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:RevenueFromFossilFuelCoalOilAndGasSector": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:RevenueFromGas": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:RevenueFromOil": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:RevenueFromTaxonomyalignedEconomicActivitiesRelatedToFossilGas": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:Reversals": {
+            "type": "ghgEmissionsItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ScenariosAreInformedByExpectationsPublishedByAuthoritativeIntergovernmentalBodiesAndOrByScientificConsensus": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ScopeOfConsolidationOfConsolidatedSustainabilityStatementIsSameAsForFinancialStatements": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:SealedArea": {
+            "type": "areaItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:SecondaryReusedOrRecycledComponentsSecondaryIntermediaryProductsAndSecondaryMaterialsUsedToManufactureProductsAndServices": {
+            "type": "massItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:SignificantCapExForCoalrelatedEconomicActivities": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:SignificantCapExForGasrelatedEconomicActivities": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:SignificantCapExForOilrelatedEconomicActivities": {
+            "type": "monetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:SpecificPoliciesAimedAtEliminationOfDiscriminationAreInPlace": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:StaffTrainingOnNondiscriminationPoliciesAndPracticesHasBeenProvided": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:SupplierCodesOfConductProvisions": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:SustainableDevelopmentGoalsWhichInitiativesOrProcessesWhosePrimaryAimIsToDeliverPositiveImpactsForPeopleInOwnWorkforceValueChainWorkersAffectedCommunitiesConsumersAndEndusersAreDesignedToSupportAchievementOf": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:SustainableLandOrAgriculturePracticesOrPoliciesHaveBeenAdopted": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:SustainableOceansOrSeasPracticesOrPoliciesHaveBeenAdopted": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:TargetAddressesShortcomingsRelatedToSubstantialContributionCriteriaForBiodiversity": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:TargetAddressesShortcomingsRelatedToSubstantialContributionCriteriaForPollutionPreventionAndControl": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:TargetIsInformedByAndOrAlignedWithRelevantAspectsOfEuBiodiversityStrategyFor2030": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:TargetIsMandatoryRequiredByLegislation": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:TargetRelatedToEnvironmentalMattersIsBasedOnConclusiveScientificEvidence": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:TargetRelatesToEitherPreventionOrControlOfEmissionsToWaterAndOrToRespectiveSpecificLoads": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:TargetRelatesToEitherPreventionOrControlOfPollutionToSoilAndOrToRespectiveSpecificLoads": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:TargetRelatesToIncreaseOfCircularMaterialUseRate": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:TargetRelatesToIncreaseOfCircularProductDesign": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:TargetRelatesToManagementOfMaterialImpactsRisksAndOpportunitiesRelatedToAreasAtWaterRiskIncludingImprovementOfWaterQuality": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:TargetRelatesToMinimisationOfPrimaryRawMaterial": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:TargetRelatesToPreventionAndControlOfAirPollutantsAndRespectiveSpecificLoads": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:TargetRelatesToReductionOfWaterConsumptionIncludingInAreasAtWaterRiskAndOrInAreasOfHighWaterstress": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:TargetRelatesToReductionOfWaterDischarges": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:TargetRelatesToReductionOfWaterWithdrawals": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:TargetRelatesToResponsibleManagementOfMarineResourcesImpactsRisksAndOpportunitiesIncludingNatureAndOrQuantityOfMarineResourcesrelatedCommoditiesUsedByUndertaking": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:TargetRelatesToSustainableSourcingAndOrUseOfRenewableResources": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ThirdpartyStandardOfConductUsedInPolicyConformsToIsealCodeOfGoodPractice": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ThirdpartyStandardOfConductUsedInPolicyEncouragesStepwiseApproachAndContinuousImprovementInStandardAndItsApplicationOfBetterManagementPracticesAndRequiresEstablishmentOfMeaningfulTargetsAndSpecificMilestonesToIndicateProgressAgainstPrinciplesAndCriteriaOverTime": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ThirdpartyStandardOfConductUsedInPolicyIsEitherDevelopedOrMaintainedThroughProcessOfOngoingConsultationWithRelevantStakeholdersWithBalancedInputFromAllRelevantStakeholderGroupsAndNoGroupHoldingUndueAuthorityAndOrVetoPowerOverContent": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ThirdpartyStandardOfConductUsedInPolicyIsEitherObjectiveAndAchievableBasedOnScientificApproachToIdentifyingIssuesOrRealisticInAssessingHowTheseIssuesCanBeAddressedUnderVarietyOfPracticalCircumstances": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:ThirdpartyStandardOfConductUsedInPolicyIsVerifiableThroughIndependentCertifyingOrVerifyingBodiesWhichHaveDefinedAndRigorousAssessmentProceduresThatAvoidConflictsOfInterestAndAreCompliantWithIsoGuidanceOnAccreditationAndVerificationProceduresOrArticle52OfRegulationEcNo765NO2008": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:TimeHorizonsAppliedForResilienceAnalysis": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:TimeHorizonsUnderWhichKeyActionIsToBeCompleted": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:TopicHasBeenAssessedToBeMaterialPhasein": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:TransitionEventsHaveBeenIdentifiedEitherOverShortMediumOrLongtermTimeHorizons": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:TypeOfExternalBodyOtherThanAssuranceProviderThatProvidesValidationExplanatory": {
+            "type": "textBlockItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:TypeOfInternalCarbonPricingSchemeAxis": {
+            "type": "stringItemType",
+            "period_type": "duration",
+            "abstract": true
+        },
+        "esrs:TypesOfCarbonCreditsFromRemovalProjects": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:TypesOfClimaterelatedRisks": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:TypesOfCommunitiesSubjectToMaterialImpactsByOwnOperationsOrThroughUpstreamAndDownstreamValueChain": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:TypesOfConsumersAndEndusersSubjectToMaterialImpactsByOwnOperationsOrThroughValueChain": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:TypesOfInternalCarbonPricingScheme": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:TypesOfValueChainWorkersSubjectToMaterialImpacts": {
+            "type": "enumerationSetItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:UndertakingAssignsResponsibilityAtTopManagementLevelForEqualTreatmentAndOpportunitiesInEmploymentIssueClearCompanywidePoliciesAndProceduresToGuideEqualEmploymentPracticesAndOrLinksAdvancementToDesiredPerformanceInThisArea": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:UndertakingEvaluatesWhetherJobRequirementsHaveBeenDefinedInWayThatCouldSystematicallyDisadvantageCertainGroups": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:UndertakingHasScreenedWhetherAssetsAndOrBusinessActivitiesMayBeExposedToClimaterelatedHazards": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:UndertakingHasScreenedWhetherAssetsAndOrBusinessActivitiesMayBeExposedToTransitionEvents": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:UndertakingHasSitesLocatedInOrNearBiodiversitysensitiveAreas": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:UndertakingHasSupplierCodeOfConduct": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:UndertakingIsActiveInChemicalsProduction": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:UndertakingIsActiveInControversialWeapons": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:UndertakingIsActiveInCultivationAndOrProductionOfTobacco": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:UndertakingIsActiveInFossilFuelCoalOilAndGasSector": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:UndertakingIsExcludedFromEUParisalignedBenchmarks": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:UndertakingIsLegallyObligedToBeMemberOfChamberOfCommerceOrOtherOrganisationThatRepresentsItsInterests": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:UndertakingIsSubjectToLegalRequirementsUnderNationalLawTransposingDirectiveEU2019NO1937OrToEquivalentLegalRequirementsWithRegardToProtectionOfWhistleblowers": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:UndertakingPutsInPlaceGrievanceProceduresToAddressComplaintsHandleAppealsAndProvideRecourseForEmployeesWhenDiscriminationIsIdentifiedAndIsAlertToFormalStructuresAndInformalCulturalIssuesThatCanPreventEmployeesFromRaisingConcernsAndGrievances": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:UptodateRecordsOnRecruitmentTrainingAndPromotionThatProvideTransparentViewOfOpportunitiesForEmployeesAndTheirProgressionWithinUndertakingHaveBeenKept": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:UseOfLandArea": {
+            "type": "areaItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:WasteGenerated": {
+            "type": "massItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:WasteGeneratedDirectedToDisposal": {
+            "type": "massItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:WasteGeneratedDivertedFromDisposal": {
+            "type": "massItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:WaterConsumption": {
+            "type": "volumeItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:WaterConsumptionInAreasOfHighwaterStress": {
+            "type": "volumeItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:WaterDischarges": {
+            "type": "volumeItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:WaterIntensityTotalWaterConsumptionPerNetRevenue": {
+            "type": "volumePerMonetaryItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:WaterRecycledAndReused": {
+            "type": "volumeItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:WaterStored": {
+            "type": "volumeItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:WaterWithdrawals": {
+            "type": "volumeItemType",
+            "period_type": "duration",
+            "abstract": false
+        },
+        "esrs:WorkplaceAccidentPreventionPolicyOrManagementSystemAreInPlace": {
+            "type": "booleanItemType",
+            "period_type": "duration",
+            "abstract": false
+        }
+    }
+}

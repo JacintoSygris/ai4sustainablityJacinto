@@ -16,7 +16,7 @@ El resumen puede incluir identificación de la organización, ejercicio, código
 - **Resumen JSON**: estado de preparación, cobertura y trazabilidad técnica.
 - **Paquete HTML**: resumen imprimible de preparación, temas y cobertura.
 - **Informe XBRL, informe DOCX y paquete de evidencias**: salidas de la versión aprobada que contienen las respuestas completadas en el paso 5 (con su tipo y unidad). El informe XBRL es un documento Inline XBRL con el mismo diseño que el resto de salidas: portada con empresa, periodo y LEI, capítulos y requisitos de información con su código ESRS, y una tarjeta por dato con código, pregunta y respuesta. Las cifras llevan la etiqueta `ix:nonFraction` (la unidad `pure` solo viaja en la etiqueta, no se muestra) y las narrativas cuyo concepto admite texto llevan `ix:nonNumeric`. Se puede abrir en el navegador o descargar; las referencias de evidencia no se imprimen.
-- **Candidato XHTML/iXBRL**: salida técnica protegida, no ofrecida como descarga ordinaria. Requiere snapshot aprobado, datos compatibles, LEI, taxonomía EFRAG externa y validación Arelle.
+- **Requisitos del informe XBRL**: versión aprobada vigente, datos compatibles, LEI y fechas del periodo, taxonomía EFRAG (se aprovisiona sola) y validación con Arelle, que tarda entre 30 y 60 segundos. Se etiquetan cifras, narrativas, booleanos, fechas y años cuyo concepto ESRS es uno a uno; los datos de enumeración, los que exigen dimensiones o periodo futuro y los sin concepto se muestran sin etiqueta.
 
 ## Respuestas y versión del informe
 

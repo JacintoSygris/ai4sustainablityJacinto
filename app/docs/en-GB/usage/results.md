@@ -16,7 +16,7 @@ The summary may include organisation identification, reporting year, activity co
 - **Summary JSON**: preparation status, coverage and technical traceability.
 - **HTML package**: printable preparation, topic and coverage summary.
 - **XBRL report, DOCX report and evidence bundle**: approved-version outputs containing the answers completed in step 5 (with their type and unit). The XBRL report is an Inline XBRL document with the same design as the other outputs: a cover with company, period and LEI, chapters and disclosure requirements with their ESRS code, and one card per datapoint with code, question and answer. Figures carry `ix:nonFraction` tags (the `pure` unit travels only in the tag and is not displayed) and narratives whose concept accepts text carry `ix:nonNumeric`. It can be opened in the browser or downloaded; evidence references are not printed.
-- **XHTML/iXBRL candidate**: protected technical output, not offered as an ordinary download. It requires an approved snapshot, compatible data, LEI, external EFRAG taxonomy and Arelle validation.
+- **XBRL report requirements**: a current approved version, compatible data, LEI and period dates, the EFRAG taxonomy (provisioned automatically) and Arelle validation, which takes 30 to 60 seconds. Figures, narratives, booleans, dates and years whose ESRS concept maps one-to-one are tagged; enumerations, datapoints that need dimensions or a future period, and unmapped datapoints are shown untagged.
 
 ## Answers and report version
 

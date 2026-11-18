@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Services\Report\XbrlConceptMap;
 use App\Http\Controllers\Api\DoubleMaterialityGuideController;
 use App\Http\Controllers\Api\EsrsDatapointController;
 use App\Http\Controllers\Api\MaterialityConfirmationController;
@@ -259,6 +260,25 @@ final class DemoCompanyBuilder
         $responses = [];
         $counts = ['total' => 0, 'completed' => 0, 'typed' => 0, 'not_applicable' => 0];
 
+        // Datapoints sharing one XBRL concept must carry one value, or the iXBRL
+        // candidate refuses the report as a duplicate-fact conflict. Curated figures
+        // claim their concept first; generated answers reuse them.
+        $conceptValues = [];
+        $conceptUses = [];
+        foreach ($corpus['blocks'] ?? [] as $block) {
+            foreach ($block['datapoints'] ?? [] as $datapoint) {
+                $id = $datapoint['id'];
+                $concept = $this->concept($id);
+                if ($concept === null) {
+                    continue;
+                }
+                $conceptUses[$concept] = ($conceptUses[$concept] ?? 0) + 1;
+                if (isset($company['figures'][$id], $typedFigures[$id]) && ! isset($company['not_applicable'][$id])) {
+                    $conceptValues[$concept] ??= ['value' => (string) $company['figures'][$id]] + $typedFigures[$id];
+                }
+            }
+        }
+
         foreach ($corpus['blocks'] ?? [] as $block) {
             foreach ($block['datapoints'] ?? [] as $datapoint) {
                 $id = $datapoint['id'];
@@ -275,6 +295,17 @@ final class DemoCompanyBuilder
                         'value' => (string) $company['figures'][$id], 'value_type' => $typed['value_type'], 'unit' => $typed['unit'], 'decimals' => $typed['decimals'],
                         'evidence_reference' => $this->pick($company['documents'], $id, 0),
                         'note' => $this->figureNote($id, (string) $company['figures'][$id], $typed['unit'], $company),
+                    ];
+                    $counts['typed']++;
+                    $counts['completed']++;
+                    continue;
+                }
+                $typed = $this->typedAnswer($id, $company, $conceptValues, $conceptUses);
+                if ($typed !== null) {
+                    $responses[] = [
+                        'datapoint_id' => $id, 'status' => 'completed', 'triage' => 'have_it',
+                        'value' => $typed['value'], 'value_type' => $typed['value_type'], 'unit' => $typed['unit'], 'decimals' => $typed['decimals'],
+                        'evidence_reference' => $this->pick($company['documents'], $id, 0),
                     ];
                     $counts['typed']++;
                     $counts['completed']++;
@@ -353,6 +384,81 @@ final class DemoCompanyBuilder
     private function pick(array $pool, string $seed, int $offset): string
     {
         return $pool[(crc32($seed) + $offset) % max(count($pool), 1)];
+    }
+
+    /** @var array<string, array{type: string, period_type: string, abstract: bool}> */
+    private array $conceptTypes = [];
+
+    private ?XbrlConceptMap $conceptMap = null;
+
+    /** Official ESRS concept of a datapoint, when the mapping is one-to-one and needs no extra context. */
+    private function concept(string $datapointId): ?string
+    {
+        $this->conceptMap ??= new XbrlConceptMap;
+        $mapped = $this->conceptMap->conceptFor($datapointId);
+        if (! is_array($mapped) || ($mapped['taggable_state'] ?? null) !== 'mapped' || ($mapped['required_context'] ?? []) !== []) {
+            return null;
+        }
+
+        return is_string($mapped['concept_id'] ?? null) ? $mapped['concept_id'] : null;
+    }
+
+    /**
+     * Answer a datapoint with the value type its XBRL concept expects (boolean, percent,
+     * money, count, tonnes, dates...) so the iXBRL candidate can tag it. Narratives,
+     * enumerations and unmapped datapoints keep their text answer.
+     *
+     * @param  array<string, array{value: string, value_type: string, unit: ?string, decimals: ?int}>  $conceptValues
+     * @param  array<string, int>  $conceptUses
+     * @return array{value: string, value_type: string, unit: ?string, decimals: ?int}|null
+     */
+    private function typedAnswer(string $datapointId, array $company, array &$conceptValues, array $conceptUses): ?array
+    {
+        $concept = $this->concept($datapointId);
+        if ($concept === null) {
+            return null;
+        }
+        if ($this->conceptTypes === []) {
+            $this->conceptTypes = json_decode(file_get_contents(base_path('data/esrs_concept_types_v1.json')), true, 512, JSON_THROW_ON_ERROR)['concepts'];
+        }
+        $type = $this->conceptTypes[$concept]['type'] ?? null;
+        $seed = crc32($company['email'].'|'.$concept);
+        $year = (int) $company['profile']['reporting_year'];
+        $revenue = (float) ($company['operations']['revenue'] ?? 1000000);
+        $employees = (int) ($company['operations']['employee_count'] ?? 100);
+        $n = fn (int $min, int $max): int => $min + ($seed % max($max - $min, 1));
+        $quantity = fn (string $unit, int $min, int $max): array => ['value' => (string) $n($min, $max), 'value_type' => 'number', 'unit' => $unit, 'decimals' => 0];
+
+        // The iXBRL candidate refuses two datapoints with numeric facts on one concept (current vs
+        // future values look alike); shared numeric concepts stay narrative so the report renders.
+        $numericTypes = ['percentItemType', 'monetaryItemType', 'integerItemType', 'decimalItemType', 'ghgEmissionsItemType', 'energyItemType', 'massItemType', 'volumeItemType', 'areaItemType'];
+        if (in_array($type, $numericTypes, true) && ($conceptUses[$concept] ?? 1) > 1) {
+            return null;
+        }
+        if (isset($conceptValues[$concept])) {
+            return $conceptValues[$concept];
+        }
+
+        $answer = match ($type) {
+            'booleanItemType' => ['value' => $seed % 5 === 0 ? 'false' : 'true', 'value_type' => 'boolean', 'unit' => null, 'decimals' => null],
+            'percentItemType' => ['value' => $n(4, 96).'.'.(($seed >> 4) % 10), 'value_type' => 'number', 'unit' => '%', 'decimals' => 1],
+            'monetaryItemType' => ['value' => (string) (int) (round($revenue * (($seed % 90) + 5) / 1000 / 1000) * 1000), 'value_type' => 'monetary', 'unit' => 'EUR', 'decimals' => 0],
+            'integerItemType' => ['value' => (string) $n(1, max($employees, 10)), 'value_type' => 'integer', 'unit' => 'pure', 'decimals' => 0],
+            'decimalItemType' => ['value' => number_format($n(1, 5000) / 10, 2, '.', ''), 'value_type' => 'number', 'unit' => 'pure', 'decimals' => 2],
+            'ghgEmissionsItemType' => $quantity('tCO2e', 10, 4000),
+            'energyItemType' => $quantity('MWh', 120, 9000),
+            'massItemType' => $quantity('t', 2, 900),
+            'volumeItemType' => $quantity('m3', 50, 60000),
+            'areaItemType' => $quantity('ha', 1, 400),
+            'dateItemType' => ['value' => sprintf('%04d-%02d-%02d', $year, 1 + $seed % 12, 1 + ($seed >> 4) % 28), 'value_type' => 'date', 'unit' => null, 'decimals' => null],
+            'gYearItemType' => ['value' => (string) ($year - 2 - $seed % 4), 'value_type' => 'date', 'unit' => null, 'decimals' => null],
+            default => null,
+        };
+        if ($answer !== null) {
+            $conceptValues[$concept] = $answer;
+        }
+
+        return $answer;
     }
 
     private function figureNote(string $id, string $value, string $unit, array $company): string
