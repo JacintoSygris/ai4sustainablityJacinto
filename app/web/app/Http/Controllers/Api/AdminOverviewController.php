@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Characterization;
+use App\Models\ReportAuditEvent;
 use App\Models\ReportSnapshot;
 use App\Models\User;
 use App\Services\AiUsefulnessReport;
@@ -14,10 +15,13 @@ use App\Support\DoubleMaterialityProcessState;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 /**
- * Read-only overview for platform administrators (see PlatformAdmin): every
- * account's progress and report links, plus the AI usefulness report.
+ * Overview for platform administrators (see PlatformAdmin): every account's
+ * progress and report links, the AI usefulness report, and the deletion of an
+ * account's report so the company can start the wizard again.
  */
 class AdminOverviewController extends Controller
 {
@@ -99,6 +103,48 @@ class AdminOverviewController extends Controller
         abort_unless($path !== null, 404, __('No walkthrough video is stored for this account.'));
 
         return response()->download($path, DemoVideoStore::downloadName($account), ['Content-Type' => 'video/webm']);
+    }
+
+    /**
+     * Deletes everything an account entered in the six steps (initial survey, AI
+     * proposal and review, acta, confirmed topics, step 5 answers, documents) and
+     * every report version with its approvals. The account itself stays and can
+     * start the wizard again. Audit events keep a trace with the ids nulled.
+     */
+    public function destroyReport(Request $request, int $user)
+    {
+        $this->authorizeAdmin($request);
+
+        $account = User::query()->findOrFail($user);
+        $characterizations = Characterization::forUser($account->id)->orderBy('id')->get();
+        abort_if($characterizations->isEmpty(), 404, __('This account has no report to delete.'));
+
+        $snapshotIds = ReportSnapshot::query()->where('user_id', $account->id)->pluck('id')->all();
+        $admin = $request->user();
+
+        DB::transaction(function () use ($characterizations, $account, $admin, $snapshotIds): void {
+            ReportAuditEvent::create([
+                'user_id' => $account->id,
+                'event_type' => 'report_deleted_by_admin',
+                'payload' => [
+                    'admin_user_id' => $admin->id,
+                    'admin_email' => $admin->email,
+                    'characterization_ids' => $characterizations->pluck('id')->all(),
+                    'snapshot_ids' => $snapshotIds,
+                ],
+            ]);
+            // Model deletes (not a bulk query) so the document hooks run; versions,
+            // approvals, facts and learning rows cascade from the characterization.
+            $characterizations->each->delete();
+        });
+
+        Log::info('Admin deleted an account report', ['admin_user_id' => $admin->id, 'user_id' => $account->id, 'characterizations' => $characterizations->count(), 'snapshots' => count($snapshotIds)]);
+
+        return response()->json(['data' => [
+            'user_id' => $account->id,
+            'deleted_characterizations' => $characterizations->count(),
+            'deleted_snapshots' => count($snapshotIds),
+        ]]);
     }
 
     public function aiUsefulness(Request $request)

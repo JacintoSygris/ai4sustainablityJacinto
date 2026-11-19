@@ -219,3 +219,58 @@ it('serves a stored walkthrough video to administrators only', function () {
         @unlink($directory.'/'.$slug.'.webm');
     }
 });
+
+it('lets administrators delete an account report while keeping the account', function () {
+    $characterization = completedProposal($this->client, [$this->t1->id, $this->t2->id]);
+    $snapshot = \App\Models\ReportSnapshot::query()->create([
+        'user_id' => $this->client->id,
+        'characterization_id' => $characterization->id,
+        'profile_id' => 'esrs-2023-preparatory-v1',
+        'profile_hash' => str_repeat('a', 64),
+        'facts_hash' => str_repeat('b', 64),
+        'characterization_hash' => str_repeat('c', 64),
+        'snapshot_hash' => str_repeat('d', 64),
+        'source_manifest' => [],
+        'snapshot_json' => ['facts' => []],
+        'stale_state' => 'fresh',
+        'stale_reasons' => [],
+    ]);
+    \App\Models\ReportApproval::query()->create([
+        'report_snapshot_id' => $snapshot->id,
+        'user_id' => $this->client->id,
+        'role_mode' => 'single_person_declared',
+        'preparer_user_id' => $this->client->id,
+        'reviewer_user_id' => $this->client->id,
+        'approver_user_id' => $this->client->id,
+        'single_person_declaration' => 'Declaro.',
+        'snapshot_hash' => $snapshot->snapshot_hash,
+        'approved_at' => now(),
+    ]);
+
+    // Ordinary users and guests cannot delete anything, not even their own report through this route.
+    $this->actingAs($this->client)->deleteJson('/api/admin/users/'.$this->client->id.'/report')->assertForbidden();
+    expect(in_array($this->deleteJson('/api/admin/users/'.$this->client->id.'/report')->getStatusCode(), [401, 403], true))->toBeTrue();
+    expect(Characterization::forUser($this->client->id)->count())->toBe(1);
+
+    $this->actingAs($this->admin)->deleteJson('/api/admin/users/'.$this->client->id.'/report')
+        ->assertOk()
+        ->assertJsonPath('data.user_id', $this->client->id)
+        ->assertJsonPath('data.deleted_characterizations', 1)
+        ->assertJsonPath('data.deleted_snapshots', 1);
+
+    expect(Characterization::forUser($this->client->id)->count())->toBe(0)
+        ->and(\App\Models\ReportSnapshot::query()->where('user_id', $this->client->id)->count())->toBe(0)
+        ->and(\App\Models\ReportApproval::query()->where('user_id', $this->client->id)->count())->toBe(0)
+        ->and(User::query()->whereKey($this->client->id)->exists())->toBeTrue();
+
+    $event = \App\Models\ReportAuditEvent::query()->where('event_type', 'report_deleted_by_admin')->sole();
+    expect($event->user_id)->toBe($this->client->id)
+        ->and($event->payload['admin_user_id'])->toBe($this->admin->id)
+        ->and($event->payload['snapshot_ids'])->toBe([$snapshot->id]);
+
+    // The overview now shows the account without a survey, and a second delete has nothing to remove.
+    $users = collect($this->actingAs($this->admin)->getJson('/api/admin/users')->assertOk()->json('data.users'))->keyBy('id');
+    expect($users[$this->client->id]['characterization'])->toBeNull();
+    $this->actingAs($this->admin)->deleteJson('/api/admin/users/'.$this->client->id.'/report')->assertNotFound();
+    $this->actingAs($this->admin)->deleteJson('/api/admin/users/999999/report')->assertNotFound();
+});

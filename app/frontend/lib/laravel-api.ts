@@ -1400,6 +1400,20 @@ export function getLaravelAdminUsers(
   return laravelApi<LaravelApiEnvelope<LaravelAdminUsers>>("/admin/users", { ...options, method: "GET" })
 }
 
+export type LaravelAdminReportDeletion = {
+  user_id: number
+  deleted_characterizations: number
+  deleted_snapshots: number
+}
+
+/** Deletes an account's whole report (six steps and every version); the account stays. Administrators only. */
+export function deleteLaravelAdminUserReport(
+  userId: number,
+  options: Omit<LaravelApiOptions, "body" | "method"> = {},
+): Promise<LaravelApiEnvelope<LaravelAdminReportDeletion>> {
+  return laravelApi<LaravelApiEnvelope<LaravelAdminReportDeletion>>(`/admin/users/${userId}/report`, { ...options, method: "DELETE" })
+}
+
 export function getLaravelAdminAiUsefulness(
   options: Omit<LaravelApiOptions, "body" | "method"> = {},
 ): Promise<LaravelApiEnvelope<LaravelAiUsefulnessReport>> {

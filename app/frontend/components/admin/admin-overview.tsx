@@ -3,15 +3,17 @@
 import type React from "react"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { AlertCircle, CheckCircle2, Circle, Download, ExternalLink, FileText, ShieldCheck, Video } from "lucide-react"
+import { AlertCircle, AlertTriangle, CheckCircle2, Circle, Download, ExternalLink, FileText, ShieldCheck, Trash2, Video } from "lucide-react"
 
 import { useLocale } from "@/components/locale-provider"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { ui, formatUi } from "@/lib/i18n/messages.mjs"
 import { useSystemMessage, systemCopy } from "@/lib/i18n/use-system-message"
 import {
   LaravelApiError,
+  deleteLaravelAdminUserReport,
   getLaravelAdminAiUsefulness,
   getLaravelAdminUsers,
   laravelApiUrl,
@@ -67,6 +69,8 @@ export function AdminOverview() {
   const [users, setUsers] = useState<LaravelAdminUsers | null>(null)
   const [report, setReport] = useState<LaravelAiUsefulnessReport | null>(null)
   const [errorMessage, setErrorMessage] = useSystemMessage(null)
+  const [noticeMessage, setNoticeMessage] = useState<string | null>(null)
+  const [reloadToken, setReloadToken] = useState(0)
 
   useEffect(() => {
     let mounted = true
@@ -100,7 +104,13 @@ export function AdminOverview() {
     return () => {
       mounted = false
     }
-  }, [router])
+  }, [router, reloadToken])
+
+  // After a report is deleted, both sections (accounts and AI usefulness) are stale: reload them.
+  const handleReportDeleted = (displayName: string) => {
+    setNoticeMessage(formatUi(locale, "Informe de {0} borrado.", [displayName]))
+    setReloadToken((token) => token + 1)
+  }
 
   return (
     <div className="space-y-8">
@@ -123,12 +133,18 @@ export function AdminOverview() {
         </div>
       ) : null}
 
+      {noticeMessage ? (
+        <div role="status" className="rounded-md border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
+          {noticeMessage}
+        </div>
+      ) : null}
+
       {loading ? (
         <div className="rounded-lg border border-border p-6 text-sm text-muted-foreground">{tr("Cargando administración...")}</div>
       ) : null}
 
       {report ? <AiUsefulnessSection report={report} locale={locale} /> : null}
-      {users ? <UsersSection users={users.users} locale={locale} /> : null}
+      {users ? <UsersSection users={users.users} locale={locale} onReportDeleted={handleReportDeleted} /> : null}
     </div>
   )
 }
@@ -329,8 +345,27 @@ function ProgressChip({ done, label }: { done: boolean; label: string }) {
   )
 }
 
-function UsersSection({ users, locale }: { users: LaravelAdminUser[]; locale: Locale }) {
+function UsersSection({ users, locale, onReportDeleted }: { users: LaravelAdminUser[]; locale: Locale; onReportDeleted: (displayName: string) => void }) {
   const tr = (message: string) => ui(locale, message)
+  const [pendingDeletion, setPendingDeletion] = useState<LaravelAdminUser | null>(null)
+  const [deleting, setDeleting] = useState(false)
+  const [deletionError, setDeletionError] = useState<string | null>(null)
+  const pendingName = pendingDeletion ? pendingDeletion.characterization?.company_name || pendingDeletion.name || pendingDeletion.email : ""
+
+  const handleConfirmDeletion = async () => {
+    if (!pendingDeletion) return
+    setDeleting(true)
+    setDeletionError(null)
+    try {
+      await deleteLaravelAdminUserReport(pendingDeletion.id)
+      setPendingDeletion(null)
+      onReportDeleted(pendingName)
+    } catch (error) {
+      setDeletionError(error instanceof LaravelApiError && error.message ? error.message : tr("No se ha podido borrar el informe."))
+    } finally {
+      setDeleting(false)
+    }
+  }
 
   return (
     <section aria-labelledby="users-title" className="space-y-3">
@@ -348,16 +383,42 @@ function UsersSection({ users, locale }: { users: LaravelAdminUser[]; locale: Lo
           </thead>
           <tbody>
             {users.map((user) => (
-              <UserRow key={user.id} user={user} locale={locale} />
+              <UserRow key={user.id} user={user} locale={locale} onDeleteReport={() => { setDeletionError(null); setPendingDeletion(user) }} />
             ))}
           </tbody>
         </table>
       </div>
+
+      <Dialog open={pendingDeletion !== null} onOpenChange={(open) => (!open && !deleting ? setPendingDeletion(null) : null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-amber-500" aria-hidden="true" />
+              {formatUi(locale, "Borrar el informe de {0}", [pendingName])}
+            </DialogTitle>
+            <DialogDescription>
+              {formatUi(locale, "Se borrarán la encuesta inicial, la propuesta de la IA y su revisión, el acta, los temas confirmados, las respuestas del paso 5, los documentos y todas las versiones del informe de {0}. La cuenta se conserva y podrá empezar el asistente de nuevo. Esta acción no se puede deshacer.", [pendingName])}
+            </DialogDescription>
+          </DialogHeader>
+          {deletionError ? (
+            <p role="alert" className="text-sm text-destructive">{deletionError}</p>
+          ) : null}
+          <DialogFooter className="flex-row justify-end gap-2 sm:gap-0">
+            <Button variant="ghost" disabled={deleting} onClick={() => setPendingDeletion(null)}>
+              {tr("Cancelar")}
+            </Button>
+            <Button variant="destructive" disabled={deleting} onClick={handleConfirmDeletion}>
+              <Trash2 className="h-4 w-4" aria-hidden="true" />
+              {deleting ? tr("Borrando...") : tr("Borrar informe")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </section>
   )
 }
 
-function UserRow({ user, locale }: { user: LaravelAdminUser; locale: Locale }) {
+function UserRow({ user, locale, onDeleteReport }: { user: LaravelAdminUser; locale: Locale; onDeleteReport: () => void }) {
   const tr = (message: string) => ui(locale, message)
   const displayName = user.name || user.email
   const characterization = user.characterization
@@ -448,6 +509,15 @@ function UserRow({ user, locale }: { user: LaravelAdminUser; locale: Locale }) {
                 {tr("Vídeo del recorrido")}
               </a>
             ) : null}
+            <button
+              type="button"
+              className="inline-flex items-center gap-1 text-sm text-destructive hover:underline"
+              onClick={onDeleteReport}
+              aria-label={formatUi(locale, "Borrar el informe de {0}", [displayName])}
+            >
+              <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+              {tr("Borrar informe")}
+            </button>
           </div>
         ) : (
           <span className="text-xs text-muted-foreground">—</span>

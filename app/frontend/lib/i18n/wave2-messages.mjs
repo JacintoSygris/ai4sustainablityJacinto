@@ -1,6 +1,13 @@
 // Reviewed application copy only. Never pass user-authored content through this catalogue.
 export const wave2English = {
   "Vídeo del recorrido": "Walkthrough video",
+  // Admin: delete an account's report
+  "Borrar informe": "Delete report",
+  "Borrar el informe de {0}": "Delete the report of {0}",
+  "Se borrarán la encuesta inicial, la propuesta de la IA y su revisión, el acta, los temas confirmados, las respuestas del paso 5, los documentos y todas las versiones del informe de {0}. La cuenta se conserva y podrá empezar el asistente de nuevo. Esta acción no se puede deshacer.": "The initial survey, the AI proposal and its review, the minutes, the confirmed topics, the step 5 answers, the documents and every report version of {0} will be deleted. The account stays and can start the wizard again. This action cannot be undone.",
+  "Borrando...": "Deleting...",
+  "Informe de {0} borrado.": "Report of {0} deleted.",
+  "No se ha podido borrar el informe.": "The report could not be deleted.",
   "Descargar el vídeo del recorrido de {0}": "Download the walkthrough video of {0}",
   // Step 5 typed answers and step 6 report content derived from them
   "Tipo de dato": "Data type",
