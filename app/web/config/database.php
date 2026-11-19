@@ -37,10 +37,12 @@ return [
             'database' => env('DB_DATABASE', database_path('database.sqlite')),
             'prefix' => '',
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
-            'busy_timeout' => null,
-            'journal_mode' => null,
-            'synchronous' => null,
-            'transaction_mode' => 'DEFERRED',
+            // Several processes write to the same file (web, queue worker, artisan
+            // commands): wait for the lock instead of failing with "database is locked".
+            'busy_timeout' => (int) env('DB_SQLITE_BUSY_TIMEOUT', 10000),
+            'journal_mode' => env('DB_SQLITE_JOURNAL_MODE', 'wal'),
+            'synchronous' => env('DB_SQLITE_SYNCHRONOUS', 'normal'),
+            'transaction_mode' => env('DB_SQLITE_TRANSACTION_MODE', 'IMMEDIATE'),
         ],
 
         'mysql' => [
