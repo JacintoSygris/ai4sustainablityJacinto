@@ -6,6 +6,9 @@ overrides:
   nanoid@3: ^3.3.18
   browserslist: ^4.28.7
   baseline-browser-mapping@2: ^2.11.0
+  source-map-js: ^1.2.2
+  zod: ^4.6.6
+  minimatch@10: ^11.0.1
 
 allowBuilds:
   sharp: true
