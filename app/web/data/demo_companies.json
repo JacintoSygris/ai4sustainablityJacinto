@@ -696,6 +696,1803 @@
         "Política anticorrupción y registro de actividades de lobby 2025",
         "Plan de formación 2025 (RRHH)"
       ]
+    },
+    {
+      "email": "test6@airis.com",
+      "name": "Construcciones Levantinas Puig, S.A.",
+      "contact": "Vicente Puig",
+      "sector_phrase": "la construcción de edificios no residenciales (naves logísticas, centros educativos y sanitarios) en la Comunidad Valenciana y Murcia",
+      "city": "Valencia",
+      "nace_code": "F41.0.2",
+      "lei": "959800CLPUIGOBRAS085",
+      "profile": {
+        "headquarters_country": "Spain",
+        "reporting_year": 2025,
+        "reporting_scope": "individual",
+        "num_subsidiaries_countries": 0,
+        "stock_listed": false,
+        "reporting_currency": "EUR",
+        "product_service_type": "construction_installations",
+        "reporting_period_start": "2025-01-01",
+        "reporting_period_end": "2025-12-31"
+      },
+      "operations": {
+        "regions": [
+          "eu"
+        ],
+        "value_chain": [
+          "upstream",
+          "direct_operations"
+        ],
+        "employee_count_range": "250_499",
+        "revenue_range": "50m_to_250m",
+        "employee_count": 380,
+        "revenue": 61200000
+      },
+      "activity_questions": {
+        "physical_operations": "yes",
+        "water_use": "yes",
+        "hazardous_substances": "yes",
+        "biodiversity_sensitive_locations": "no",
+        "physical_goods_resources": "yes",
+        "external_value_chain_workers": "yes",
+        "local_communities": "yes",
+        "consumer_end_users": "no",
+        "international_footprint": "no"
+      },
+      "topics": {
+        "unsure": [
+          1
+        ],
+        "reject": [
+          15,
+          74
+        ],
+        "add": [
+          2,
+          25,
+          27,
+          35,
+          45,
+          52,
+          87
+        ],
+        "notes": {
+          "15": "Sin actividad relacionada con recursos marinos.",
+          "74": "No se tratan datos de consumidores finales: los clientes son promotores y administraciones."
+        }
+      },
+      "acta": {
+        "completed_on": "2026-02-10",
+        "method": "Taller con dirección, jefes de obra, compras y prevención; encuesta a 34 subcontratas y a los ayuntamientos con obra en curso",
+        "participants": "Dirección general, dirección técnica, compras, prevención de riesgos, RRHH, delegados de prevención"
+      },
+      "figures": {
+        "GOV-1_01": "2",
+        "GOV-1_02": "3",
+        "GOV-1_05": "20",
+        "GOV-1_06": "20",
+        "GOV-1_07": "20",
+        "GOV-3_05": "10",
+        "SBM-1_03": "380",
+        "SBM-1_04": "380",
+        "SBM-1_06": "61200000",
+        "SBM-1_10": "0",
+        "SBM-1_16": "0",
+        "E1-1_05": "210000",
+        "E1-1_06": "1450000",
+        "E1-5_01": "9800",
+        "E1-5_02": "7900",
+        "E1-5_05": "1900",
+        "E1-5_07": "1900",
+        "E1-5_09": "19.4",
+        "E1-5_15": "80.6",
+        "E1-5_22": "61200000",
+        "E1-5_23": "0",
+        "E1-6_25": "25",
+        "E1-6_34": "61200000",
+        "E1-7_10": "0",
+        "E1.GOV-3_02": "5"
+      },
+      "not_applicable": {
+        "SBM-1_11": "No aplica: la empresa no obtiene ingresos del carbón.",
+        "SBM-1_12": "No aplica: la empresa no obtiene ingresos del petróleo.",
+        "SBM-1_13": "No aplica: la empresa no obtiene ingresos del gas.",
+        "SBM-1_18": "No aplica: la empresa no fabrica ni comercializa armas controvertidas.",
+        "SBM-1_20": "No aplica: la empresa no cultiva ni produce tabaco."
+      },
+      "documents": [
+        "Cuentas anuales 2025",
+        "Memoria de actividad y cartera de obra 2025",
+        "Inventario GEI 2025 (alcances 1 y 2 y principales categorías del 3)",
+        "Registro de accidentes e índices de siniestralidad 2025",
+        "Acta del consejo de administración, 10/02/2026",
+        "Certificados ISO 9001, ISO 14001 e ISO 45001",
+        "Planes de gestión de residuos de construcción y demolición 2025",
+        "Procedimiento de homologación y pago a subcontratas PC-07"
+      ]
+    },
+    {
+      "email": "test7@airis.com",
+      "name": "Laboratorios Farmacéuticos Guadarrama, S.A.",
+      "contact": "Elena Sanz",
+      "sector_phrase": "el desarrollo, la fabricación y la comercialización de especialidades farmacéuticas genéricas y hospitalarias, con plantas en Madrid y Oporto",
+      "city": "Tres Cantos",
+      "nace_code": "C21.2.0",
+      "lei": "959800LFGUADARRAMA16",
+      "profile": {
+        "headquarters_country": "Spain",
+        "reporting_year": 2025,
+        "reporting_scope": "consolidated_group",
+        "num_subsidiaries_countries": 1,
+        "stock_listed": true,
+        "reporting_currency": "EUR",
+        "product_service_type": "health_life_sciences",
+        "reporting_period_start": "2025-01-01",
+        "reporting_period_end": "2025-12-31"
+      },
+      "operations": {
+        "regions": [
+          "eu",
+          "latin_america"
+        ],
+        "value_chain": [
+          "upstream",
+          "direct_operations",
+          "downstream"
+        ],
+        "employee_count_range": "500_999",
+        "revenue_range": "50m_to_250m",
+        "employee_count": 720,
+        "revenue": 198000000
+      },
+      "activity_questions": {
+        "physical_operations": "yes",
+        "water_use": "yes",
+        "hazardous_substances": "yes",
+        "biodiversity_sensitive_locations": "no",
+        "physical_goods_resources": "yes",
+        "external_value_chain_workers": "yes",
+        "local_communities": "no",
+        "consumer_end_users": "yes",
+        "international_footprint": "yes"
+      },
+      "topics": {
+        "unsure": [
+          20
+        ],
+        "reject": [
+          15,
+          85
+        ],
+        "add": [
+          5,
+          8,
+          27,
+          37,
+          58,
+          77,
+          88
+        ],
+        "notes": {
+          "15": "Sin actividad relacionada con recursos marinos.",
+          "85": "La compañía no realiza ensayos con animales en sus instalaciones; los estudios preclínicos están externalizados y regulados."
+        }
+      },
+      "acta": {
+        "completed_on": "2026-02-18",
+        "method": "Comité de sostenibilidad con dirección de plantas, calidad, I+D y asuntos regulatorios; consulta a hospitales clientes, pacientes y 40 proveedores de principios activos",
+        "participants": "Consejo de administración, dirección general, calidad y asuntos regulatorios, I+D, producción, compras, RRHH, comité de empresa"
+      },
+      "figures": {
+        "GOV-1_01": "3",
+        "GOV-1_02": "8",
+        "GOV-1_05": "45.5",
+        "GOV-1_06": "45.5",
+        "GOV-1_07": "63.6",
+        "GOV-3_05": "25",
+        "SBM-1_03": "720",
+        "SBM-1_04": "720",
+        "SBM-1_06": "198000000",
+        "SBM-1_10": "0",
+        "SBM-1_16": "0",
+        "E1-1_05": "1200000",
+        "E1-1_06": "7800000",
+        "E1-5_01": "41300",
+        "E1-5_02": "22800",
+        "E1-5_05": "18500",
+        "E1-5_07": "17900",
+        "E1-5_09": "44.8",
+        "E1-5_15": "55.2",
+        "E1-5_22": "198000000",
+        "E1-5_23": "0",
+        "E1-6_25": "35",
+        "E1-6_34": "198000000",
+        "E1-7_10": "0",
+        "E1.GOV-3_02": "20"
+      },
+      "not_applicable": {
+        "SBM-1_11": "No aplica: la empresa no obtiene ingresos del carbón.",
+        "SBM-1_12": "No aplica: la empresa no obtiene ingresos del petróleo.",
+        "SBM-1_13": "No aplica: la empresa no obtiene ingresos del gas.",
+        "SBM-1_18": "No aplica: la empresa no fabrica ni comercializa armas controvertidas.",
+        "SBM-1_20": "No aplica: la empresa no cultiva ni produce tabaco."
+      },
+      "documents": [
+        "Cuentas anuales consolidadas 2025",
+        "Informe de gestión y estado de información no financiera 2025",
+        "Inventario GEI 2025 verificado (ISO 14064-3)",
+        "Registro de vertidos y autorización ambiental integrada de la planta de Tres Cantos",
+        "Acta del consejo de administración, 18/02/2026",
+        "Certificados GMP y ISO 14001",
+        "Política de farmacovigilancia y registro de reclamaciones 2025",
+        "Código de conducta, política anticorrupción e informe del canal ético 2025"
+      ]
+    },
+    {
+      "email": "test8@airis.com",
+      "name": "Tejidos y Confección Atlántica, S.L.",
+      "contact": "Rosa Ferreiro",
+      "sector_phrase": "el diseño y la confección de prendas de punto y moda infantil, con producción propia en Galicia y talleres subcontratados en Portugal, Marruecos y Bangladés",
+      "city": "A Coruña",
+      "nace_code": "C14.1.0",
+      "lei": "959800TCATLANTICA083",
+      "profile": {
+        "headquarters_country": "Spain",
+        "reporting_year": 2025,
+        "reporting_scope": "individual",
+        "num_subsidiaries_countries": 0,
+        "stock_listed": false,
+        "reporting_currency": "EUR",
+        "product_service_type": "physical_product_manufacturing",
+        "reporting_period_start": "2025-01-01",
+        "reporting_period_end": "2025-12-31"
+      },
+      "operations": {
+        "regions": [
+          "eu",
+          "middle_east_africa",
+          "asia"
+        ],
+        "value_chain": [
+          "upstream",
+          "direct_operations",
+          "downstream"
+        ],
+        "employee_count_range": "250_499",
+        "revenue_range": "50m_to_250m",
+        "employee_count": 290,
+        "revenue": 58400000
+      },
+      "activity_questions": {
+        "physical_operations": "yes",
+        "water_use": "yes",
+        "hazardous_substances": "yes",
+        "biodiversity_sensitive_locations": "no",
+        "physical_goods_resources": "yes",
+        "external_value_chain_workers": "yes",
+        "local_communities": "no",
+        "consumer_end_users": "yes",
+        "international_footprint": "yes"
+      },
+      "topics": {
+        "unsure": [
+          13
+        ],
+        "reject": [
+          15,
+          86
+        ],
+        "add": [
+          5,
+          10,
+          25,
+          26,
+          41,
+          47,
+          58,
+          59,
+          82
+        ],
+        "notes": {
+          "15": "Sin actividad relacionada con recursos marinos.",
+          "86": "La empresa no realiza actividades de presión política ni aportaciones a partidos."
+        }
+      },
+      "acta": {
+        "completed_on": "2026-01-30",
+        "method": "Grupo de trabajo de dirección, compras y RSC; auditorías sociales a 22 talleres proveedores y encuesta a clientes mayoristas",
+        "participants": "Dirección general, compras y aprovisionamiento, diseño, RSC, RRHH, representación legal de los trabajadores"
+      },
+      "figures": {
+        "GOV-1_01": "2",
+        "GOV-1_02": "2",
+        "GOV-1_05": "50",
+        "GOV-1_06": "50",
+        "GOV-1_07": "25",
+        "GOV-3_05": "8",
+        "SBM-1_03": "290",
+        "SBM-1_04": "290",
+        "SBM-1_06": "58400000",
+        "SBM-1_10": "0",
+        "SBM-1_16": "0",
+        "E1-1_05": "140000",
+        "E1-1_06": "520000",
+        "E1-5_01": "6400",
+        "E1-5_02": "3100",
+        "E1-5_05": "3300",
+        "E1-5_07": "3300",
+        "E1-5_09": "51.6",
+        "E1-5_15": "48.4",
+        "E1-5_22": "58400000",
+        "E1-5_23": "0",
+        "E1-6_25": "30",
+        "E1-6_34": "58400000",
+        "E1-7_10": "0",
+        "E1.GOV-3_02": "5"
+      },
+      "not_applicable": {
+        "SBM-1_11": "No aplica: la empresa no obtiene ingresos del carbón.",
+        "SBM-1_12": "No aplica: la empresa no obtiene ingresos del petróleo.",
+        "SBM-1_13": "No aplica: la empresa no obtiene ingresos del gas.",
+        "SBM-1_18": "No aplica: la empresa no fabrica ni comercializa armas controvertidas.",
+        "SBM-1_20": "No aplica: la empresa no cultiva ni produce tabaco."
+      },
+      "documents": [
+        "Cuentas anuales 2025",
+        "Memoria de sostenibilidad 2025",
+        "Inventario GEI 2025 (alcances 1, 2 y 3 de compras)",
+        "Informe de auditorías sociales a proveedores 2025 (amfori BSCI)",
+        "Acta de la junta de socios, 30/01/2026",
+        "Certificados OEKO-TEX Standard 100 y GOTS",
+        "Registro de sustancias químicas restringidas (ZDHC MRSL)",
+        "Plan de igualdad 2025-2028 y registro retributivo"
+      ]
+    },
+    {
+      "email": "test9@airis.com",
+      "name": "Química Fina del Vallès, S.A.",
+      "contact": "Jordi Casals",
+      "sector_phrase": "la síntesis de productos intermedios de química orgánica y aditivos para las industrias farmacéutica, cosmética y de recubrimientos",
+      "city": "Sabadell",
+      "nace_code": "C20.1.4",
+      "lei": "959800QFVALLESQUIM64",
+      "profile": {
+        "headquarters_country": "Spain",
+        "reporting_year": 2025,
+        "reporting_scope": "individual",
+        "num_subsidiaries_countries": 0,
+        "stock_listed": false,
+        "reporting_currency": "EUR",
+        "product_service_type": "physical_product_manufacturing",
+        "reporting_period_start": "2025-01-01",
+        "reporting_period_end": "2025-12-31"
+      },
+      "operations": {
+        "regions": [
+          "eu",
+          "asia"
+        ],
+        "value_chain": [
+          "upstream",
+          "direct_operations",
+          "downstream"
+        ],
+        "employee_count_range": "50_249",
+        "revenue_range": "40m_to_50m",
+        "employee_count": 210,
+        "revenue": 44600000
+      },
+      "activity_questions": {
+        "physical_operations": "yes",
+        "water_use": "yes",
+        "hazardous_substances": "yes",
+        "biodiversity_sensitive_locations": "no",
+        "physical_goods_resources": "yes",
+        "external_value_chain_workers": "yes",
+        "local_communities": "yes",
+        "consumer_end_users": "no",
+        "international_footprint": "yes"
+      },
+      "topics": {
+        "unsure": [
+          6
+        ],
+        "reject": [
+          15,
+          79
+        ],
+        "add": [
+          4,
+          5,
+          8,
+          9,
+          11,
+          13,
+          27,
+          35,
+          67
+        ],
+        "notes": {
+          "15": "Sin actividad relacionada con recursos marinos.",
+          "79": "No hay productos ni servicios dirigidos a menores."
+        }
+      },
+      "acta": {
+        "completed_on": "2026-02-03",
+        "method": "Sesiones del comité de seguridad y medio ambiente con dirección, producción y laboratorio; consulta al ayuntamiento, a vecinos del polígono y a 15 clientes industriales",
+        "participants": "Dirección general, dirección técnica, seguridad de procesos y medio ambiente, laboratorio, compras, RRHH, comité de empresa"
+      },
+      "figures": {
+        "GOV-1_01": "2",
+        "GOV-1_02": "3",
+        "GOV-1_05": "40",
+        "GOV-1_06": "40",
+        "GOV-1_07": "40",
+        "GOV-3_05": "15",
+        "SBM-1_03": "210",
+        "SBM-1_04": "210",
+        "SBM-1_06": "44600000",
+        "SBM-1_10": "0",
+        "SBM-1_16": "44600000",
+        "E1-1_05": "380000",
+        "E1-1_06": "2600000",
+        "E1-5_01": "28900",
+        "E1-5_02": "19600",
+        "E1-5_05": "9300",
+        "E1-5_07": "9300",
+        "E1-5_09": "32.2",
+        "E1-5_15": "67.8",
+        "E1-5_22": "44600000",
+        "E1-5_23": "0",
+        "E1-6_25": "40",
+        "E1-6_34": "44600000",
+        "E1-7_10": "0",
+        "E1.GOV-3_02": "10"
+      },
+      "not_applicable": {
+        "SBM-1_11": "No aplica: la empresa no obtiene ingresos del carbón.",
+        "SBM-1_12": "No aplica: la empresa no obtiene ingresos del petróleo.",
+        "SBM-1_13": "No aplica: la empresa no obtiene ingresos del gas.",
+        "SBM-1_18": "No aplica: la empresa no fabrica ni comercializa armas controvertidas.",
+        "SBM-1_20": "No aplica: la empresa no cultiva ni produce tabaco."
+      },
+      "documents": [
+        "Cuentas anuales 2025",
+        "Declaración ambiental EMAS 2025",
+        "Inventario GEI 2025 verificado",
+        "Autorización ambiental integrada y registro PRTR 2025",
+        "Acta del consejo de administración, 03/02/2026",
+        "Certificados ISO 14001, ISO 45001 y Responsible Care",
+        "Registros REACH, fichas de datos de seguridad y plan de emergencia exterior (Seveso)",
+        "Registro de accidentes e incidentes de proceso 2025"
+      ]
+    },
+    {
+      "email": "test10@airis.com",
+      "name": "Agropecuaria Tierras de Zamora, S.L.",
+      "contact": "Manuel Rodríguez",
+      "sector_phrase": "la explotación de ganado bovino de leche, el cultivo de forrajes y cereales en 2.400 hectáreas y la venta de leche cruda a industrias lácteas",
+      "city": "Zamora",
+      "nace_code": "A1.4.1",
+      "lei": "959800AGROZAMORA0097",
+      "profile": {
+        "headquarters_country": "Spain",
+        "reporting_year": 2025,
+        "reporting_scope": "individual",
+        "num_subsidiaries_countries": 0,
+        "stock_listed": false,
+        "reporting_currency": "EUR",
+        "product_service_type": "agrifood",
+        "reporting_period_start": "2025-01-01",
+        "reporting_period_end": "2025-12-31"
+      },
+      "operations": {
+        "regions": [
+          "eu"
+        ],
+        "value_chain": [
+          "direct_operations",
+          "downstream"
+        ],
+        "employee_count_range": "50_249",
+        "revenue_range": "10m_to_40m",
+        "employee_count": 95,
+        "revenue": 14800000
+      },
+      "activity_questions": {
+        "physical_operations": "yes",
+        "water_use": "yes",
+        "hazardous_substances": "yes",
+        "biodiversity_sensitive_locations": "yes",
+        "physical_goods_resources": "yes",
+        "external_value_chain_workers": "yes",
+        "local_communities": "yes",
+        "consumer_end_users": "no",
+        "international_footprint": "no"
+      },
+      "topics": {
+        "unsure": [
+          17
+        ],
+        "reject": [
+          10,
+          74
+        ],
+        "add": [
+          6,
+          7,
+          11,
+          12,
+          20,
+          23,
+          24,
+          27,
+          66,
+          85
+        ],
+        "notes": {
+          "10": "No se generan microplásticos en la actividad.",
+          "74": "No se tratan datos de consumidores finales: la leche se vende a industria."
+        }
+      },
+      "acta": {
+        "completed_on": "2026-01-22",
+        "method": "Reuniones de la gerencia con veterinaria, agronomía y personal de explotación; consulta a la comunidad de regantes, al ayuntamiento y a la cooperativa compradora",
+        "participants": "Gerencia, dirección técnica agronómica, veterinaria, administración, encargados de explotación, representante de los trabajadores"
+      },
+      "figures": {
+        "GOV-1_01": "2",
+        "GOV-1_02": "1",
+        "GOV-1_05": "33.3",
+        "GOV-1_06": "33.3",
+        "GOV-1_07": "0",
+        "GOV-3_05": "0",
+        "SBM-1_03": "95",
+        "SBM-1_04": "95",
+        "SBM-1_06": "14800000",
+        "SBM-1_10": "0",
+        "SBM-1_16": "0",
+        "E1-1_05": "95000",
+        "E1-1_06": "640000",
+        "E1-5_01": "5100",
+        "E1-5_02": "4200",
+        "E1-5_05": "900",
+        "E1-5_07": "900",
+        "E1-5_09": "17.6",
+        "E1-5_15": "82.4",
+        "E1-5_22": "14800000",
+        "E1-5_23": "0",
+        "E1-6_25": "15",
+        "E1-6_34": "14800000",
+        "E1-7_10": "0",
+        "E1.GOV-3_02": "0"
+      },
+      "not_applicable": {
+        "SBM-1_11": "No aplica: la empresa no obtiene ingresos del carbón.",
+        "SBM-1_12": "No aplica: la empresa no obtiene ingresos del petróleo.",
+        "SBM-1_13": "No aplica: la empresa no obtiene ingresos del gas.",
+        "SBM-1_18": "No aplica: la empresa no fabrica ni comercializa armas controvertidas.",
+        "SBM-1_20": "No aplica: la empresa no cultiva ni produce tabaco."
+      },
+      "documents": [
+        "Cuentas anuales 2025",
+        "Cuaderno de explotación y registro de fertilización 2025",
+        "Inventario GEI 2025 (fermentación entérica, gestión de estiércol y energía)",
+        "Concesión de aguas y registro de consumos de riego 2025",
+        "Acta de la junta de socios, 22/01/2026",
+        "Certificado de bienestar animal Welfair y registro sanitario de la explotación",
+        "Plan de gestión de purines y autorización ambiental",
+        "Registro de plantilla, temporeros y formación en seguridad 2025"
+      ]
+    },
+    {
+      "email": "test11@airis.com",
+      "name": "Conservas del Cantábrico Oriental, S.A.",
+      "contact": "Ane Zubiaurre",
+      "sector_phrase": "la elaboración de conservas de anchoa, bonito y otros pescados, con compra de pescado en lonjas del Cantábrico y proveedores internacionales",
+      "city": "Santoña",
+      "nace_code": "C10.2.2",
+      "lei": "959800CONSERVCANTA82",
+      "profile": {
+        "headquarters_country": "Spain",
+        "reporting_year": 2025,
+        "reporting_scope": "individual",
+        "num_subsidiaries_countries": 0,
+        "stock_listed": false,
+        "reporting_currency": "EUR",
+        "product_service_type": "agrifood",
+        "reporting_period_start": "2025-01-01",
+        "reporting_period_end": "2025-12-31"
+      },
+      "operations": {
+        "regions": [
+          "eu",
+          "latin_america"
+        ],
+        "value_chain": [
+          "upstream",
+          "direct_operations",
+          "downstream"
+        ],
+        "employee_count_range": "250_499",
+        "revenue_range": "50m_to_250m",
+        "employee_count": 260,
+        "revenue": 52300000
+      },
+      "activity_questions": {
+        "physical_operations": "yes",
+        "water_use": "yes",
+        "hazardous_substances": "no",
+        "biodiversity_sensitive_locations": "yes",
+        "physical_goods_resources": "yes",
+        "external_value_chain_workers": "yes",
+        "local_communities": "yes",
+        "consumer_end_users": "yes",
+        "international_footprint": "yes"
+      },
+      "topics": {
+        "unsure": [
+          18
+        ],
+        "reject": [
+          9,
+          79
+        ],
+        "add": [
+          5,
+          11,
+          13,
+          14,
+          15,
+          22,
+          26,
+          27,
+          59,
+          77,
+          82,
+          85
+        ],
+        "notes": {
+          "9": "No se utilizan sustancias extremadamente preocupantes en el proceso.",
+          "79": "Los productos no están dirigidos específicamente a menores."
+        }
+      },
+      "acta": {
+        "completed_on": "2026-02-14",
+        "method": "Taller con dirección, calidad, compras y producción; consulta a cofradías de pescadores, armadores proveedores y clientes de distribución",
+        "participants": "Dirección general, calidad y seguridad alimentaria, compras de materia prima, producción, RRHH, comité de empresa"
+      },
+      "figures": {
+        "GOV-1_01": "3",
+        "GOV-1_02": "4",
+        "GOV-1_05": "42.9",
+        "GOV-1_06": "42.9",
+        "GOV-1_07": "28.6",
+        "GOV-3_05": "12",
+        "SBM-1_03": "260",
+        "SBM-1_04": "260",
+        "SBM-1_06": "52300000",
+        "SBM-1_10": "0",
+        "SBM-1_16": "0",
+        "E1-1_05": "230000",
+        "E1-1_06": "1100000",
+        "E1-5_01": "11600",
+        "E1-5_02": "7300",
+        "E1-5_05": "4300",
+        "E1-5_07": "4100",
+        "E1-5_09": "37.1",
+        "E1-5_15": "62.9",
+        "E1-5_22": "52300000",
+        "E1-5_23": "0",
+        "E1-6_25": "30",
+        "E1-6_34": "52300000",
+        "E1-7_10": "0",
+        "E1.GOV-3_02": "5"
+      },
+      "not_applicable": {
+        "SBM-1_11": "No aplica: la empresa no obtiene ingresos del carbón.",
+        "SBM-1_12": "No aplica: la empresa no obtiene ingresos del petróleo.",
+        "SBM-1_13": "No aplica: la empresa no obtiene ingresos del gas.",
+        "SBM-1_18": "No aplica: la empresa no fabrica ni comercializa armas controvertidas.",
+        "SBM-1_20": "No aplica: la empresa no cultiva ni produce tabaco."
+      },
+      "documents": [
+        "Cuentas anuales 2025",
+        "Memoria de sostenibilidad 2025",
+        "Inventario GEI 2025",
+        "Registro de vertidos y consumo de agua de la planta de Santoña 2025",
+        "Acta del consejo de administración, 14/02/2026",
+        "Certificados IFS Food, MSC y Friend of the Sea",
+        "Política de compra responsable de pescado y trazabilidad de capturas",
+        "Plan de igualdad 2024-2027 y registro de accidentes 2025"
+      ]
+    },
+    {
+      "email": "test12@airis.com",
+      "name": "Nube Digital Soluciones, S.L.",
+      "contact": "Pablo Jiménez",
+      "sector_phrase": "el desarrollo de software de gestión en la nube para pymes y administraciones públicas, con un centro de desarrollo en Bogotá",
+      "city": "Málaga",
+      "nace_code": "K62.1.0",
+      "lei": "959800NUBEDIGITAL008",
+      "profile": {
+        "headquarters_country": "Spain",
+        "reporting_year": 2025,
+        "reporting_scope": "consolidated_group",
+        "num_subsidiaries_countries": 1,
+        "stock_listed": false,
+        "reporting_currency": "EUR",
+        "product_service_type": "software_digital_services",
+        "reporting_period_start": "2025-01-01",
+        "reporting_period_end": "2025-12-31"
+      },
+      "operations": {
+        "regions": [
+          "eu",
+          "latin_america"
+        ],
+        "value_chain": [
+          "direct_operations",
+          "services"
+        ],
+        "employee_count_range": "250_499",
+        "revenue_range": "10m_to_40m",
+        "employee_count": 410,
+        "revenue": 39200000
+      },
+      "activity_questions": {
+        "physical_operations": "no",
+        "water_use": "no",
+        "hazardous_substances": "no",
+        "biodiversity_sensitive_locations": "no",
+        "physical_goods_resources": "no",
+        "external_value_chain_workers": "yes",
+        "local_communities": "no",
+        "consumer_end_users": "yes",
+        "international_footprint": "yes"
+      },
+      "topics": {
+        "unsure": [
+          25
+        ],
+        "reject": [
+          11,
+          27
+        ],
+        "add": [
+          3,
+          29,
+          34,
+          37,
+          40,
+          44,
+          45,
+          74,
+          76,
+          80,
+          83
+        ],
+        "notes": {
+          "11": "El consumo de agua se limita a oficinas; los centros de datos son de proveedores externos.",
+          "27": "Los residuos se limitan a equipos electrónicos de oficina gestionados por un gestor autorizado."
+        }
+      },
+      "acta": {
+        "completed_on": "2026-01-27",
+        "method": "Sesiones con dirección, personas, seguridad de la información y desarrollo de producto; encuesta a 120 clientes y al equipo de Bogotá",
+        "participants": "Dirección general, dirección de producto, seguridad de la información, personas y cultura, dirección financiera, representantes de los equipos"
+      },
+      "figures": {
+        "GOV-1_01": "2",
+        "GOV-1_02": "3",
+        "GOV-1_05": "40",
+        "GOV-1_06": "40",
+        "GOV-1_07": "40",
+        "GOV-3_05": "20",
+        "SBM-1_03": "410",
+        "SBM-1_04": "410",
+        "SBM-1_06": "39200000",
+        "SBM-1_10": "0",
+        "SBM-1_16": "0",
+        "E1-1_05": "120000",
+        "E1-1_06": "300000",
+        "E1-5_01": "1450",
+        "E1-5_02": "180",
+        "E1-5_05": "1270",
+        "E1-5_07": "1270",
+        "E1-5_09": "87.6",
+        "E1-5_15": "12.4",
+        "E1-5_22": "0",
+        "E1-5_23": "39200000",
+        "E1-6_25": "45",
+        "E1-6_34": "39200000",
+        "E1-7_10": "600",
+        "E1.GOV-3_02": "10"
+      },
+      "not_applicable": {
+        "SBM-1_11": "No aplica: la empresa no obtiene ingresos del carbón.",
+        "SBM-1_12": "No aplica: la empresa no obtiene ingresos del petróleo.",
+        "SBM-1_13": "No aplica: la empresa no obtiene ingresos del gas.",
+        "SBM-1_18": "No aplica: la empresa no fabrica ni comercializa armas controvertidas.",
+        "SBM-1_20": "No aplica: la empresa no cultiva ni produce tabaco."
+      },
+      "documents": [
+        "Cuentas anuales consolidadas 2025",
+        "Memoria de sostenibilidad y responsabilidad digital 2025",
+        "Inventario GEI 2025 (incluye nube y teletrabajo)",
+        "Informe de auditoría ISO 27001 y Esquema Nacional de Seguridad",
+        "Acta del consejo de administración, 27/01/2026",
+        "Registro de tratamientos y evaluaciones de impacto (RGPD)",
+        "Plan de igualdad y registro retributivo 2025",
+        "Política de accesibilidad digital y resultados de auditorías WCAG 2025"
+      ]
+    },
+    {
+      "email": "test13@airis.com",
+      "name": "Seguros Mutua del Guadalquivir, S.A.",
+      "contact": "Isabel Romero",
+      "sector_phrase": "los seguros de hogar, automóvil, agrario y salud para particulares y pymes en Andalucía y Extremadura, con una red de 180 oficinas y agentes",
+      "city": "Córdoba",
+      "nace_code": "L65.1.2",
+      "lei": "959800MUTUAGUADALQ65",
+      "profile": {
+        "headquarters_country": "Spain",
+        "reporting_year": 2025,
+        "reporting_scope": "individual",
+        "num_subsidiaries_countries": 0,
+        "stock_listed": false,
+        "reporting_currency": "EUR",
+        "product_service_type": "finance_insurance",
+        "reporting_period_start": "2025-01-01",
+        "reporting_period_end": "2025-12-31"
+      },
+      "operations": {
+        "regions": [
+          "eu"
+        ],
+        "value_chain": [
+          "direct_operations",
+          "downstream",
+          "services"
+        ],
+        "employee_count_range": "500_999",
+        "revenue_range": "50m_to_250m",
+        "employee_count": 540,
+        "revenue": 165000000
+      },
+      "activity_questions": {
+        "physical_operations": "no",
+        "water_use": "no",
+        "hazardous_substances": "no",
+        "biodiversity_sensitive_locations": "no",
+        "physical_goods_resources": "no",
+        "external_value_chain_workers": "yes",
+        "local_communities": "no",
+        "consumer_end_users": "yes",
+        "international_footprint": "no"
+      },
+      "topics": {
+        "unsure": [
+          3
+        ],
+        "reject": [
+          27,
+          52
+        ],
+        "add": [
+          1,
+          2,
+          36,
+          37,
+          74,
+          76,
+          80,
+          81,
+          82,
+          83,
+          84,
+          88
+        ],
+        "notes": {
+          "27": "Los residuos se limitan a papel y equipos de oficina gestionados por gestor autorizado.",
+          "52": "La red de agentes es comercial; no hay riesgos relevantes de salud y seguridad en la cadena de valor."
+        }
+      },
+      "acta": {
+        "completed_on": "2026-02-06",
+        "method": "Comité de sostenibilidad con dirección técnica, inversiones, cumplimiento y red comercial; encuesta a 2.000 asegurados y a la red de agentes",
+        "participants": "Consejo de administración, dirección general, dirección técnica y actuarial, inversiones, cumplimiento normativo, RRHH, representación sindical"
+      },
+      "figures": {
+        "GOV-1_01": "2",
+        "GOV-1_02": "9",
+        "GOV-1_05": "45.5",
+        "GOV-1_06": "45.5",
+        "GOV-1_07": "54.5",
+        "GOV-3_05": "20",
+        "SBM-1_03": "540",
+        "SBM-1_04": "540",
+        "SBM-1_06": "165000000",
+        "SBM-1_10": "0",
+        "SBM-1_16": "0",
+        "E1-1_05": "450000",
+        "E1-1_06": "900000",
+        "E1-5_01": "3900",
+        "E1-5_02": "700",
+        "E1-5_05": "3200",
+        "E1-5_07": "3200",
+        "E1-5_09": "82.1",
+        "E1-5_15": "17.9",
+        "E1-5_22": "0",
+        "E1-5_23": "165000000",
+        "E1-6_25": "20",
+        "E1-6_34": "165000000",
+        "E1-7_10": "0",
+        "E1.GOV-3_02": "15"
+      },
+      "not_applicable": {
+        "SBM-1_11": "No aplica: la empresa no obtiene ingresos del carbón.",
+        "SBM-1_12": "No aplica: la empresa no obtiene ingresos del petróleo.",
+        "SBM-1_13": "No aplica: la empresa no obtiene ingresos del gas.",
+        "SBM-1_18": "No aplica: la empresa no fabrica ni comercializa armas controvertidas.",
+        "SBM-1_20": "No aplica: la empresa no cultiva ni produce tabaco."
+      },
+      "documents": [
+        "Cuentas anuales 2025",
+        "Informe sobre la situación financiera y de solvencia 2025",
+        "Inventario GEI 2025 (operaciones propias e inversiones)",
+        "Informe de riesgos climáticos de la cartera asegurada y de inversión",
+        "Acta del consejo de administración, 06/02/2026",
+        "Política de inversión responsable y registro de votaciones",
+        "Registro de reclamaciones y informe del servicio de atención al cliente 2025",
+        "Política anticorrupción, canal de denuncias e informe anual de cumplimiento 2025"
+      ]
+    },
+    {
+      "email": "test14@airis.com",
+      "name": "Supermercados Valle del Jerte, S.A.",
+      "contact": "Francisco Moreno",
+      "sector_phrase": "la distribución minorista de alimentación y productos del hogar en 96 supermercados de Extremadura y Castilla y León, con plataforma logística propia",
+      "city": "Plasencia",
+      "nace_code": "G47.1.1",
+      "lei": "959800SUPERJERTE0038",
+      "profile": {
+        "headquarters_country": "Spain",
+        "reporting_year": 2025,
+        "reporting_scope": "individual",
+        "num_subsidiaries_countries": 0,
+        "stock_listed": false,
+        "reporting_currency": "EUR",
+        "product_service_type": "physical_product_retail",
+        "reporting_period_start": "2025-01-01",
+        "reporting_period_end": "2025-12-31"
+      },
+      "operations": {
+        "regions": [
+          "eu"
+        ],
+        "value_chain": [
+          "upstream",
+          "direct_operations",
+          "downstream"
+        ],
+        "employee_count_range": "1000_plus",
+        "revenue_range": "50m_to_250m",
+        "employee_count": 1850,
+        "revenue": 240000000
+      },
+      "activity_questions": {
+        "physical_operations": "yes",
+        "water_use": "no",
+        "hazardous_substances": "yes",
+        "biodiversity_sensitive_locations": "no",
+        "physical_goods_resources": "yes",
+        "external_value_chain_workers": "yes",
+        "local_communities": "yes",
+        "consumer_end_users": "yes",
+        "international_footprint": "no"
+      },
+      "topics": {
+        "unsure": [
+          64
+        ],
+        "reject": [
+          14,
+          15
+        ],
+        "add": [
+          2,
+          3,
+          26,
+          27,
+          29,
+          34,
+          36,
+          45,
+          77,
+          81,
+          82,
+          85,
+          87
+        ],
+        "notes": {
+          "14": "Sin vertidos a aguas marinas.",
+          "15": "La empresa no extrae recursos marinos; el pescado procede de proveedores con trazabilidad."
+        }
+      },
+      "acta": {
+        "completed_on": "2026-02-11",
+        "method": "Taller con dirección, operaciones, compras y RRHH; encuesta a clientes en 30 tiendas, a proveedores locales y a los ayuntamientos de las poblaciones pequeñas",
+        "participants": "Dirección general, operaciones de tienda, logística, compras, RRHH, prevención, comité intercentros"
+      },
+      "figures": {
+        "GOV-1_01": "3",
+        "GOV-1_02": "4",
+        "GOV-1_05": "28.6",
+        "GOV-1_06": "28.6",
+        "GOV-1_07": "14.3",
+        "GOV-3_05": "10",
+        "SBM-1_03": "1850",
+        "SBM-1_04": "1850",
+        "SBM-1_06": "240000000",
+        "SBM-1_10": "0",
+        "SBM-1_16": "0",
+        "E1-1_05": "620000",
+        "E1-1_06": "4900000",
+        "E1-5_01": "58400",
+        "E1-5_02": "21900",
+        "E1-5_05": "36500",
+        "E1-5_07": "36500",
+        "E1-5_09": "62.5",
+        "E1-5_15": "37.5",
+        "E1-5_22": "240000000",
+        "E1-5_23": "0",
+        "E1-6_25": "20",
+        "E1-6_34": "240000000",
+        "E1-7_10": "0",
+        "E1.GOV-3_02": "5"
+      },
+      "not_applicable": {
+        "SBM-1_11": "No aplica: la empresa no obtiene ingresos del carbón.",
+        "SBM-1_12": "No aplica: la empresa no obtiene ingresos del petróleo.",
+        "SBM-1_13": "No aplica: la empresa no obtiene ingresos del gas.",
+        "SBM-1_18": "No aplica: la empresa no fabrica ni comercializa armas controvertidas.",
+        "SBM-1_20": "No aplica: la empresa no cultiva ni produce tabaco."
+      },
+      "documents": [
+        "Cuentas anuales 2025",
+        "Memoria de sostenibilidad 2025",
+        "Inventario GEI 2025 (refrigerantes, energía, transporte)",
+        "Registro de consumos eléctricos por tienda y plan de sustitución de refrigerantes",
+        "Acta del consejo de administración, 11/02/2026",
+        "Informe de desperdicio alimentario y donaciones 2025",
+        "Plan de igualdad 2025-2029 y registro de jornada",
+        "Procedimiento de pago a proveedores y adhesión al código de buenas prácticas de la cadena alimentaria"
+      ]
+    },
+    {
+      "email": "test15@airis.com",
+      "name": "Reciclajes y Valorización del Noroeste, S.L.",
+      "contact": "Xosé Varela",
+      "sector_phrase": "la recogida, clasificación y valorización de residuos industriales, envases y chatarra, con dos plantas de tratamiento en Galicia",
+      "city": "Lugo",
+      "nace_code": "E38.2.1",
+      "lei": "959800RECIVALNOROE81",
+      "profile": {
+        "headquarters_country": "Spain",
+        "reporting_year": 2025,
+        "reporting_scope": "individual",
+        "num_subsidiaries_countries": 0,
+        "stock_listed": false,
+        "reporting_currency": "EUR",
+        "product_service_type": "technical_services",
+        "reporting_period_start": "2025-01-01",
+        "reporting_period_end": "2025-12-31"
+      },
+      "operations": {
+        "regions": [
+          "eu"
+        ],
+        "value_chain": [
+          "upstream",
+          "direct_operations",
+          "downstream",
+          "services"
+        ],
+        "employee_count_range": "50_249",
+        "revenue_range": "10m_to_40m",
+        "employee_count": 175,
+        "revenue": 22100000
+      },
+      "activity_questions": {
+        "physical_operations": "yes",
+        "water_use": "yes",
+        "hazardous_substances": "yes",
+        "biodiversity_sensitive_locations": "no",
+        "physical_goods_resources": "yes",
+        "external_value_chain_workers": "yes",
+        "local_communities": "yes",
+        "consumer_end_users": "no",
+        "international_footprint": "no"
+      },
+      "topics": {
+        "unsure": [
+          16
+        ],
+        "reject": [
+          15,
+          74
+        ],
+        "add": [
+          4,
+          6,
+          8,
+          11,
+          13,
+          25,
+          26,
+          27,
+          35,
+          67
+        ],
+        "notes": {
+          "15": "Sin actividad relacionada con recursos marinos.",
+          "74": "La empresa no trata datos de consumidores finales."
+        }
+      },
+      "acta": {
+        "completed_on": "2026-01-19",
+        "method": "Reuniones de gerencia con responsables de planta, medio ambiente y prevención; consulta a los ayuntamientos, vecinos de las plantas y clientes industriales",
+        "participants": "Gerencia, responsables de planta, medio ambiente, prevención, administración, delegados de personal"
+      },
+      "figures": {
+        "GOV-1_01": "2",
+        "GOV-1_02": "2",
+        "GOV-1_05": "25",
+        "GOV-1_06": "25",
+        "GOV-1_07": "0",
+        "GOV-3_05": "5",
+        "SBM-1_03": "175",
+        "SBM-1_04": "175",
+        "SBM-1_06": "22100000",
+        "SBM-1_10": "0",
+        "SBM-1_16": "0",
+        "E1-1_05": "160000",
+        "E1-1_06": "1300000",
+        "E1-5_01": "7200",
+        "E1-5_02": "5400",
+        "E1-5_05": "1800",
+        "E1-5_07": "1800",
+        "E1-5_09": "25.0",
+        "E1-5_15": "75.0",
+        "E1-5_22": "22100000",
+        "E1-5_23": "0",
+        "E1-6_25": "35",
+        "E1-6_34": "22100000",
+        "E1-7_10": "0",
+        "E1.GOV-3_02": "0"
+      },
+      "not_applicable": {
+        "SBM-1_11": "No aplica: la empresa no obtiene ingresos del carbón.",
+        "SBM-1_12": "No aplica: la empresa no obtiene ingresos del petróleo.",
+        "SBM-1_13": "No aplica: la empresa no obtiene ingresos del gas.",
+        "SBM-1_18": "No aplica: la empresa no fabrica ni comercializa armas controvertidas.",
+        "SBM-1_20": "No aplica: la empresa no cultiva ni produce tabaco."
+      },
+      "documents": [
+        "Cuentas anuales 2025",
+        "Memoria anual de gestor de residuos 2025",
+        "Inventario GEI 2025",
+        "Autorizaciones ambientales de las plantas y registro de salidas de residuos",
+        "Acta de la junta de socios, 19/01/2026",
+        "Certificados ISO 14001 e ISO 45001",
+        "Registro de accidentes, mediciones de ruido y quejas vecinales 2025",
+        "Plan de formación en manipulación de residuos peligrosos 2025"
+      ]
+    },
+    {
+      "email": "test16@airis.com",
+      "name": "Aceros Especiales del Nalón, S.A.",
+      "contact": "Covadonga Suárez",
+      "sector_phrase": "la producción de aceros especiales en horno eléctrico a partir de chatarra y su laminación, con una acería en Asturias y un centro de transformación en Francia",
+      "city": "Langreo",
+      "nace_code": "C24.1.0",
+      "lei": "959800ACEROSNALON086",
+      "profile": {
+        "headquarters_country": "Spain",
+        "reporting_year": 2025,
+        "reporting_scope": "consolidated_group",
+        "num_subsidiaries_countries": 1,
+        "stock_listed": true,
+        "reporting_currency": "EUR",
+        "product_service_type": "physical_product_manufacturing",
+        "reporting_period_start": "2025-01-01",
+        "reporting_period_end": "2025-12-31"
+      },
+      "operations": {
+        "regions": [
+          "eu",
+          "north_america"
+        ],
+        "value_chain": [
+          "upstream",
+          "direct_operations",
+          "downstream"
+        ],
+        "employee_count_range": "500_999",
+        "revenue_range": "gt_250m",
+        "employee_count": 890,
+        "revenue": 310000000
+      },
+      "activity_questions": {
+        "physical_operations": "yes",
+        "water_use": "yes",
+        "hazardous_substances": "yes",
+        "biodiversity_sensitive_locations": "no",
+        "physical_goods_resources": "yes",
+        "external_value_chain_workers": "yes",
+        "local_communities": "yes",
+        "consumer_end_users": "no",
+        "international_footprint": "yes"
+      },
+      "topics": {
+        "unsure": [
+          1
+        ],
+        "reject": [
+          15,
+          79
+        ],
+        "add": [
+          2,
+          3,
+          4,
+          6,
+          11,
+          13,
+          25,
+          27,
+          35,
+          67,
+          86
+        ],
+        "notes": {
+          "15": "Sin actividad relacionada con recursos marinos.",
+          "79": "No hay productos ni servicios dirigidos a menores."
+        }
+      },
+      "acta": {
+        "completed_on": "2026-02-16",
+        "method": "Comisión de sostenibilidad del consejo con dirección industrial, medio ambiente y compras; consulta a sindicatos, ayuntamientos del valle y clientes de automoción",
+        "participants": "Consejo de administración, dirección general, dirección industrial, medio ambiente y energía, compras de chatarra, RRHH, comité intercentros, dirección de la filial francesa"
+      },
+      "figures": {
+        "GOV-1_01": "3",
+        "GOV-1_02": "8",
+        "GOV-1_05": "36.4",
+        "GOV-1_06": "36.4",
+        "GOV-1_07": "54.5",
+        "GOV-3_05": "30",
+        "SBM-1_03": "890",
+        "SBM-1_04": "890",
+        "SBM-1_06": "310000000",
+        "SBM-1_10": "0",
+        "SBM-1_16": "0",
+        "E1-1_05": "2900000",
+        "E1-1_06": "46000000",
+        "E1-5_01": "612000",
+        "E1-5_02": "330000",
+        "E1-5_05": "282000",
+        "E1-5_07": "282000",
+        "E1-5_09": "46.1",
+        "E1-5_15": "53.9",
+        "E1-5_22": "310000000",
+        "E1-5_23": "0",
+        "E1-6_25": "50",
+        "E1-6_34": "310000000",
+        "E1-7_10": "0",
+        "E1.GOV-3_02": "25"
+      },
+      "not_applicable": {
+        "SBM-1_11": "No aplica: la empresa no obtiene ingresos del carbón.",
+        "SBM-1_12": "No aplica: la empresa no obtiene ingresos del petróleo.",
+        "SBM-1_13": "No aplica: la empresa no obtiene ingresos del gas.",
+        "SBM-1_18": "No aplica: la empresa no fabrica ni comercializa armas controvertidas.",
+        "SBM-1_20": "No aplica: la empresa no cultiva ni produce tabaco."
+      },
+      "documents": [
+        "Cuentas anuales consolidadas 2025",
+        "Estado de información no financiera 2025",
+        "Inventario GEI 2025 verificado y asignación del régimen de comercio de emisiones",
+        "Autorización ambiental integrada y registro PRTR de la acería",
+        "Acta del consejo de administración, 16/02/2026",
+        "Certificados ISO 14001, ISO 50001 e ISO 45001",
+        "Plan de transición climática y contrato de suministro eléctrico renovable (PPA)",
+        "Política de relaciones institucionales y registro de actividades de representación de intereses 2025"
+      ]
+    },
+    {
+      "email": "test17@airis.com",
+      "name": "Cementos del Alto Guadiana, S.A.",
+      "contact": "Alfonso Rubio",
+      "sector_phrase": "la fabricación de cemento y clínker en una planta integral con cantera propia, y su distribución a granel y ensacado en el centro peninsular",
+      "city": "Alcázar de San Juan",
+      "nace_code": "C23.5.1",
+      "lei": "959800CEMALTOGUADI84",
+      "profile": {
+        "headquarters_country": "Spain",
+        "reporting_year": 2025,
+        "reporting_scope": "individual",
+        "num_subsidiaries_countries": 0,
+        "stock_listed": false,
+        "reporting_currency": "EUR",
+        "product_service_type": "physical_product_manufacturing",
+        "reporting_period_start": "2025-01-01",
+        "reporting_period_end": "2025-12-31"
+      },
+      "operations": {
+        "regions": [
+          "eu"
+        ],
+        "value_chain": [
+          "upstream",
+          "direct_operations",
+          "downstream"
+        ],
+        "employee_count_range": "50_249",
+        "revenue_range": "50m_to_250m",
+        "employee_count": 230,
+        "revenue": 71500000
+      },
+      "activity_questions": {
+        "physical_operations": "yes",
+        "water_use": "yes",
+        "hazardous_substances": "yes",
+        "biodiversity_sensitive_locations": "yes",
+        "physical_goods_resources": "yes",
+        "external_value_chain_workers": "yes",
+        "local_communities": "yes",
+        "consumer_end_users": "no",
+        "international_footprint": "no"
+      },
+      "topics": {
+        "unsure": [
+          24
+        ],
+        "reject": [
+          15,
+          74
+        ],
+        "add": [
+          2,
+          3,
+          4,
+          6,
+          17,
+          23,
+          25,
+          27,
+          35,
+          67
+        ],
+        "notes": {
+          "15": "Sin actividad relacionada con recursos marinos.",
+          "74": "La empresa no trata datos de consumidores finales."
+        }
+      },
+      "acta": {
+        "completed_on": "2026-01-29",
+        "method": "Grupo de trabajo con dirección de fábrica, medio ambiente, cantera y RRHH; consulta al ayuntamiento, asociaciones vecinales y transportistas",
+        "participants": "Dirección general, dirección de fábrica, medio ambiente y cantera, mantenimiento, compras, RRHH, comité de empresa"
+      },
+      "figures": {
+        "GOV-1_01": "2",
+        "GOV-1_02": "4",
+        "GOV-1_05": "33.3",
+        "GOV-1_06": "33.3",
+        "GOV-1_07": "33.3",
+        "GOV-3_05": "15",
+        "SBM-1_03": "230",
+        "SBM-1_04": "230",
+        "SBM-1_06": "71500000",
+        "SBM-1_10": "0",
+        "SBM-1_16": "0",
+        "E1-1_05": "1400000",
+        "E1-1_06": "18500000",
+        "E1-5_01": "1180000",
+        "E1-5_02": "1010000",
+        "E1-5_05": "170000",
+        "E1-5_07": "54000",
+        "E1-5_09": "14.4",
+        "E1-5_15": "85.6",
+        "E1-5_22": "71500000",
+        "E1-5_23": "0",
+        "E1-6_25": "30",
+        "E1-6_34": "71500000",
+        "E1-7_10": "0",
+        "E1.GOV-3_02": "20"
+      },
+      "not_applicable": {
+        "SBM-1_11": "No aplica: la empresa no obtiene ingresos del carbón.",
+        "SBM-1_12": "No aplica: la empresa no obtiene ingresos del petróleo.",
+        "SBM-1_13": "No aplica: la empresa no obtiene ingresos del gas.",
+        "SBM-1_18": "No aplica: la empresa no fabrica ni comercializa armas controvertidas.",
+        "SBM-1_20": "No aplica: la empresa no cultiva ni produce tabaco."
+      },
+      "documents": [
+        "Cuentas anuales 2025",
+        "Declaración ambiental 2025",
+        "Inventario GEI 2025 verificado y informe del régimen de comercio de emisiones",
+        "Autorización ambiental integrada, mediciones de emisiones y plan de restauración de la cantera",
+        "Acta del consejo de administración, 29/01/2026",
+        "Certificados ISO 14001, ISO 50001 e ISO 45001",
+        "Hoja de ruta de descarbonización 2030 (combustibles alternativos y captura)",
+        "Registro de accidentes y mediciones de polvo y ruido 2025"
+      ]
+    },
+    {
+      "email": "test18@airis.com",
+      "name": "Telecomunicaciones Rurales Ibéricas, S.A.",
+      "contact": "Beatriz Alonso",
+      "sector_phrase": "el despliegue y la explotación de redes de fibra óptica y radioenlaces en municipios rurales de Castilla y León y el norte de Portugal",
+      "city": "Salamanca",
+      "nace_code": "K61.1.0",
+      "lei": "959800TELERURALIBE49",
+      "profile": {
+        "headquarters_country": "Spain",
+        "reporting_year": 2025,
+        "reporting_scope": "consolidated_group",
+        "num_subsidiaries_countries": 1,
+        "stock_listed": false,
+        "reporting_currency": "EUR",
+        "product_service_type": "technical_services",
+        "reporting_period_start": "2025-01-01",
+        "reporting_period_end": "2025-12-31"
+      },
+      "operations": {
+        "regions": [
+          "eu"
+        ],
+        "value_chain": [
+          "upstream",
+          "direct_operations",
+          "downstream",
+          "services"
+        ],
+        "employee_count_range": "250_499",
+        "revenue_range": "40m_to_50m",
+        "employee_count": 310,
+        "revenue": 48700000
+      },
+      "activity_questions": {
+        "physical_operations": "yes",
+        "water_use": "no",
+        "hazardous_substances": "no",
+        "biodiversity_sensitive_locations": "yes",
+        "physical_goods_resources": "no",
+        "external_value_chain_workers": "yes",
+        "local_communities": "yes",
+        "consumer_end_users": "yes",
+        "international_footprint": "yes"
+      },
+      "topics": {
+        "unsure": [
+          23
+        ],
+        "reject": [
+          11,
+          15
+        ],
+        "add": [
+          3,
+          25,
+          27,
+          35,
+          44,
+          45,
+          52,
+          74,
+          76,
+          81,
+          87
+        ],
+        "notes": {
+          "11": "El consumo de agua se limita a oficinas.",
+          "15": "Sin actividad relacionada con recursos marinos."
+        }
+      },
+      "acta": {
+        "completed_on": "2026-02-04",
+        "method": "Sesiones con dirección de red, despliegue, atención al cliente y personas; consulta a ayuntamientos, usuarios de 40 municipios y empresas instaladoras",
+        "participants": "Consejo de administración, dirección general, dirección de red y despliegue, atención al cliente, RRHH, prevención, dirección de la filial portuguesa"
+      },
+      "figures": {
+        "GOV-1_01": "2",
+        "GOV-1_02": "5",
+        "GOV-1_05": "42.9",
+        "GOV-1_06": "42.9",
+        "GOV-1_07": "42.9",
+        "GOV-3_05": "10",
+        "SBM-1_03": "310",
+        "SBM-1_04": "310",
+        "SBM-1_06": "48700000",
+        "SBM-1_10": "0",
+        "SBM-1_16": "0",
+        "E1-1_05": "260000",
+        "E1-1_06": "1700000",
+        "E1-5_01": "12800",
+        "E1-5_02": "1900",
+        "E1-5_05": "10900",
+        "E1-5_07": "10900",
+        "E1-5_09": "85.2",
+        "E1-5_15": "14.8",
+        "E1-5_22": "0",
+        "E1-5_23": "48700000",
+        "E1-6_25": "25",
+        "E1-6_34": "48700000",
+        "E1-7_10": "0",
+        "E1.GOV-3_02": "10"
+      },
+      "not_applicable": {
+        "SBM-1_11": "No aplica: la empresa no obtiene ingresos del carbón.",
+        "SBM-1_12": "No aplica: la empresa no obtiene ingresos del petróleo.",
+        "SBM-1_13": "No aplica: la empresa no obtiene ingresos del gas.",
+        "SBM-1_18": "No aplica: la empresa no fabrica ni comercializa armas controvertidas.",
+        "SBM-1_20": "No aplica: la empresa no cultiva ni produce tabaco."
+      },
+      "documents": [
+        "Cuentas anuales consolidadas 2025",
+        "Memoria de sostenibilidad 2025",
+        "Inventario GEI 2025 (red, flota y equipos)",
+        "Registro de consumos eléctricos de la red y contratos renovables",
+        "Acta del consejo de administración, 04/02/2026",
+        "Certificados ISO 27001 e ISO 45001",
+        "Registro de tratamientos y gestión de incidentes de privacidad (RGPD)",
+        "Contratos marco y auditorías de prevención a empresas instaladoras 2025"
+      ]
+    },
+    {
+      "email": "test19@airis.com",
+      "name": "Clínicas Salud Mediterránea, S.A.",
+      "contact": "Nuria Gascón",
+      "sector_phrase": "la prestación de asistencia hospitalaria y ambulatoria privada en 6 hospitales y 22 centros médicos de la Comunidad Valenciana y Murcia",
+      "city": "Alicante",
+      "nace_code": "R86.1.0",
+      "lei": "959800CLINSALUDMED43",
+      "profile": {
+        "headquarters_country": "Spain",
+        "reporting_year": 2025,
+        "reporting_scope": "consolidated_group",
+        "num_subsidiaries_countries": 0,
+        "stock_listed": false,
+        "reporting_currency": "EUR",
+        "product_service_type": "health_life_sciences",
+        "reporting_period_start": "2025-01-01",
+        "reporting_period_end": "2025-12-31"
+      },
+      "operations": {
+        "regions": [
+          "eu"
+        ],
+        "value_chain": [
+          "upstream",
+          "direct_operations",
+          "services"
+        ],
+        "employee_count_range": "1000_plus",
+        "revenue_range": "50m_to_250m",
+        "employee_count": 1400,
+        "revenue": 185000000
+      },
+      "activity_questions": {
+        "physical_operations": "yes",
+        "water_use": "yes",
+        "hazardous_substances": "yes",
+        "biodiversity_sensitive_locations": "no",
+        "physical_goods_resources": "no",
+        "external_value_chain_workers": "yes",
+        "local_communities": "yes",
+        "consumer_end_users": "yes",
+        "international_footprint": "no"
+      },
+      "topics": {
+        "unsure": [
+          3
+        ],
+        "reject": [
+          15,
+          86
+        ],
+        "add": [
+          8,
+          11,
+          27,
+          29,
+          35,
+          37,
+          39,
+          44,
+          74,
+          77,
+          80,
+          81
+        ],
+        "notes": {
+          "15": "Sin actividad relacionada con recursos marinos.",
+          "86": "El grupo no realiza actividades de presión política ni aportaciones a partidos."
+        }
+      },
+      "acta": {
+        "completed_on": "2026-02-19",
+        "method": "Comité de calidad y sostenibilidad con direcciones médicas, enfermería, compras y personas; encuesta a pacientes, aseguradoras y profesionales",
+        "participants": "Consejo de administración, dirección general, direcciones médicas y de enfermería, calidad y seguridad del paciente, compras, RRHH, comité intercentros"
+      },
+      "figures": {
+        "GOV-1_01": "2",
+        "GOV-1_02": "6",
+        "GOV-1_05": "50",
+        "GOV-1_06": "50",
+        "GOV-1_07": "37.5",
+        "GOV-3_05": "15",
+        "SBM-1_03": "1400",
+        "SBM-1_04": "1400",
+        "SBM-1_06": "185000000",
+        "SBM-1_10": "0",
+        "SBM-1_16": "0",
+        "E1-1_05": "780000",
+        "E1-1_06": "3400000",
+        "E1-5_01": "46800",
+        "E1-5_02": "20200",
+        "E1-5_05": "26600",
+        "E1-5_07": "26600",
+        "E1-5_09": "56.8",
+        "E1-5_15": "43.2",
+        "E1-5_22": "0",
+        "E1-5_23": "185000000",
+        "E1-6_25": "25",
+        "E1-6_34": "185000000",
+        "E1-7_10": "0",
+        "E1.GOV-3_02": "10"
+      },
+      "not_applicable": {
+        "SBM-1_11": "No aplica: la empresa no obtiene ingresos del carbón.",
+        "SBM-1_12": "No aplica: la empresa no obtiene ingresos del petróleo.",
+        "SBM-1_13": "No aplica: la empresa no obtiene ingresos del gas.",
+        "SBM-1_18": "No aplica: la empresa no fabrica ni comercializa armas controvertidas.",
+        "SBM-1_20": "No aplica: la empresa no cultiva ni produce tabaco."
+      },
+      "documents": [
+        "Cuentas anuales consolidadas 2025",
+        "Memoria de calidad y sostenibilidad 2025",
+        "Inventario GEI 2025 (energía, gases anestésicos y residuos)",
+        "Registro de residuos sanitarios y gestores autorizados 2025",
+        "Acta del consejo de administración, 19/02/2026",
+        "Acreditación Joint Commission e ISO 14001",
+        "Registro de tratamientos, evaluaciones de impacto y brechas de seguridad (RGPD)",
+        "Plan de igualdad, protocolo de acoso y registro de agresiones a profesionales 2025"
+      ]
+    },
+    {
+      "email": "test20@airis.com",
+      "name": "Terminal Portuaria del Estrecho, S.A.",
+      "contact": "Rafael Ortega",
+      "sector_phrase": "la explotación de una terminal de contenedores y una terminal de graneles en el puerto de Algeciras, con servicios de estiba, almacenamiento y conexión ferroviaria",
+      "city": "Algeciras",
+      "nace_code": "H52.2.2",
+      "lei": "959800TERMPORTESTR58",
+      "profile": {
+        "headquarters_country": "Spain",
+        "reporting_year": 2025,
+        "reporting_scope": "individual",
+        "num_subsidiaries_countries": 0,
+        "stock_listed": false,
+        "reporting_currency": "EUR",
+        "product_service_type": "logistics_transport_storage",
+        "reporting_period_start": "2025-01-01",
+        "reporting_period_end": "2025-12-31"
+      },
+      "operations": {
+        "regions": [
+          "eu",
+          "middle_east_africa"
+        ],
+        "value_chain": [
+          "direct_operations",
+          "services"
+        ],
+        "employee_count_range": "250_499",
+        "revenue_range": "50m_to_250m",
+        "employee_count": 350,
+        "revenue": 95800000
+      },
+      "activity_questions": {
+        "physical_operations": "yes",
+        "water_use": "no",
+        "hazardous_substances": "yes",
+        "biodiversity_sensitive_locations": "yes",
+        "physical_goods_resources": "no",
+        "external_value_chain_workers": "yes",
+        "local_communities": "yes",
+        "consumer_end_users": "no",
+        "international_footprint": "yes"
+      },
+      "topics": {
+        "unsure": [
+          13
+        ],
+        "reject": [
+          7,
+          79
+        ],
+        "add": [
+          2,
+          3,
+          4,
+          14,
+          19,
+          22,
+          27,
+          35,
+          46,
+          52,
+          67,
+          88
+        ],
+        "notes": {
+          "7": "No se manipulan alimentos ni organismos vivos.",
+          "79": "No hay productos ni servicios dirigidos a menores."
+        }
+      },
+      "acta": {
+        "completed_on": "2026-02-12",
+        "method": "Taller con dirección, operaciones, seguridad y medio ambiente; consulta a la Autoridad Portuaria, estibadores, navieras y asociaciones vecinales de la bahía",
+        "participants": "Dirección general, dirección de operaciones, seguridad y protección, medio ambiente, RRHH, comité de empresa, representantes de la estiba"
+      },
+      "figures": {
+        "GOV-1_01": "2",
+        "GOV-1_02": "5",
+        "GOV-1_05": "28.6",
+        "GOV-1_06": "28.6",
+        "GOV-1_07": "42.9",
+        "GOV-3_05": "15",
+        "SBM-1_03": "350",
+        "SBM-1_04": "350",
+        "SBM-1_06": "95800000",
+        "SBM-1_10": "0",
+        "SBM-1_16": "0",
+        "E1-1_05": "540000",
+        "E1-1_06": "6200000",
+        "E1-5_01": "31500",
+        "E1-5_02": "24200",
+        "E1-5_05": "7300",
+        "E1-5_07": "7300",
+        "E1-5_09": "23.2",
+        "E1-5_15": "76.8",
+        "E1-5_22": "95800000",
+        "E1-5_23": "0",
+        "E1-6_25": "35",
+        "E1-6_34": "95800000",
+        "E1-7_10": "0",
+        "E1.GOV-3_02": "10"
+      },
+      "not_applicable": {
+        "SBM-1_11": "No aplica: la empresa no obtiene ingresos del carbón.",
+        "SBM-1_12": "No aplica: la empresa no obtiene ingresos del petróleo.",
+        "SBM-1_13": "No aplica: la empresa no obtiene ingresos del gas.",
+        "SBM-1_18": "No aplica: la empresa no fabrica ni comercializa armas controvertidas.",
+        "SBM-1_20": "No aplica: la empresa no cultiva ni produce tabaco."
+      },
+      "documents": [
+        "Cuentas anuales 2025",
+        "Memoria de sostenibilidad 2025",
+        "Inventario GEI 2025 (maquinaria, electricidad y buques en muelle)",
+        "Plan de vigilancia ambiental de la bahía y mediciones de calidad del aire 2025",
+        "Acta del consejo de administración, 12/02/2026",
+        "Certificados ISO 14001, ISO 45001 y código ISPS",
+        "Registro de accidentes y plan de autoprotección 2025",
+        "Política anticorrupción, procedimiento aduanero y canal ético (informe 2025)"
+      ]
     }
   ]
 }

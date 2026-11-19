@@ -18,7 +18,7 @@ beforeEach(function () {
 it('lists the fictitious companies of the catalogue', function () {
     $catalogue = DemoCompanyBuilder::catalogue();
 
-    expect($catalogue['companies'])->toHaveCount(5);
+    expect($catalogue['companies'])->toHaveCount(20);
     foreach ($catalogue['companies'] as $company) {
         expect($company['email'])->toEndWith('@airis.com')
             ->and(count($company['not_applicable']))->toBeLessThanOrEqual(5)
