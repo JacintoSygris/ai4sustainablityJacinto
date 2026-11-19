@@ -285,5 +285,6 @@
     "No company has an AI proposal yet.": "Ninguna empresa tiene todavía una propuesta de la IA.",
     "The value does not match the selected data type.": "El valor no coincide con el tipo de dato seleccionado.",
     "No walkthrough video is stored for this account.": "No hay vídeo de recorrido guardado para esta cuenta.",
-    "This account has no report to delete.": "Esta cuenta no tiene ningún informe que borrar."
+    "This account has no report to delete.": "Esta cuenta no tiene ningún informe que borrar.",
+    "You cannot delete your own account from the administration panel.": "No puedes borrar tu propia cuenta desde el panel de administración."
 }

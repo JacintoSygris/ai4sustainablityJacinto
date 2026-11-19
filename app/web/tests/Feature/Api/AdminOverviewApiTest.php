@@ -274,3 +274,32 @@ it('lets administrators delete an account report while keeping the account', fun
     $this->actingAs($this->admin)->deleteJson('/api/admin/users/'.$this->client->id.'/report')->assertNotFound();
     $this->actingAs($this->admin)->deleteJson('/api/admin/users/999999/report')->assertNotFound();
 });
+
+it('lets administrators delete an account but never their own', function () {
+    completedProposal($this->client, [$this->t1->id]);
+    \Illuminate\Support\Facades\DB::table('sessions')->insert(['id' => 'sess-client', 'user_id' => $this->client->id, 'ip_address' => '127.0.0.1', 'user_agent' => 'test', 'payload' => '', 'last_activity' => time()]);
+
+    $this->actingAs($this->client)->deleteJson('/api/admin/users/'.$this->admin->id)->assertForbidden();
+    expect(in_array($this->deleteJson('/api/admin/users/'.$this->client->id)->getStatusCode(), [401, 403], true))->toBeTrue();
+    $this->actingAs($this->admin)->deleteJson('/api/admin/users/'.$this->admin->id)->assertStatus(422);
+    $this->actingAs($this->admin)->deleteJson('/api/admin/users/999999')->assertNotFound();
+    expect(User::query()->count())->toBe(2);
+
+    $users = $this->actingAs($this->admin)->getJson('/api/admin/users')->assertOk()->json('data');
+    expect($users['current_user_id'])->toBe($this->admin->id);
+
+    $this->actingAs($this->admin)->deleteJson('/api/admin/users/'.$this->client->id)
+        ->assertOk()
+        ->assertJsonPath('data.user_id', $this->client->id)
+        ->assertJsonPath('data.email', $this->client->email)
+        ->assertJsonPath('data.deleted_characterizations', 1);
+
+    expect(User::query()->whereKey($this->client->id)->exists())->toBeFalse()
+        ->and(Characterization::forUser($this->client->id)->count())->toBe(0)
+        ->and(\Illuminate\Support\Facades\DB::table('sessions')->where('user_id', $this->client->id)->count())->toBe(0)
+        ->and(User::query()->whereKey($this->admin->id)->exists())->toBeTrue();
+
+    $event = \App\Models\ReportAuditEvent::query()->where('event_type', 'account_deleted_by_admin')->sole();
+    expect($event->payload['deleted_email'])->toBe($this->client->email)
+        ->and($event->payload['admin_user_id'])->toBe($this->admin->id);
+});

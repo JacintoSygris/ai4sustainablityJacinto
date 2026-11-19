@@ -8,6 +8,12 @@ export const wave2English = {
   "Borrando...": "Deleting...",
   "Informe de {0} borrado.": "Report of {0} deleted.",
   "No se ha podido borrar el informe.": "The report could not be deleted.",
+  "Borrar usuario": "Delete user",
+  "Borrar la cuenta de {0}": "Delete the account of {0}",
+  "Se borrará la cuenta {0} con todo lo que introdujo: encuesta inicial, propuesta de la IA y su revisión, acta, temas confirmados, respuestas del paso 5, documentos y versiones del informe. La persona dejará de poder entrar y tendría que registrarse de nuevo. Esta acción no se puede deshacer.": "The account {0} will be deleted with everything it entered: initial survey, AI proposal and its review, minutes, confirmed topics, step 5 answers, documents and report versions. The person will no longer be able to sign in and would have to register again. This action cannot be undone.",
+  "Cuenta {0} borrada.": "Account {0} deleted.",
+  "No se ha podido borrar la cuenta.": "The account could not be deleted.",
+  "Tu cuenta": "Your account",
   "Descargar el vídeo del recorrido de {0}": "Download the walkthrough video of {0}",
   // Step 5 typed answers and step 6 report content derived from them
   "Tipo de dato": "Data type",

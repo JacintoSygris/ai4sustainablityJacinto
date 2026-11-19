@@ -45,6 +45,8 @@ Route::middleware(['web', 'private-dev-user', 'auth', 'verified.required'])->gro
         ->whereNumber('user')->middleware('throttle:30,1,admin-overview')->name('api.admin.demo-video');
     Route::delete('admin/users/{user}/report', [\App\Http\Controllers\Api\AdminOverviewController::class, 'destroyReport'])
         ->whereNumber('user')->middleware('throttle:10,1,admin-destroy-report')->name('api.admin.report.destroy');
+    Route::delete('admin/users/{user}', [\App\Http\Controllers\Api\AdminOverviewController::class, 'destroyUser'])
+        ->whereNumber('user')->middleware('throttle:10,1,admin-destroy-user')->name('api.admin.users.destroy');
     Route::get('admin/learning', [\App\Http\Controllers\Api\LearningAdminController::class, 'show'])->middleware('throttle:20,1,learning-admin-read');
     Route::post('admin/learning/actions', [\App\Http\Controllers\Api\LearningAdminController::class, 'store'])->middleware('throttle:5,1,learning-admin-actions');
     Route::get('learning-case/draft', [\App\Http\Controllers\Api\LearningCaseController::class, 'show'])->name('api.learning_case.draft');

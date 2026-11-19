@@ -91,7 +91,7 @@ class AdminOverviewController extends Controller
             ];
         })->values()->all();
 
-        return response()->json(['data' => ['users' => $rows, 'admin_domains' => PlatformAdmin::domains()]]);
+        return response()->json(['data' => ['users' => $rows, 'admin_domains' => PlatformAdmin::domains(), 'current_user_id' => $request->user()->id]]);
     }
 
     public function demoVideo(Request $request, int $user)
@@ -142,6 +142,49 @@ class AdminOverviewController extends Controller
 
         return response()->json(['data' => [
             'user_id' => $account->id,
+            'deleted_characterizations' => $characterizations->count(),
+            'deleted_snapshots' => count($snapshotIds),
+        ]]);
+    }
+
+    /**
+     * Deletes an account entirely: its report (as destroyReport) and then the user
+     * row, from which sessions, learning rows and approvals cascade. Administrators
+     * cannot delete their own account. Audit events keep a trace with the ids nulled.
+     */
+    public function destroyUser(Request $request, int $user)
+    {
+        $this->authorizeAdmin($request);
+
+        $admin = $request->user();
+        $account = User::query()->findOrFail($user);
+        abort_if($account->id === $admin->id, 422, __('You cannot delete your own account from the administration panel.'));
+
+        $characterizations = Characterization::forUser($account->id)->orderBy('id')->get();
+        $snapshotIds = ReportSnapshot::query()->where('user_id', $account->id)->pluck('id')->all();
+
+        DB::transaction(function () use ($characterizations, $account, $admin, $snapshotIds): void {
+            ReportAuditEvent::create([
+                'event_type' => 'account_deleted_by_admin',
+                'payload' => [
+                    'admin_user_id' => $admin->id,
+                    'admin_email' => $admin->email,
+                    'deleted_user_id' => $account->id,
+                    'deleted_email' => $account->email,
+                    'characterization_ids' => $characterizations->pluck('id')->all(),
+                    'snapshot_ids' => $snapshotIds,
+                ],
+            ]);
+            $characterizations->each->delete();
+            DB::table('sessions')->where('user_id', $account->id)->delete();
+            $account->delete();
+        });
+
+        Log::info('Admin deleted an account', ['admin_user_id' => $admin->id, 'user_id' => $account->id, 'characterizations' => $characterizations->count(), 'snapshots' => count($snapshotIds)]);
+
+        return response()->json(['data' => [
+            'user_id' => $account->id,
+            'email' => $account->email,
             'deleted_characterizations' => $characterizations->count(),
             'deleted_snapshots' => count($snapshotIds),
         ]]);

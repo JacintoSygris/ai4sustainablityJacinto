@@ -1318,6 +1318,7 @@ export type LaravelAdminUser = {
 export type LaravelAdminUsers = {
   users: LaravelAdminUser[]
   admin_domains: string[]
+  current_user_id: number
 }
 
 export type LaravelAiUsefulnessTopic = {
@@ -1412,6 +1413,16 @@ export function deleteLaravelAdminUserReport(
   options: Omit<LaravelApiOptions, "body" | "method"> = {},
 ): Promise<LaravelApiEnvelope<LaravelAdminReportDeletion>> {
   return laravelApi<LaravelApiEnvelope<LaravelAdminReportDeletion>>(`/admin/users/${userId}/report`, { ...options, method: "DELETE" })
+}
+
+export type LaravelAdminUserDeletion = LaravelAdminReportDeletion & { email: string }
+
+/** Deletes an account and everything it entered. Administrators only; never the caller's own account. */
+export function deleteLaravelAdminUser(
+  userId: number,
+  options: Omit<LaravelApiOptions, "body" | "method"> = {},
+): Promise<LaravelApiEnvelope<LaravelAdminUserDeletion>> {
+  return laravelApi<LaravelApiEnvelope<LaravelAdminUserDeletion>>(`/admin/users/${userId}`, { ...options, method: "DELETE" })
 }
 
 export function getLaravelAdminAiUsefulness(

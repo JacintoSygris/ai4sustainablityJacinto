@@ -13,6 +13,7 @@ import { ui, formatUi } from "@/lib/i18n/messages.mjs"
 import { useSystemMessage, systemCopy } from "@/lib/i18n/use-system-message"
 import {
   LaravelApiError,
+  deleteLaravelAdminUser,
   deleteLaravelAdminUserReport,
   getLaravelAdminAiUsefulness,
   getLaravelAdminUsers,
@@ -106,9 +107,9 @@ export function AdminOverview() {
     }
   }, [router, reloadToken])
 
-  // After a report is deleted, both sections (accounts and AI usefulness) are stale: reload them.
-  const handleReportDeleted = (displayName: string) => {
-    setNoticeMessage(formatUi(locale, "Informe de {0} borrado.", [displayName]))
+  // After a report or an account is deleted, both sections (accounts and AI usefulness) are stale: reload them.
+  const handleDeleted = (kind: DeletionKind, displayName: string) => {
+    setNoticeMessage(formatUi(locale, kind === "report" ? "Informe de {0} borrado." : "Cuenta {0} borrada.", [displayName]))
     setReloadToken((token) => token + 1)
   }
 
@@ -144,7 +145,7 @@ export function AdminOverview() {
       ) : null}
 
       {report ? <AiUsefulnessSection report={report} locale={locale} /> : null}
-      {users ? <UsersSection users={users.users} locale={locale} onReportDeleted={handleReportDeleted} /> : null}
+      {users ? <UsersSection users={users.users} currentUserId={users.current_user_id} locale={locale} onDeleted={handleDeleted} /> : null}
     </div>
   )
 }
@@ -345,23 +346,45 @@ function ProgressChip({ done, label }: { done: boolean; label: string }) {
   )
 }
 
-function UsersSection({ users, locale, onReportDeleted }: { users: LaravelAdminUser[]; locale: Locale; onReportDeleted: (displayName: string) => void }) {
+type DeletionKind = "report" | "account"
+
+function UsersSection({
+  users,
+  currentUserId,
+  locale,
+  onDeleted,
+}: {
+  users: LaravelAdminUser[]
+  currentUserId: number
+  locale: Locale
+  onDeleted: (kind: DeletionKind, displayName: string) => void
+}) {
   const tr = (message: string) => ui(locale, message)
-  const [pendingDeletion, setPendingDeletion] = useState<LaravelAdminUser | null>(null)
+  const [pendingDeletion, setPendingDeletion] = useState<{ user: LaravelAdminUser; kind: DeletionKind } | null>(null)
   const [deleting, setDeleting] = useState(false)
   const [deletionError, setDeletionError] = useState<string | null>(null)
-  const pendingName = pendingDeletion ? pendingDeletion.characterization?.company_name || pendingDeletion.name || pendingDeletion.email : ""
+  const kind = pendingDeletion?.kind ?? "report"
+  const pendingName = pendingDeletion
+    ? kind === "report"
+      ? pendingDeletion.user.characterization?.company_name || pendingDeletion.user.name || pendingDeletion.user.email
+      : pendingDeletion.user.email
+    : ""
 
   const handleConfirmDeletion = async () => {
     if (!pendingDeletion) return
     setDeleting(true)
     setDeletionError(null)
     try {
-      await deleteLaravelAdminUserReport(pendingDeletion.id)
+      if (kind === "report") {
+        await deleteLaravelAdminUserReport(pendingDeletion.user.id)
+      } else {
+        await deleteLaravelAdminUser(pendingDeletion.user.id)
+      }
       setPendingDeletion(null)
-      onReportDeleted(pendingName)
+      onDeleted(kind, pendingName)
     } catch (error) {
-      setDeletionError(error instanceof LaravelApiError && error.message ? error.message : tr("No se ha podido borrar el informe."))
+      const fallback = kind === "report" ? tr("No se ha podido borrar el informe.") : tr("No se ha podido borrar la cuenta.")
+      setDeletionError(error instanceof LaravelApiError && error.message ? error.message : fallback)
     } finally {
       setDeleting(false)
     }
@@ -383,7 +406,16 @@ function UsersSection({ users, locale, onReportDeleted }: { users: LaravelAdminU
           </thead>
           <tbody>
             {users.map((user) => (
-              <UserRow key={user.id} user={user} locale={locale} onDeleteReport={() => { setDeletionError(null); setPendingDeletion(user) }} />
+              <UserRow
+                key={user.id}
+                user={user}
+                isCurrentUser={user.id === currentUserId}
+                locale={locale}
+                onDelete={(requested) => {
+                  setDeletionError(null)
+                  setPendingDeletion({ user, kind: requested })
+                }}
+              />
             ))}
           </tbody>
         </table>
@@ -394,10 +426,12 @@ function UsersSection({ users, locale, onReportDeleted }: { users: LaravelAdminU
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-amber-500" aria-hidden="true" />
-              {formatUi(locale, "Borrar el informe de {0}", [pendingName])}
+              {formatUi(locale, kind === "report" ? "Borrar el informe de {0}" : "Borrar la cuenta de {0}", [pendingName])}
             </DialogTitle>
             <DialogDescription>
-              {formatUi(locale, "Se borrarán la encuesta inicial, la propuesta de la IA y su revisión, el acta, los temas confirmados, las respuestas del paso 5, los documentos y todas las versiones del informe de {0}. La cuenta se conserva y podrá empezar el asistente de nuevo. Esta acción no se puede deshacer.", [pendingName])}
+              {kind === "report"
+                ? formatUi(locale, "Se borrarán la encuesta inicial, la propuesta de la IA y su revisión, el acta, los temas confirmados, las respuestas del paso 5, los documentos y todas las versiones del informe de {0}. La cuenta se conserva y podrá empezar el asistente de nuevo. Esta acción no se puede deshacer.", [pendingName])
+                : formatUi(locale, "Se borrará la cuenta {0} con todo lo que introdujo: encuesta inicial, propuesta de la IA y su revisión, acta, temas confirmados, respuestas del paso 5, documentos y versiones del informe. La persona dejará de poder entrar y tendría que registrarse de nuevo. Esta acción no se puede deshacer.", [pendingName])}
             </DialogDescription>
           </DialogHeader>
           {deletionError ? (
@@ -409,7 +443,7 @@ function UsersSection({ users, locale, onReportDeleted }: { users: LaravelAdminU
             </Button>
             <Button variant="destructive" disabled={deleting} onClick={handleConfirmDeletion}>
               <Trash2 className="h-4 w-4" aria-hidden="true" />
-              {deleting ? tr("Borrando...") : tr("Borrar informe")}
+              {deleting ? tr("Borrando...") : kind === "report" ? tr("Borrar informe") : tr("Borrar usuario")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -418,7 +452,17 @@ function UsersSection({ users, locale, onReportDeleted }: { users: LaravelAdminU
   )
 }
 
-function UserRow({ user, locale, onDeleteReport }: { user: LaravelAdminUser; locale: Locale; onDeleteReport: () => void }) {
+function UserRow({
+  user,
+  isCurrentUser,
+  locale,
+  onDelete,
+}: {
+  user: LaravelAdminUser
+  isCurrentUser: boolean
+  locale: Locale
+  onDelete: (kind: DeletionKind) => void
+}) {
   const tr = (message: string) => ui(locale, message)
   const displayName = user.name || user.email
   const characterization = user.characterization
@@ -433,6 +477,7 @@ function UserRow({ user, locale, onDeleteReport }: { user: LaravelAdminUser; loc
         <p className="text-xs text-muted-foreground">{user.email}</p>
         <div className="mt-1 flex flex-wrap gap-1">
           {user.is_admin ? <Badge variant="secondary">{tr("Administrador")}</Badge> : null}
+          {isCurrentUser ? <Badge variant="outline">{tr("Tu cuenta")}</Badge> : null}
           {!user.email_verified ? <Badge variant="outline" className="border-amber-400 text-amber-900">{tr("Sin verificar")}</Badge> : null}
         </div>
       </td>
@@ -512,7 +557,7 @@ function UserRow({ user, locale, onDeleteReport }: { user: LaravelAdminUser; loc
             <button
               type="button"
               className="inline-flex items-center gap-1 text-sm text-destructive hover:underline"
-              onClick={onDeleteReport}
+              onClick={() => onDelete("report")}
               aria-label={formatUi(locale, "Borrar el informe de {0}", [displayName])}
             >
               <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
@@ -522,6 +567,17 @@ function UserRow({ user, locale, onDeleteReport }: { user: LaravelAdminUser; loc
         ) : (
           <span className="text-xs text-muted-foreground">—</span>
         )}
+        {!isCurrentUser ? (
+          <button
+            type="button"
+            className="mt-2 inline-flex items-center gap-1 text-sm text-destructive hover:underline"
+            onClick={() => onDelete("account")}
+            aria-label={formatUi(locale, "Borrar la cuenta de {0}", [user.email])}
+          >
+            <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+            {tr("Borrar usuario")}
+          </button>
+        ) : null}
       </td>
     </tr>
   )
