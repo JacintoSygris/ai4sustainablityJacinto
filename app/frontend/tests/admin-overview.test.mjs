@@ -37,10 +37,8 @@ test("the overview reads admin endpoints and opens other accounts' reports throu
   assert.doesNotMatch(source, /fetch\(["']\/api\//, "no direct fetches outside the Laravel client")
 })
 
-test("the overview offers the walkthrough video only when the platform stored one", () => {
+test("the overview no longer links the walkthrough video (removed at the user's request on 2026-11-20)", () => {
   const source = read("components/admin/admin-overview.tsx")
 
-  assert.match(source, /user\.demo_video \? \(/)
-  assert.match(source, /\/admin\/users\/\$\{user\.id\}\/demo-video/)
-  assert.match(read("lib/laravel-api.ts"), /demo_video\?: boolean/)
+  assert.doesNotMatch(source, /demo-video|demo_video|Vídeo del recorrido/)
 })

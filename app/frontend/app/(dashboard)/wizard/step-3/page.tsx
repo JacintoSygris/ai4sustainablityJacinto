@@ -2,6 +2,7 @@ import { WizardSidebar } from "@/components/wizard/wizard-sidebar"
 import { AcademyTips } from "@/components/wizard/academy-tips"
 import { DoubleMaterialityGuide } from "@/components/wizard/double-materiality-guide"
 import { wizardStepsForView } from "@/lib/wizard-steps"
+import { getReachedWizardStep } from "@/lib/wizard-progress-server"
 
 const academyTips = {
   title: "Consejos prácticos",
@@ -10,8 +11,8 @@ const academyTips = {
   ],
 }
 
-export default function Step3Page() {
-  const wizardSteps = wizardStepsForView(3)
+export default async function Step3Page() {
+  const wizardSteps = wizardStepsForView(3, await getReachedWizardStep())
 
   return (
     <div className="flex flex-col gap-8 lg:flex-row">

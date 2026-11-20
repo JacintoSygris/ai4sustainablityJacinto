@@ -135,6 +135,8 @@ return [
         'arelle_probe' => env('ESRS_ARELLE_PROBE', true),
         'arelle_cache_directory' => env('ESRS_ARELLE_CACHE_DIRECTORY'),
         'arelle_max_output_bytes' => env('ESRS_ARELLE_MAX_OUTPUT_BYTES'),
+        // iXBRL Viewer plugin next to Arelle: null detects it, true/false forces it.
+        'ixbrl_viewer_plugin' => env('ESRS_IXBRL_VIEWER_PLUGIN'),
     ],
 
 ];

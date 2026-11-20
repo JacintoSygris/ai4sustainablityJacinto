@@ -286,5 +286,19 @@
     "The value does not match the selected data type.": "El valor no coincide con el tipo de dato seleccionado.",
     "No walkthrough video is stored for this account.": "No hay vídeo de recorrido guardado para esta cuenta.",
     "This account has no report to delete.": "Esta cuenta no tiene ningún informe que borrar.",
-    "You cannot delete your own account from the administration panel.": "No puedes borrar tu propia cuenta desde el panel de administración."
+    "You cannot delete your own account from the administration panel.": "No puedes borrar tu propia cuenta desde el panel de administración.",
+    "Prepared with :app": "Preparado con :app",
+    "Page": "Página",
+    "Reporting period": "Periodo del informe",
+    "Entity identifier": "Identificador de entidad",
+    ":count standards": ":count normas",
+    ":count topics": ":count temas",
+    "Notes": "Notas",
+    "Activity profile": "Perfil de actividad",
+    "Not answered": "Sin responder",
+    "Environment": "Medioambiente",
+    "Social": "Social",
+    "Governance": "Gobernanza",
+    "Topics proposed for the materiality review, grouped by standard.": "Temas propuestos para la revisión de materialidad, agrupados por norma.",
+    "This summary reflects the information entered in step 1 of the assistant and the topics proposed for the materiality review.": "Este resumen refleja la información introducida en el paso 1 del asistente y los temas propuestos para la revisión de materialidad."
 }

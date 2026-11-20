@@ -53,6 +53,43 @@ it('runs Arelle with argument list, offline validation, package, file and cleans
         ->and(is_file($capture['xhtml_path']))->toBeFalse();
 });
 
+it('emits the iXBRL Viewer page from the same run when asked and the plugin is present', function () {
+    $capturePath = arelleValidatorTempFile('capture.json', '');
+    $binary = arelleValidatorFixtureBinary($capturePath, 0, '[info] validated in 1.23 secs - candidate.xhtml');
+    config(['services.report.arelle_command' => [PHP_BINARY, '-n', $binary], 'services.report.ixbrl_viewer_plugin' => true]);
+
+    $result = (new ArelleXhtmlIxbrlValidator())->validate('<html />', $this->profile, arelleValidatorManifestFixture(), false, '/api/report/ixbrl-viewer.js');
+    $argv = json_decode(file_get_contents($capturePath), true, flags: JSON_THROW_ON_ERROR)['argv'];
+
+    expect($argv)->toContain('--plugins')->toContain('iXBRLViewerPlugin')->toContain('--viewer-no-copy-script')->toContain('--viewer-feature-review')
+        ->and($argv[array_search('--viewer-url', $argv, true) + 1])->toBe('/api/report/ixbrl-viewer.js')
+        ->and($result['assertion_errors'])->toBe(0)
+        ->and($result['viewer_html'])->toContain('viewer fixture')
+        ->and(is_file($argv[array_search('--save-viewer', $argv, true) + 1]))->toBeFalse();
+});
+
+it('skips the viewer without a script URL, for packages, or when the plugin is disabled', function () {
+    $capturePath = arelleValidatorTempFile('capture.json', '');
+    $binary = arelleValidatorFixtureBinary($capturePath, 0, '[info] validated in 1.23 secs - candidate.xhtml');
+    config(['services.report.arelle_command' => [PHP_BINARY, '-n', $binary], 'services.report.ixbrl_viewer_plugin' => true]);
+    $argvOf = fn () => json_decode(file_get_contents($capturePath), true, flags: JSON_THROW_ON_ERROR)['argv'];
+
+    $noUrl = (new ArelleXhtmlIxbrlValidator())->validate('<html />', $this->profile, arelleValidatorManifestFixture());
+    expect($noUrl['viewer_html'])->toBeNull()->and($argvOf())->not->toContain('--save-viewer');
+
+    $package = (new ArelleXhtmlIxbrlValidator())->validate('zip', $this->profile, arelleValidatorManifestFixture(), true, '/api/report/ixbrl-viewer.js');
+    expect($package['viewer_html'])->toBeNull()->and($argvOf())->not->toContain('--save-viewer');
+
+    config(['services.report.ixbrl_viewer_plugin' => false]);
+    $disabled = (new ArelleXhtmlIxbrlValidator())->validate('<html />', $this->profile, arelleValidatorManifestFixture(), false, '/api/report/ixbrl-viewer.js');
+    expect($disabled['viewer_html'])->toBeNull()->and($argvOf())->not->toContain('--plugins');
+
+    // Auto-detection: a fixture command outside a Python environment has no plugin.
+    config(['services.report.ixbrl_viewer_plugin' => null]);
+    expect(\App\Services\Report\IxbrlViewerPlugin::enabled([PHP_BINARY, '-n', $binary]))->toBeFalse()
+        ->and(\App\Services\Report\IxbrlViewerPlugin::scriptPath([PHP_BINARY]))->toBeNull();
+});
+
 it('blocks Arelle timeout', function () {
     $binary = arelleValidatorFixtureBinary(
         arelleValidatorTempFile('capture.json', ''),
@@ -138,7 +175,7 @@ PHP);
         return;
     }
 
-    expect($validator->validate('<html />', $this->profile, arelleValidatorManifestFixture()))->toBe($expected);
+    expect($validator->validate('<html />', $this->profile, arelleValidatorManifestFixture()))->toBe([...$expected, 'viewer_html' => null]);
 })->with([
     'EFRAG completeness assertions at error and warning level, exit 3' => [[
         ['code' => 'message:ea_eu_tags_99', 'level' => 'error', 'message' => ['text' => 'No tag found for X']],
@@ -225,6 +262,8 @@ file_put_contents($capturePath, json_encode([
     'xhtml_exists_during_run' => is_file($xhtmlPath),
     'package_exists' => is_file($packagePath),
 ], JSON_THROW_ON_ERROR));
+$viewerIndex = array_search('--save-viewer', $argvList, true);
+if (is_int($viewerIndex)) file_put_contents($argvList[$viewerIndex + 1], '<html xmlns="http://www.w3.org/1999/xhtml"><head><script src="'.htmlspecialchars((string) ($argvList[array_search('--viewer-url', $argvList, true) + 1] ?? ''), ENT_QUOTES).'"></script></head><body>viewer fixture</body></html>');
 if ((int) getenv('I4S_ARELLE_SLEEP') > 0) {
     sleep((int) getenv('I4S_ARELLE_SLEEP'));
 }

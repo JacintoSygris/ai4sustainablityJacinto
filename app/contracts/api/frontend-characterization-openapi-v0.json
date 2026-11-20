@@ -1706,7 +1706,7 @@
       "get": {
         "operationId": "downloadReportXhtmlIxbrlCandidate",
         "summary": "Download a validated candidate with selective numeric tagging",
-        "description": "Existing taxonomy and Arelle gates remain mandatory. Limited to 2 requests/minute in report-xhtml-ixbrl. Coherent v2 candidates include tagged/untagged claim IDs and stable exclusion reasons in metadata. Zero taggable claims returns 409 xhtml_ixbrl_no_taggable_claims with next_step /api/report/xhtml.",
+        "description": "Existing taxonomy and Arelle gates remain mandatory. Limited to 2 requests/minute in report-xhtml-ixbrl. Coherent v2 candidates include tagged/untagged claim IDs and stable exclusion reasons in metadata. Zero taggable claims returns 409 xhtml_ixbrl_no_taggable_claims with next_step /api/report/xhtml. With inline=1 the document is served for the browser; when the Arelle iXBRL Viewer plugin is installed that response is the viewer page (report plus embedded fact data, script at /api/report/ixbrl-viewer.js, header X-Report-Viewer: ixbrl-viewer); viewer=0 keeps the plain document. Downloads never embed the viewer.",
         "security": [
           {
             "laravelSession": []
@@ -1723,6 +1723,16 @@
                     "validated_candidate"
                   ]
                 }
+              },
+              "X-Report-Viewer": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "ixbrl-viewer",
+                    "none"
+                  ]
+                },
+                "description": "Whether the body is the iXBRL Viewer page or the plain candidate."
               }
             },
             "content": {
@@ -1745,6 +1755,83 @@
           },
           "429": {
             "description": "Rate limit exceeded"
+          }
+        },
+        "parameters": [
+          {
+            "name": "inline",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Serve the document inline for the browser instead of as a download."
+          },
+          {
+            "name": "viewer",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "0",
+                "1"
+              ]
+            },
+            "description": "With inline=1: 0 keeps the plain XHTML document instead of the iXBRL Viewer page (default 1)."
+          }
+        ]
+      }
+    },
+    "/api/report/ixbrl-viewer.js": {
+      "get": {
+        "operationId": "getIxbrlViewerScript",
+        "summary": "iXBRL Viewer script bundled with the Arelle plugin",
+        "description": "Referenced by the viewer page served by /api/report/xhtml-ixbrl-candidate?inline=1. Same session rules; 404 when the plugin is not installed next to Arelle. 30 requests/minute.",
+        "security": [
+          {
+            "laravelSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JavaScript bundle",
+            "content": {
+              "application/javascript": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "404": {
+            "description": "Plugin unavailable: {data: {type: ixbrl_viewer_unavailable}}"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          }
+        }
+      }
+    },
+    "/api/report/ixbrlviewer.config.json": {
+      "get": {
+        "operationId": "getIxbrlViewerConfig",
+        "summary": "Empty iXBRL Viewer configuration",
+        "description": "The viewer script requests this file next to itself; an empty object keeps the defaults.",
+        "security": [
+          {
+            "laravelSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Empty JSON object"
+          },
+          "401": {
+            "description": "Authentication required"
           }
         }
       }

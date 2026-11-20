@@ -775,6 +775,8 @@ export function MaterialTopicsForm() {
                     {" "}{tr("Revisión guardada")}{" "}</Badge>
                   <Button type="button" variant="outline" onClick={() => setShowEditConfirmDialog(true)}>
                     {" "}{tr("Editar este paso")}{" "}</Button>
+                  <Button type="button" onClick={() => router.push("/wizard/step-3")}>
+                    {" "}{tr("Continuar al paso 3")}{" "}</Button>
                 </div>
               ) : (
                 <div className="flex flex-col items-end gap-2">

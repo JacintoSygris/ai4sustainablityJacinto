@@ -24,6 +24,18 @@ test("wizardStepsForView marks previous, current, and upcoming steps", () => {
   )
 })
 
+test("wizardStepsForView opens every step already reached, keeps the viewed one current", () => {
+  assert.deepEqual(
+    wizardStepsForView(2, 6).map((step) => step.status),
+    ["completed", "current", "completed", "completed", "completed", "available"],
+  )
+  assert.deepEqual(
+    wizardStepsForView(2, 3).map((step) => step.status),
+    ["completed", "current", "available", "upcoming", "upcoming", "upcoming"],
+  )
+  assert.deepEqual(wizardStepsForView(4, 2).map((step) => step.status), wizardStepsForView(4).map((step) => step.status))
+})
+
 test("wizard step copy does not expose internal codes or retired brand names", () => {
   for (const step of WIZARD_STEPS) {
     assert.doesNotMatch(step.title, /P\d/)

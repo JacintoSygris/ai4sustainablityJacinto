@@ -34,9 +34,15 @@ class ArelleXhtmlIxbrlValidator
      * codes, e.g. EFRAG's "always disclose" completeness checks) do not block: they describe what
      * the report still lacks and are returned so callers can surface them.
      *
-     * @return array{assertion_errors: int, assertion_warnings: int}
+     * When `$viewerScriptUrl` is given (and the candidate is a plain document, not a package)
+     * and the iXBRL Viewer plugin is installed next to Arelle, the same run also saves the
+     * viewer page (report + embedded fact data, script loaded from that URL); it comes back
+     * as `viewer_html`, null when the plugin is absent or produced nothing. The viewer never
+     * blocks validation.
+     *
+     * @return array{assertion_errors: int, assertion_warnings: int, viewer_html: ?string}
      */
-    public function validate(string $xhtml, ReportingProfile $profile, array $internalManifest, bool $reportPackage = false): array
+    public function validate(string $xhtml, ReportingProfile $profile, array $internalManifest, bool $reportPackage = false, ?string $viewerScriptUrl = null): array
     {
         $prefix = ArelleCommandLocator::resolve();
         if (! is_array($prefix) || ! array_is_list($prefix) || $prefix === []) {
@@ -70,6 +76,9 @@ class ArelleXhtmlIxbrlValidator
             $tmpDir = $this->temporaryDirectory();
             $xhtmlPath = $tmpDir.($reportPackage ? '/candidate.zip' : '/candidate.xhtml');
             $logPath = $tmpDir.'/validation.json';
+            $viewerPath = $viewerScriptUrl !== null && ! $reportPackage && IxbrlViewerPlugin::enabled($prefix)
+                ? $tmpDir.'/viewer.xhtml'
+                : null;
 
             try {
                 file_put_contents($xhtmlPath, $xhtml, LOCK_EX);
@@ -87,6 +96,9 @@ class ArelleXhtmlIxbrlValidator
                     '--file',
                     $xhtmlPath,
                 ];
+                if ($viewerPath !== null) {
+                    $args = [...$args, ...self::viewerArguments($viewerPath, (string) $viewerScriptUrl)];
+                }
 
                 [$args, $bootstrapMarker] = $this->withCache($args);
                 $result = $this->run($args, $tmpDir);
@@ -100,8 +112,11 @@ class ArelleXhtmlIxbrlValidator
                     throw new XhtmlIxbrlCandidateException('xhtml_ixbrl_arelle_validation_failed');
                 }
 
-                return $summary;
+                $viewer = $viewerPath !== null && is_file($viewerPath) ? (string) file_get_contents($viewerPath) : '';
+
+                return [...$summary, 'viewer_html' => $viewer !== '' ? $viewer : null];
             } finally {
+                if ($viewerPath !== null && is_file($viewerPath)) @unlink($viewerPath);
                 if (is_file($logPath)) @unlink($logPath);
                 if (is_file($xhtmlPath)) {
                     @unlink($xhtmlPath);
@@ -213,6 +228,24 @@ class ArelleXhtmlIxbrlValidator
         );
 
         return [$args, $marker];
+    }
+
+    /**
+     * Plugin arguments: save the viewer next to the candidate, reference the script by URL
+     * instead of copying it, and highlight untagged numbers and dates (review feature) so
+     * the reader can see what is and is not tagged.
+     *
+     * @return list<string>
+     */
+    public static function viewerArguments(string $viewerPath, string $viewerScriptUrl): array
+    {
+        return [
+            '--plugins', IxbrlViewerPlugin::PLUGIN_NAME,
+            '--save-viewer', $viewerPath,
+            '--viewer-url', $viewerScriptUrl,
+            '--viewer-no-copy-script',
+            '--viewer-feature-review',
+        ];
     }
 
     /** @return list<string> */

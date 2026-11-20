@@ -291,7 +291,6 @@ it('lets administrators delete an account but never their own', function () {
     $this->actingAs($this->admin)->deleteJson('/api/admin/users/'.$this->client->id)
         ->assertOk()
         ->assertJsonPath('data.user_id', $this->client->id)
-        ->assertJsonPath('data.email', $this->client->email)
         ->assertJsonPath('data.deleted_characterizations', 1);
 
     expect(User::query()->whereKey($this->client->id)->exists())->toBeFalse()

@@ -8,6 +8,7 @@ use App\Models\ReportSnapshot;
 use App\Services\CharacterizationStateTransaction;
 use App\Services\EsrsDatapointCorpusBuilder;
 use App\Services\Report\ArelleXhtmlIxbrlValidator;
+use App\Services\Report\IxbrlViewerPlugin;
 use App\Services\Report\DocxRenderer;
 use App\Services\Report\EvidenceBundleBuilder;
 use App\Jobs\WarmArelleCache;
@@ -368,7 +369,10 @@ class GuidedReportController extends Controller
             $bundle['candidate_validation'] = ['scope' => 'xbrl_2_1_inline_xbrl_report_package', 'publication_state' => 'validated_candidate', 'filing_ready' => false];
             $bundle['taxonomy_package_checksum'] = $manifest['taxonomy_package_checksum'];
             $bytes = $package ? $this->reportPackage->render($xhtml, $bundle) : $xhtml;
-            $assertions = $this->arelle->validate($bytes, $profile, $manifest, $package);
+            // The browser view (`inline=1`) also asks the validation run for the iXBRL Viewer page;
+            // `viewer=0` keeps the plain document. Downloads and packages never embed the viewer.
+            $wantViewer = ! $package && $request->boolean('inline') && $request->query('viewer', '1') !== '0';
+            $assertions = $this->arelle->validate($bytes, $profile, $manifest, $package, $wantViewer ? self::viewerScriptUrl() : null);
         } catch (DomainException) {
             return $this->blocked('approved_snapshot_invalid', 'xhtml_ixbrl_candidate_blocked');
         } catch (XhtmlIxbrlCandidateException $e) {
@@ -391,12 +395,43 @@ class GuidedReportController extends Controller
         }
         // `inline=1` lets the browser show the report; the default stays a download.
         $disposition = $request->boolean('inline') ? 'inline' : 'attachment';
+        $viewer = is_string($assertions['viewer_html'] ?? null) ? $assertions['viewer_html'] : null;
 
-        return response($xhtml, 200)
+        return response($viewer ?? $xhtml, 200)
+            ->header('X-Report-Viewer', $viewer !== null ? 'ixbrl-viewer' : 'none')
             ->header('X-Taxonomy-Assertions', $assertionSummary)
             ->header('Content-Type', 'application/xhtml+xml; charset=UTF-8')
             ->header('Content-Disposition', $disposition.'; filename="'.(app()->getLocale() === 'en' ? 'esrs-candidate-report.xhtml' : 'informe-neis-candidato.xhtml').'"')
             ->header('X-Report-Publication-State', 'validated_candidate');
+    }
+
+    /**
+     * Serves the iXBRL Viewer script bundled with the Arelle plugin, referenced by the
+     * viewer page. Same session rules as the report itself; 404 when the plugin is absent.
+     */
+    public function ixbrlViewerScript()
+    {
+        $script = IxbrlViewerPlugin::scriptPath();
+        if ($script === null) {
+            return response()->json(['data' => ['type' => 'ixbrl_viewer_unavailable']], 404);
+        }
+
+        return response()->file($script, [
+            'Content-Type' => 'application/javascript; charset=UTF-8',
+            'Cache-Control' => 'private, max-age=86400',
+        ]);
+    }
+
+    /** The viewer looks for an optional `ixbrlviewer.config.json` next to its script; an empty one avoids a 404. */
+    public function ixbrlViewerConfig()
+    {
+        return response()->json(new \stdClass, 200, ['Cache-Control' => 'private, max-age=86400']);
+    }
+
+    /** Same-origin path of the viewer script, so the page served through the frontend proxy finds it. */
+    private static function viewerScriptUrl(): string
+    {
+        return (string) (parse_url(route('api.report.ixbrl-viewer-script'), PHP_URL_PATH) ?: '/api/report/ixbrl-viewer.js');
     }
 
     /** @return array{0: ?Characterization, 1: mixed} */

@@ -9,7 +9,7 @@ interface WizardStep {
   id: number
   title: string
   description: string
-  status: "completed" | "current" | "upcoming"
+  status: "completed" | "current" | "available" | "upcoming"
 }
 
 interface WizardSidebarProps {
@@ -32,7 +32,7 @@ export function WizardSidebar({ steps, currentStep, viewingStep }: WizardSidebar
         {steps.map((step) => {
           const isCompleted = step.status === "completed"
           const isViewing = step.id === viewingStep
-          const isClickable = isCompleted || step.status === "current"
+          const isClickable = isCompleted || step.status === "current" || step.status === "available"
 
           const stepContent = (
             <>
@@ -49,7 +49,7 @@ export function WizardSidebar({ steps, currentStep, viewingStep }: WizardSidebar
               </div>
               <div>
                 <h3
-                  className={`font-medium ${isViewing ? "text-primary" : isCompleted ? "text-foreground" : "text-muted-foreground"}`}
+                  className={`font-medium ${isViewing ? "text-primary" : isClickable ? "text-foreground" : "text-muted-foreground"}`}
                 >
                   {tr(step.title)}
                 </h3>

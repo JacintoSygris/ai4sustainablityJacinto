@@ -554,7 +554,7 @@ it('blocks publication when facts change while Arelle is validating the candidat
     app()->bind(\App\Services\Report\ArelleXhtmlIxbrlValidator::class, fn () => new class($fact->id) extends \App\Services\Report\ArelleXhtmlIxbrlValidator {
         public function __construct(private readonly int $factId) {}
 
-        public function validate(string $xhtml, \App\Services\Report\ReportingProfile $profile, array $internalManifest, bool $reportPackage = false): array
+        public function validate(string $xhtml, \App\Services\Report\ReportingProfile $profile, array $internalManifest, bool $reportPackage = false, ?string $viewerScriptUrl = null): array
         {
             ReportingFact::query()->whereKey($this->factId)->update(['value' => json_encode(['value' => '999.99'])]);
 
@@ -741,6 +741,8 @@ file_put_contents(getenv('I4S_GUIDED_ARELLE_CAPTURE'), json_encode([
     'xhtml_exists_during_run' => is_file($xhtmlPath),
     'package_exists' => is_file($packagePath),
 ], JSON_THROW_ON_ERROR));
+$viewerIndex = array_search('--save-viewer', $argvList, true);
+if (is_int($viewerIndex)) file_put_contents($argvList[$viewerIndex + 1], '<html xmlns="http://www.w3.org/1999/xhtml"><head><script src="'.htmlspecialchars((string) ($argvList[array_search('--viewer-url', $argvList, true) + 1] ?? ''), ENT_QUOTES).'"></script></head><body>viewer fixture</body></html>');
 $logIndex = array_search('--logFile', $argvList, true);
 $output = getenv('I4S_GUIDED_ARELLE_OUTPUT');
 $ok = $output !== '' && ! preg_match('/error|fatal|invalid|fail/i', $output);
@@ -766,6 +768,58 @@ PHP);
 
     return [$binary, $capturePath];
 }
+
+it('serves the iXBRL Viewer page for inline viewing when the plugin is installed, the plain document otherwise', function () {
+    $characterization = fullyReadyReportCharacterization($this->user, $this->e2);
+    guidedReportApiSetEntityIdentifier($characterization);
+    guidedReportApiFact($characterization, [
+        'fact_id' => 'rf_guided_numeric',
+        'value_type' => 'number',
+        'value' => ['value' => '123.45'],
+        'unit' => 'EUR',
+        'decimals' => 2,
+    ]);
+    guidedReportApiApproveSnapshot($this->user, $characterization);
+    [$manifestPath] = guidedReportApiExternalTaxonomyManifestFixture();
+    [$arelle, $capturePath] = guidedReportApiArelleFixture(0, 'info: validation successful');
+    config([
+        'services.report.external_taxonomy_manifest_path' => $manifestPath,
+        'services.report.arelle_command' => [PHP_BINARY, '-n', $arelle],
+        'services.report.ixbrl_viewer_plugin' => true,
+    ]);
+
+    $viewer = $this->actingAs($this->user)->get('/api/report/xhtml-ixbrl-candidate?inline=1')->assertOk();
+    $argv = json_decode(file_get_contents($capturePath), true, flags: JSON_THROW_ON_ERROR)['argv'];
+    expect($argv)->toContain('--plugins')->toContain('iXBRLViewerPlugin')->toContain('--save-viewer')->toContain('--viewer-no-copy-script')->toContain('--viewer-feature-review')
+        ->and($argv[array_search('--viewer-url', $argv, true) + 1])->toBe('/api/report/ixbrl-viewer.js')
+        ->and($viewer->headers->get('X-Report-Viewer'))->toBe('ixbrl-viewer')
+        ->and($viewer->headers->get('content-disposition'))->toBe('inline; filename="informe-neis-candidato.xhtml"')
+        ->and($viewer->getContent())->toContain('viewer fixture')->toContain('src="/api/report/ixbrl-viewer.js"');
+
+    // viewer=0 keeps the plain candidate; downloads never carry the viewer.
+    $plain = $this->actingAs($this->user)->get('/api/report/xhtml-ixbrl-candidate?inline=1&viewer=0')->assertOk();
+    expect(json_decode(file_get_contents($capturePath), true, flags: JSON_THROW_ON_ERROR)['argv'])->not->toContain('--save-viewer')
+        ->and($plain->headers->get('X-Report-Viewer'))->toBe('none')
+        ->and($plain->getContent())->toContain('<ix:nonFraction')->not->toContain('viewer fixture');
+    $download = $this->actingAs($this->user)->get('/api/report/xhtml-ixbrl-candidate')->assertOk();
+    expect($download->getContent())->not->toContain('viewer fixture');
+
+    // Without the plugin the inline view falls back to the plain document.
+    config(['services.report.ixbrl_viewer_plugin' => false]);
+    $fallback = $this->actingAs($this->user)->get('/api/report/xhtml-ixbrl-candidate?inline=1')->assertOk();
+    expect($fallback->headers->get('X-Report-Viewer'))->toBe('none')
+        ->and($fallback->getContent())->toContain('<ix:nonFraction');
+});
+
+it('serves the iXBRL Viewer script only to signed-in users and 404s without the plugin', function () {
+    $this->getJson('/api/report/ixbrl-viewer.js')->assertUnauthorized();
+
+    config(['services.report.arelle_command' => '/tmp/missing-arelle']);
+    $this->actingAs($this->user)->getJson('/api/report/ixbrl-viewer.js')
+        ->assertNotFound()
+        ->assertJsonPath('data.type', 'ixbrl_viewer_unavailable');
+    $this->actingAs($this->user)->getJson('/api/report/ixbrlviewer.config.json')->assertOk()->assertExactJson([]);
+});
 
 it('requires auth and a default off flag for the report package route', function () {
     $this->getJson('/api/report/ixbrl-package')->assertUnauthorized();

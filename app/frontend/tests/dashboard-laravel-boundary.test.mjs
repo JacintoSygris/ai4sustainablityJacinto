@@ -29,11 +29,27 @@ test("dashboard page derives progress from Laravel workflow state", () => {
   assert.doesNotMatch(source, /getUserReport|getActiveReport/, "dashboard page must not read local report state")
   assert.match(source, /getLaravelServerCharacterization/, "dashboard page must read Laravel characterization")
   assert.match(source, /getLaravelServerReportReadiness/, "dashboard page must read Laravel report readiness")
+  assert.match(source, /reachedWizardStep\(characterization, readiness\)/, "dashboard progress comes from the shared wizard progress helper")
   assert.match(
-    source,
+    read("lib/wizard-progress.mjs"),
     /sections\.double_materiality_guide\?\.status/,
-    "dashboard progress must stop at Step 3 while the double-materiality guide is incomplete",
+    "wizard progress must stop at Step 3 while the double-materiality guide is incomplete",
   )
+  for (const step of [1, 2, 3, 4, 5, 6]) {
+    assert.match(read(`app/(dashboard)/wizard/step-${step}/page.tsx`), /wizardStepsForView\(\d, await getReachedWizardStep\(\)\)/, `step ${step} sidebar must reflect the reached progress`)
+  }
+})
+
+test("reachedWizardStep follows the platform readiness sections", async () => {
+  const { reachedWizardStep } = await import("../lib/wizard-progress.mjs")
+  const ready = { status: "ready" }
+  const sections = { characterization: ready, materiality_proposal: ready, double_materiality_guide: ready, materiality_confirmation: ready, datapoint_responses: ready }
+
+  assert.equal(reachedWizardStep(null, null), 1)
+  assert.equal(reachedWizardStep({ status: "completed" }, null), 2)
+  assert.equal(reachedWizardStep({ status: "completed" }, { sections }), 6)
+  assert.equal(reachedWizardStep({ status: "completed" }, { sections: { ...sections, double_materiality_guide: { status: "missing" } } }), 3)
+  assert.equal(reachedWizardStep({ status: "completed" }, { sections: { ...sections, datapoint_responses: { status: "partial" } } }), 5)
 })
 
 test("dashboard header logs out through Laravel, not Better Auth client", () => {

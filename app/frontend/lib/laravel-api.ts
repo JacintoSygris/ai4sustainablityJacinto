@@ -1297,7 +1297,6 @@ export type LaravelAdminUserProgress = {
 export type LaravelAdminUser = {
   id: number
   name: string | null
-  email: string
   email_verified: boolean
   is_admin: boolean
   created_at: string | null
@@ -1331,7 +1330,6 @@ export type LaravelAiUsefulnessTopic = {
 export type LaravelAiUsefulnessCompany = {
   user_id: number
   user_name: string | null
-  user_email: string
   company_name: string | null
   nace_code: string | null
   status: string
@@ -1415,7 +1413,7 @@ export function deleteLaravelAdminUserReport(
   return laravelApi<LaravelApiEnvelope<LaravelAdminReportDeletion>>(`/admin/users/${userId}/report`, { ...options, method: "DELETE" })
 }
 
-export type LaravelAdminUserDeletion = LaravelAdminReportDeletion & { email: string }
+export type LaravelAdminUserDeletion = LaravelAdminReportDeletion
 
 /** Deletes an account and everything it entered. Administrators only; never the caller's own account. */
 export function deleteLaravelAdminUser(

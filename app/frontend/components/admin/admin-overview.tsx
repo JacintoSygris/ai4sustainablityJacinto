@@ -3,7 +3,7 @@
 import type React from "react"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { AlertCircle, AlertTriangle, CheckCircle2, Circle, Download, ExternalLink, FileText, ShieldCheck, Trash2, Video } from "lucide-react"
+import { AlertCircle, AlertTriangle, CheckCircle2, Circle, Download, ExternalLink, FileText, ShieldCheck, Trash2 } from "lucide-react"
 
 import { useLocale } from "@/components/locale-provider"
 import { Badge } from "@/components/ui/badge"
@@ -290,7 +290,7 @@ function AiUsefulnessSection({ report, locale }: { report: LaravelAiUsefulnessRe
         <TopicList title={tr("Temas de la IA más rechazados")} topics={report.top_rejected_topics} locale={locale} />
       </div>
 
-      <details className="rounded-lg border border-border bg-card">
+      <details open className="rounded-lg border border-border bg-card">
         <summary className="cursor-pointer px-4 py-3 text-sm font-semibold text-foreground">{tr("Por empresa")}</summary>
         <div className="overflow-x-auto border-t border-border">
           <table className="w-full text-sm">
@@ -317,7 +317,7 @@ function AiUsefulnessSection({ report, locale }: { report: LaravelAiUsefulnessRe
                 report.companies.map((company) => (
                   <tr key={company.user_id} className="border-t border-border">
                     <td className="px-3 py-2 text-foreground">{company.company_name || "—"}</td>
-                    <td className="px-3 py-2 text-muted-foreground">{company.user_email}</td>
+                    <td className="px-3 py-2 text-muted-foreground">{company.user_name || "—"}</td>
                     <td className="px-3 py-2 text-right tabular-nums">{company.ai_recommended_count}</td>
                     <td className="px-3 py-2 text-right tabular-nums">{company.review.accepted}</td>
                     <td className="px-3 py-2 text-right tabular-nums">{company.review.unsure}</td>
@@ -366,8 +366,8 @@ function UsersSection({
   const kind = pendingDeletion?.kind ?? "report"
   const pendingName = pendingDeletion
     ? kind === "report"
-      ? pendingDeletion.user.characterization?.company_name || pendingDeletion.user.name || pendingDeletion.user.email
-      : pendingDeletion.user.email
+      ? pendingDeletion.user.characterization?.company_name || pendingDeletion.user.name || String(pendingDeletion.user.id)
+      : pendingDeletion.user.name || pendingDeletion.user.characterization?.company_name || String(pendingDeletion.user.id)
     : ""
 
   const handleConfirmDeletion = async () => {
@@ -464,7 +464,7 @@ function UserRow({
   onDelete: (kind: DeletionKind) => void
 }) {
   const tr = (message: string) => ui(locale, message)
-  const displayName = user.name || user.email
+  const displayName = user.name || user.characterization?.company_name || String(user.id)
   const characterization = user.characterization
   const progress = user.progress
   const reportReady = progress.report?.workflow_complete === true
@@ -474,7 +474,6 @@ function UserRow({
     <tr className="border-t border-border align-top">
       <td className="px-3 py-3">
         <p className="font-medium text-foreground">{displayName}</p>
-        <p className="text-xs text-muted-foreground">{user.email}</p>
         <div className="mt-1 flex flex-wrap gap-1">
           {user.is_admin ? <Badge variant="secondary">{tr("Administrador")}</Badge> : null}
           {isCurrentUser ? <Badge variant="outline">{tr("Tu cuenta")}</Badge> : null}
@@ -544,16 +543,6 @@ function UserRow({
               <FileText className="h-3.5 w-3.5" aria-hidden="true" />
               {tr("Resumen de la encuesta (PDF)")}
             </a>
-            {user.demo_video ? (
-              <a
-                className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
-                href={laravelApiUrl(`/admin/users/${user.id}/demo-video`)}
-                aria-label={formatUi(locale, "Descargar el vídeo del recorrido de {0}", [displayName])}
-              >
-                <Video className="h-3.5 w-3.5" aria-hidden="true" />
-                {tr("Vídeo del recorrido")}
-              </a>
-            ) : null}
             <button
               type="button"
               className="inline-flex items-center gap-1 text-sm text-destructive hover:underline"
@@ -572,7 +561,7 @@ function UserRow({
             type="button"
             className="mt-2 inline-flex items-center gap-1 text-sm text-destructive hover:underline"
             onClick={() => onDelete("account")}
-            aria-label={formatUi(locale, "Borrar la cuenta de {0}", [user.email])}
+            aria-label={formatUi(locale, "Borrar la cuenta de {0}", [displayName])}
           >
             <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
             {tr("Borrar usuario")}

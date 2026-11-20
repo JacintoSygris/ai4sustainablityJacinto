@@ -4,6 +4,7 @@ import { WizardSidebar } from "@/components/wizard/wizard-sidebar"
 import { FinalTopicsSelection } from "@/components/wizard/final-topics-selection"
 import { AcademyTips } from "@/components/wizard/academy-tips"
 import { wizardStepsForView } from "@/lib/wizard-steps"
+import { getReachedWizardStep } from "@/lib/wizard-progress-server"
 
 const tips = [
   "La propuesta del paso 2 es un punto de partida; la selección final registra la decisión posterior a la doble importancia relativa.",
@@ -22,7 +23,7 @@ export default async function Step4Page() {
   const session = await getLaravelServerSession()
   const tr = (message: string) => ui(locale, message)
 
-  const wizardSteps = wizardStepsForView(4)
+  const wizardSteps = wizardStepsForView(4, await getReachedWizardStep())
 
   return (
     <div className="flex flex-col gap-8 lg:flex-row">

@@ -1,5 +1,5 @@
 /**
- * @typedef {"completed" | "current" | "upcoming"} WizardStepStatus
+ * @typedef {"completed" | "current" | "available" | "upcoming"} WizardStepStatus
  * @typedef {{ id: number, title: string, description: string }} WizardStepDefinition
  * @typedef {WizardStepDefinition & { status: WizardStepStatus }} WizardStep
  */
@@ -39,12 +39,27 @@ export const WIZARD_STEPS = [
 ]
 
 /**
+ * Sidebar statuses for the step being viewed. `reachedStep` is the furthest step the
+ * account has reached (see lib/wizard-progress.mjs): every step before it is done and
+ * can be reopened, the reached step itself is "available" (next thing to do) and the
+ * rest stay "upcoming". Without it, only the steps before the viewed one are open.
+ *
  * @param {number} viewingStep
+ * @param {number} [reachedStep]
  * @returns {WizardStep[]}
  */
-export function wizardStepsForView(viewingStep) {
+export function wizardStepsForView(viewingStep, reachedStep = viewingStep) {
+  const furthest = Math.max(viewingStep, reachedStep)
+
   return WIZARD_STEPS.map((step) => ({
     ...step,
-    status: step.id < viewingStep ? "completed" : step.id === viewingStep ? "current" : "upcoming",
+    status:
+      step.id === viewingStep
+        ? "current"
+        : step.id < furthest
+          ? "completed"
+          : step.id === furthest
+            ? "available"
+            : "upcoming",
   }))
 }

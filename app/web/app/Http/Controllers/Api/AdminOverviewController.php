@@ -62,7 +62,6 @@ class AdminOverviewController extends Controller
             return [
                 'id' => $user->id,
                 'name' => $user->name,
-                'email' => $user->email,
                 'email_verified' => $user->hasVerifiedEmail(),
                 'is_admin' => PlatformAdmin::isAdmin($user),
                 'created_at' => $user->created_at?->toJSON(),
@@ -184,7 +183,6 @@ class AdminOverviewController extends Controller
 
         return response()->json(['data' => [
             'user_id' => $account->id,
-            'email' => $account->email,
             'deleted_characterizations' => $characterizations->count(),
             'deleted_snapshots' => count($snapshotIds),
         ]]);

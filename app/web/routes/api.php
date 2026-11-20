@@ -153,6 +153,12 @@ Route::middleware(['web', 'private-dev-user', 'auth', 'verified.required'])->gro
     Route::get('report/ixbrl-package', [GuidedReportController::class, 'ixbrlPackage'])
         ->middleware('throttle:6,1,report-xhtml-ixbrl')
         ->name('api.report.ixbrl-package');
+    Route::get('report/ixbrl-viewer.js', [GuidedReportController::class, 'ixbrlViewerScript'])
+        ->middleware('throttle:30,1,report-ixbrl-viewer-script')
+        ->name('api.report.ixbrl-viewer-script');
+    Route::get('report/ixbrlviewer.config.json', [GuidedReportController::class, 'ixbrlViewerConfig'])
+        ->middleware('throttle:30,1,report-ixbrl-viewer-script')
+        ->name('api.report.ixbrl-viewer-config');
     Route::get('report/facts', [ReportFactController::class, 'index'])
         ->middleware('throttle:30,1,report-facts-read')
         ->name('api.report.facts.index');

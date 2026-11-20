@@ -9,42 +9,115 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
-// Sygris articles backing each card; the English edition is used when it exists.
+// Sygris articles backing each card (featured images stored under /public/academy);
+// the English edition is used when Sygris publishes one.
 const articles = [
   {
     id: 1,
     title: "¿Qué es la doble importancia relativa?",
     description:
       "Aprende sobre el concepto de doble importancia relativa y cómo evaluar los impactos ambientales y financieros de tu empresa según NEIS.",
-    image: "/forest-trees-canopy-sustainability.jpg",
+    image: "/academy/doble-materialidad.jpg",
     isExternal: true,
     href: {
-      es: "https://sygris.com/2024/07/30/que-es-doble-materialidad/",
+      es: "https://sygris.com/recursos/articulos/que-es-doble-materialidad/",
       en: "https://sygris.com/en/resources/articles/what-is-double-materiality/",
     },
   },
   {
     id: 2,
-    title: "Grupos de interés",
+    title: "¿Sabes qué es un análisis de materialidad?",
     description:
-      "Descubre cómo identificar y consultar a los grupos de interés clave para tu análisis de materialidad.",
-    image: "/esg-business-meeting.jpg",
+      "Descubre cómo identificar y priorizar los temas ESG relevantes para tu empresa y sus grupos de interés, base del informe de sostenibilidad.",
+    image: "/academy/analisis-materialidad.jpg",
     isExternal: true,
     href: {
-      es: "https://sygris.com/2021/11/16/que-es-un-analisis-de-materialidad",
-      en: "https://sygris.com/2021/11/16/que-es-un-analisis-de-materialidad",
+      es: "https://sygris.com/recursos/eventos/que-es-un-analisis-de-materialidad/",
+      en: "https://sygris.com/recursos/eventos/que-es-un-analisis-de-materialidad/",
     },
   },
   {
     id: 3,
-    title: "Energías renovables y CSRD",
+    title: "CSRD: todo lo que necesitas saber sobre la nueva directiva europea",
     description:
-      "Pistas para revisar información relacionada con energías renovables antes de incorporarla a una salida de trabajo.",
-    image: "/wind-turbines-renewable-energy.jpg",
+      "La directiva que pide información de sostenibilidad útil, comparable y accesible: a quién afecta, qué exige y en qué plazos.",
+    image: "/academy/csrd-directiva.jpg",
     isExternal: true,
     href: {
-      es: "https://sygris.com/recursos/noticias/grenergy-confia-en-sygris-para-reportar-su-informacion-no-financiera/",
-      en: "https://sygris.com/recursos/noticias/grenergy-confia-en-sygris-para-reportar-su-informacion-no-financiera/",
+      es: "https://sygris.com/recursos/articulos/csrd-todo-lo-que-necesitas-saber-sobre-la-nueva-directiva-europea/",
+      en: "https://sygris.com/recursos/articulos/csrd-todo-lo-que-necesitas-saber-sobre-la-nueva-directiva-europea/",
+    },
+  },
+  {
+    id: 4,
+    title: "Novedades en los indicadores ESRS",
+    description:
+      "La lista revisada de indicadores publicada por EFRAG, traducida al español: qué cambia en los datos que piden las normas NEIS.",
+    image: "/academy/indicadores-esrs.jpg",
+    isExternal: true,
+    href: {
+      es: "https://sygris.com/recursos/articulos/novedades-en-los-indicadores-esrs/",
+      en: "https://sygris.com/recursos/articulos/novedades-en-los-indicadores-esrs/",
+    },
+  },
+  {
+    id: 5,
+    title: "Si quieres cumplir con la CSRD, tienes que desglosar los datos",
+    description:
+      "Cómo convertir los datos normativos de las NEIS en información procesable y recogerla de forma eficiente dentro de la empresa.",
+    image: "/academy/data-points.jpg",
+    isExternal: true,
+    href: {
+      es: "https://sygris.com/recursos/articulos/si-quieres-cumplir-con-la-csrd-tienes-que-desglosar-los-data-points/",
+      en: "https://sygris.com/recursos/articulos/si-quieres-cumplir-con-la-csrd-tienes-que-desglosar-los-data-points/",
+    },
+  },
+  {
+    id: 6,
+    title: "Claves del desarrollo de la taxonomía XBRL para los ESRS",
+    description:
+      "Qué es la taxonomía XBRL de las NEIS, cómo avanza su desarrollo en EFRAG y qué supone para el formato digital del informe.",
+    image: "/academy/taxonomia-xbrl.jpg",
+    isExternal: true,
+    href: {
+      es: "https://sygris.com/recursos/articulos/claves-del-desarrollo-de-la-taxonomia-xbrl-para-los-esrs/",
+      en: "https://sygris.com/recursos/articulos/claves-del-desarrollo-de-la-taxonomia-xbrl-para-los-esrs/",
+    },
+  },
+  {
+    id: 7,
+    title: "PYMES y sostenibilidad: nuevos retos de información ESG",
+    description:
+      "Por qué las pymes deben preparar su información de sostenibilidad aunque no estén obligadas: clientes e inversores la piden en la cadena de valor.",
+    image: "/academy/pymes-esg.jpg",
+    isExternal: true,
+    href: {
+      es: "https://sygris.com/recursos/articulos/pymes-y-sostenibilidad-nuevos-retos-de-informacion-esg/",
+      en: "https://sygris.com/recursos/articulos/pymes-y-sostenibilidad-nuevos-retos-de-informacion-esg/",
+    },
+  },
+  {
+    id: 8,
+    title: "El paquete Ómnibus",
+    description:
+      "Qué cambia con la propuesta Ómnibus de la Comisión Europea en los umbrales, plazos y contenidos del informe de sostenibilidad.",
+    image: "/academy/omnibus.jpg",
+    isExternal: true,
+    href: {
+      es: "https://sygris.com/recursos/articulos/el-paquete-omnibus/",
+      en: "https://sygris.com/recursos/articulos/el-paquete-omnibus/",
+    },
+  },
+  {
+    id: 9,
+    title: "Errores clave en el reporting ESG que no puedes ignorar",
+    description:
+      "Los fallos más habituales al preparar el informe de sostenibilidad y cómo evitarlos antes de la revisión y la verificación.",
+    image: "/academy/errores-reporting.jpg",
+    isExternal: true,
+    href: {
+      es: "https://sygris.com/recursos/articulos/errores-clave-en-el-reporting-esg-que-no-puedes-ignorar/",
+      en: "https://sygris.com/recursos/articulos/errores-clave-en-el-reporting-esg-que-no-puedes-ignorar/",
     },
   },
 ]

@@ -5,6 +5,7 @@ import { AcademyTips } from "@/components/wizard/academy-tips"
 import { InitialSurveyForm } from "@/components/wizard/initial-survey-form"
 import { WizardExpectations } from "@/components/wizard/wizard-expectations"
 import { wizardStepsForView } from "@/lib/wizard-steps"
+import { getReachedWizardStep } from "@/lib/wizard-progress-server"
 
 const tips = [
   "Usa datos del último ejercicio cerrado.",
@@ -41,7 +42,7 @@ export default async function WizardStep1Page() {
   const locale = await getLaravelServerLocale()
   const tr = (message: string) => ui(locale, message)
 
-  const wizardSteps = wizardStepsForView(1)
+  const wizardSteps = wizardStepsForView(1, await getReachedWizardStep())
 
   return (
     <div className="flex flex-col gap-8 lg:flex-row">

@@ -118,7 +118,7 @@
         @forelse ($report['companies'] as $company)
             <tr>
                 <td>{{ $company['company_name'] ?: '—' }}</td>
-                <td>{{ $company['user_email'] }}</td>
+                <td>{{ $company['user_name'] ?: '—' }}</td>
                 <td class="num">{{ $company['ai_recommended_count'] }}</td>
                 <td class="num">{{ $company['review']['accepted'] }}</td>
                 <td class="num">{{ $company['review']['unsure'] }}</td>

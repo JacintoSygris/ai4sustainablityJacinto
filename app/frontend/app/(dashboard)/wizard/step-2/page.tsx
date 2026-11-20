@@ -2,6 +2,7 @@ import { WizardSidebar } from "@/components/wizard/wizard-sidebar"
 import { AcademyTips } from "@/components/wizard/academy-tips"
 import { MaterialTopicsForm } from "@/components/wizard/material-topics-form"
 import { wizardStepsForView } from "@/lib/wizard-steps"
+import { getReachedWizardStep } from "@/lib/wizard-progress-server"
 
 const academyTips = {
   title: "Consejos prácticos",
@@ -11,8 +12,8 @@ const academyTips = {
   ],
 }
 
-export default function Step2Page() {
-  const wizardSteps = wizardStepsForView(2)
+export default async function Step2Page() {
+  const wizardSteps = wizardStepsForView(2, await getReachedWizardStep())
 
   return (
     <div className="flex flex-col gap-8 lg:flex-row">

@@ -112,7 +112,6 @@ final class AiUsefulnessReport
         return [
             'user_id' => $user->id,
             'user_name' => $user->name,
-            'user_email' => $user->email,
             'company_name' => Arr::get($characterization->form_data ?? [], 'company_profile.company_name'),
             'nace_code' => $characterization->nace_code,
             'status' => $characterization->status,
