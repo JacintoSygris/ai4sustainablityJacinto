@@ -70,6 +70,22 @@ export function actionsFromProposal(proposal) {
   )
 }
 
+/**
+ * Actions shown when the review screen opens: the stored explicit actions plus the
+ * AI-recommended topics marked as accepted while the user has not decided on them.
+ * Stored ids without the AI flag stay undecided, so the explicit-review guard still applies to them.
+ */
+export function initialTopicActions(proposal) {
+  const actions = actionsFromProposal(proposal)
+
+  for (const topicId of aiTopicIdsFromProposal(proposal)) {
+    const key = canonicalTopicKey(topicId)
+    if (key && !actions[key]) actions[key] = "accepted"
+  }
+
+  return actions
+}
+
 export function reasonsFromProposal(proposal) {
   return cleanReasons(proposal.review?.action_reasons ?? {}, currentTopicKeySet(proposal.proposal_topic_ids ?? []))
 }

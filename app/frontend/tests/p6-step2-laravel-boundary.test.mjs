@@ -8,6 +8,7 @@ const root = dirname(dirname(fileURLToPath(import.meta.url)))
 const {
   actionsFromProposal,
   addedTopicIdsFromProposal,
+  initialTopicActions,
   aiTopicIdsFromProposal,
   baseProposalTopicIds,
   buildDraftReviewPayload,
@@ -83,6 +84,35 @@ test("P6 review helpers do not turn a fresh proposal into implicit accept-all", 
   assert.equal(result.ok, false)
   assert.deepEqual(result.missingTopicIds, ["101", "102"])
   assert.equal("payload" in result, false, "untouched fresh proposal must not produce a PUT payload")
+})
+
+test("P6 review screen opens with the AI-recommended topics preselected, keeping stored decisions", () => {
+  const proposal = {
+    proposal_topic_ids: [101, 102, 103, 104],
+    ai_topic_ids: [101, 102, 103],
+    review: {
+      topic_actions: { "102": "rejected" },
+      action_reasons: {},
+      action_notes: {},
+    },
+  }
+
+  assert.deepEqual(actionsFromProposal(proposal), { "102": "rejected" }, "stored actions stay as the user left them")
+  assert.deepEqual(
+    initialTopicActions(proposal),
+    { "101": "accepted", "102": "rejected", "103": "accepted" },
+    "recommended topics show as selected; a stored id without the AI flag stays undecided",
+  )
+
+  const result = buildReviewPayload({
+    proposalTopicIds: proposal.proposal_topic_ids,
+    topicActions: initialTopicActions(proposal),
+  })
+  assert.equal(result.ok, false)
+  assert.deepEqual(result.missingTopicIds, ["104"], "only the non-recommended topic still needs an explicit decision")
+
+  const source = read("components/wizard/material-topics-form.tsx")
+  assert.match(source, /setTopicActions\(initialTopicActions\(proposalResponse\.data\)\)/)
 })
 
 test("P6 review helpers persist only explicit actions, selected reason chips, and cleaned notes", () => {

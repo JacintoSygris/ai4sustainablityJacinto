@@ -484,18 +484,7 @@ export function ReportDraftPanel() {
                 </div>
               </CardContent>
             </Card>
-          ) : (
-            <Card>
-              <CardContent className="space-y-4 pt-6">
-                <h2 className="text-lg font-semibold text-foreground">{tr("¿Y ahora qué?")}</h2>
-                <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
-                  <li>{tr("Comparte las descargas como material de trabajo con las personas que revisen la información.")}</li>
-                  <li>{tr("Usa el CSV de datos normativos como lista de recogida de información dentro de tu empresa.")}</li>
-                  <li>{tr("Vuelve cuando cambien tus cifras o tu actividad y actualiza las respuestas.")}</li>
-                </ul>
-              </CardContent>
-            </Card>
-          )}
+          ) : null}
 
           <div className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
             <div className="min-w-0 space-y-6">

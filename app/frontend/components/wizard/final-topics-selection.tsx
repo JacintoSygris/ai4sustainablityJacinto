@@ -616,6 +616,9 @@ export function FinalTopicsSelection({ learningInvitationEnabled = false }: { le
   // "Hay algún otro tema" add from catalog (exposicion default normal for new)
   const [guidedAddOpen, setGuidedAddOpen] = useState(false)
   const [guidedAddQuery, setGuidedAddQuery] = useState("")
+  // "Añadir tema" picker of the direct mode (same catalogue, topics not yet selected)
+  const [directAddOpen, setDirectAddOpen] = useState(false)
+  const [directAddQuery, setDirectAddQuery] = useState("")
   const addTopicFromGuided = (topicId: number) => {
     if (saveInFlight.current) return
     markDraftChanged()
@@ -626,7 +629,8 @@ export function FinalTopicsSelection({ learningInvitationEnabled = false }: { le
     // (the assistant will be offered on the shared review or via direct affordance)
     setGuidedAddOpen(false)
     setGuidedAddQuery("")
-
+    setDirectAddOpen(false)
+    setDirectAddQuery("")
   }
 
   // --- shared review surface groups ---
@@ -1039,8 +1043,55 @@ export function FinalTopicsSelection({ learningInvitationEnabled = false }: { le
                 <section className="space-y-4" aria-labelledby="p8-added-heading">
                   <div className="flex items-center justify-between gap-3">
                     <h3 id="p8-added-heading" className="text-base font-semibold text-foreground">{tr("Nuevos (añadidos por ti)")}</h3>
-                    <Button size="sm" variant="outline" onClick={() => { setSearchQuery(""); /* reuse dialog */ setShowInfoModal(false); /* simple: reuse search area */ }}>{tr("Añadir tema")}</Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      aria-expanded={directAddOpen}
+                      aria-controls="p8-add-topic-picker"
+                      onClick={() => { setDirectAddOpen((open) => !open); setDirectAddQuery("") }}
+                    >
+                      {directAddOpen ? tr("Cerrar") : tr("Añadir tema")}
+                    </Button>
                   </div>
+                  {directAddOpen && (
+                    <div id="p8-add-topic-picker" className="space-y-3 rounded-lg border bg-card p-4">
+                      <div className="relative max-w-md">
+                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                        <Input
+                          aria-label={tr("Buscar tema NEIS")}
+                          placeholder={tr("Buscar y añadir tema del catálogo...")}
+                          value={directAddQuery}
+                          onChange={(e) => setDirectAddQuery(e.target.value)}
+                          className="pl-9"
+                        />
+                      </div>
+                      <div className="max-h-72 overflow-auto text-sm">
+                        {Object.entries(groupedCatalog).map(([group, list]) => {
+                          const candidates = list.filter((t) => !selectedTopics.has(t.id) && topicMatches(t, directAddQuery, locale))
+                          if (candidates.length === 0) return null
+                          return (
+                            <div key={group} className="mb-3">
+                              <div className="mb-1 text-xs uppercase text-muted-foreground">{tr(group)}</div>
+                              {candidates.map((t) => (
+                                <button
+                                  type="button"
+                                  key={t.id}
+                                  className="block w-full rounded px-2 py-1 text-left hover:bg-muted"
+                                  onClick={() => addTopicFromGuided(t.id)}
+                                >
+                                  <Badge variant="outline" className="mr-2">{t.esrs_code}</Badge>
+                                  {topicTitle(t, locale)}
+                                </button>
+                              ))}
+                            </div>
+                          )
+                        })}
+                        {catalogTopics.every((t) => selectedTopics.has(t.id) || !topicMatches(t, directAddQuery, locale)) && (
+                          <div className="text-muted-foreground">{tr("Ningún tema coincide con el filtro.")}</div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                   {Array.from(selectedTopics).filter((id) => !p6TopicIds.has(id)).map((id) => {
                     const t = catalogTopics.find((x) => x.id === id)
                     if (!t) return null

@@ -62,7 +62,7 @@ import {
 } from "@/lib/p6-document-evidence.mjs"
 import {
   REVIEW_REASON_KEYS,
-  actionsFromProposal,
+  initialTopicActions,
   addedTopicIdsFromProposal,
   aiTopicIdsFromProposal,
   baseProposalTopicIds,
@@ -252,7 +252,7 @@ export function MaterialTopicsForm() {
         setCatalogUnavailable(catalogResponse == null)
 
         if (proposalResponse.data) {
-          setTopicActions(actionsFromProposal(proposalResponse.data))
+          setTopicActions(initialTopicActions(proposalResponse.data))
           setActionReasons(reasonsFromProposal(proposalResponse.data))
           setActionNotes(notesFromProposal(proposalResponse.data))
           setAddedTopicIds(addedTopicIdsFromProposal(proposalResponse.data))

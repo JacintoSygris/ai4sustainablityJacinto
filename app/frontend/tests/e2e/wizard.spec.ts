@@ -371,7 +371,7 @@ test("el asistente se completa de principio a fin con datos de una PYME industri
     test.info().annotations.push({ type: "hechos del informe", description: `${facts.claimable_fact_count} con valor, ${reviewed.length} revisados` })
 
     await expect(page.getByText("Siguientes acciones")).toHaveCount(0, { timeout: 30_000 })
-    await expect(page.getByText("¿Y ahora qué?")).toBeVisible()
+    await expect(page.getByText("¿Y ahora qué?")).toHaveCount(0)
   })
 
   await test.step("paso 6: versión del informe aprobada y descargas", async () => {
