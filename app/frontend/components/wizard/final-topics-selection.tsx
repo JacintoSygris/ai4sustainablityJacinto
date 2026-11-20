@@ -101,8 +101,6 @@ export function FinalTopicsSelection({ learningInvitationEnabled = false }: { le
   const [loadingInitial, setLoadingInitial] = useState(true)
   const [saving, setSaving] = useState(false)
   const [showInfoModal, setShowInfoModal] = useState(false)
-  const [searchQuery, setSearchQuery] = useState("")
-  const [showOnlySelected, setShowOnlySelected] = useState(false)
   const [csrfToken, setCsrfToken] = useState<string>()
   const [confirmation, setConfirmation] = useState<LaravelMaterialityConfirmation | null>(null)
   const sectorComparison = useSectorComparison(confirmation)
@@ -766,13 +764,6 @@ export function FinalTopicsSelection({ learningInvitationEnabled = false }: { le
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTopicKey])
 
-  const filteredTopics = useMemo(() => {
-    return catalogTopics.filter((topic) => {
-      const selected = selectedTopics.has(topic.id)
-      return topicMatches(topic, searchQuery, locale) && (!showOnlySelected || selected)
-    })
-  }, [catalogTopics, searchQuery, selectedTopics, showOnlySelected, locale])
-
   const currentPreview = previewSelectionKey === selectedTopicKey ? previewEstimate : null
 
   // group catalog for "Añadir tema" (Ambiente/Social/Gobernanza by first letter of esrs_code)
@@ -1119,21 +1110,12 @@ export function FinalTopicsSelection({ learningInvitationEnabled = false }: { le
                 </section>
               </div>
 
-              {confirmation.sector_comparison_enabled && filteredTopics.filter((topic) => !p6TopicIds.has(topic.id) && !selectedTopics.has(topic.id)).map((topic) => (
+              {confirmation.sector_comparison_enabled && catalogTopics.filter((topic) => !p6TopicIds.has(topic.id) && !selectedTopics.has(topic.id)).map((topic) => (
                 <div key={topic.id} className="rounded border p-2 text-sm">
                   <span>{topic.esrs_code} {topicTitle(topic, locale)}</span>
                   <SectorComparison {...sectorComparison} topicId={topic.id} locale={locale} />
                 </div>
               ))}
-
-              {/* search / add affordance for direct */}
-              <div className="flex items-center gap-2">
-                <div className="relative flex-1 max-w-md">
-                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input aria-label={tr("Buscar tema NEIS")} placeholder={tr("Buscar y añadir tema del catálogo...")} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9" />
-                </div>
-                <Button variant="outline" onClick={() => { /* open simple add from filtered */ if (filteredTopics[0]) toggleTopic(filteredTopics[0].id) }}>{tr("Añadir primero filtrado")}</Button>
-              </div>
             </>
           )}
 

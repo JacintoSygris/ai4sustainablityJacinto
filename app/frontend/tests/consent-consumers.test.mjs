@@ -831,7 +831,9 @@ test('P8 direct reload renders related topics for a saved user-added topic outsi
     try {
       c.render(); await c.settle()
       const html = renderToStaticMarkup(c.render())
-      const added = html.slice(html.indexOf('Nuevos (añadidos por ti)'), html.indexOf('Buscar y añadir tema'))
+      const addedStart = html.indexOf('Nuevos (añadidos por ti)')
+      const addedEnd = html.indexOf('Resumen de la selección', addedStart)
+      const added = html.slice(addedStart, addedEnd === -1 ? undefined : addedEnd)
       assert.match(added, /Aire/)
       assert.match(added, /Quitar/)
       if (enabled) {

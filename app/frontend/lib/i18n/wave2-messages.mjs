@@ -235,7 +235,6 @@ export const wave2English = {
   "Quitar": "Remove",
   "Buscar tema NEIS": "Search ESRS topics",
   "Buscar y añadir tema del catálogo...": "Search and add a topic from the catalogue...",
-  "Añadir primero filtrado": "Add first filtered topic",
   "Progreso guiado:": "Guided progress:",
   "de": "of",
   "¿Hay algún otro tema que te preocupe?": "Are there any other topics that concern you?",
