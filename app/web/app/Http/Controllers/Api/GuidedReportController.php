@@ -428,10 +428,14 @@ class GuidedReportController extends Controller
         return response()->json(new \stdClass, 200, ['Cache-Control' => 'private, max-age=86400']);
     }
 
-    /** Same-origin path of the viewer script, so the page served through the frontend proxy finds it. */
+    /**
+     * Same-origin path of the viewer script, so the page served through the frontend proxy
+     * finds it. A literal path, not route(): a deployment whose route cache predates the
+     * script route must still serve the plain document instead of failing.
+     */
     private static function viewerScriptUrl(): string
     {
-        return (string) (parse_url(route('api.report.ixbrl-viewer-script'), PHP_URL_PATH) ?: '/api/report/ixbrl-viewer.js');
+        return '/api/report/ixbrl-viewer.js';
     }
 
     /** @return array{0: ?Characterization, 1: mixed} */
