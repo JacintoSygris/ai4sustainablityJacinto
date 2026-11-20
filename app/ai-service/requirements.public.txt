@@ -12,3 +12,5 @@ pypdf==6.21.4
 # XBRL validator for the Laravel report pipeline (ArelleCommandLocator finds it in this
 # environment's bin/ directory, so deployments without shell access still get a validator).
 arelle-release==2.45.1
+# iXBRL Viewer plugin: the Laravel candidate validation run also saves the viewer page served on ?inline=1.
+ixbrl-viewer==1.5.11
